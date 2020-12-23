@@ -45,4 +45,4 @@ class AccountSecurityQA(models.Model):
     answer = models.CharField(max_length=200)
 
     def __str__(self):
-        return '{} ({})'.format(self.question, self.account)
+        return '{} {}'.format(self.question, self.account)
