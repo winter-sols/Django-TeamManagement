@@ -13,14 +13,24 @@ PROFILE_TYPE_SELF = 1
 PROFILE_TYPE_PARTNER = 2
 
 PROFILE_TYPES = [
-    (PROFILE_TYPE_SELF, 'self'),
-    (PROFILE_TYPE_PARTNER, 'partner')
+    (PROFILE_TYPE_SELF, 'Self'),
+    (PROFILE_TYPE_PARTNER, 'Partner')
 ]
 
 PROFILE_GENDER_MALE = 1
 PROFILE_GENDER_FEMALE = 2
 
 PROFILE_GENDERS = [
-    (PROFILE_GENDER_MALE, 'male'),
-    (PROFILE_GENDER_FEMALE, 'female')
+    (PROFILE_GENDER_MALE, 'Male'),
+    (PROFILE_GENDER_FEMALE, 'Female')
 ]
+
+PLATFORM_TYPES = [
+    ('email', 'Email'),
+    ('skype', 'Skype'),
+    ('slack', 'Slack'),
+    ('ms_team', 'MS Team'),
+    ('github', 'Github'),
+    ('bitbucket', 'Bitbucket'),
+]
+
