@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from . import constants
 
 class User(AbstractUser):
+    team = models.ForeignKey('Team', on_delete=models.CASCADE, null=True)
     email = models.EmailField(unique=True)
     role = models.IntegerField(choices=constants.ROLE_TYPES, default=constants.ROLE_DEVELOPER)
     USERNAME_FIELD = 'email'
@@ -10,6 +11,11 @@ class User(AbstractUser):
 
     def __str__(self):
         return '{} {} ({})'.format(self.first_name, self.last_name, self.email)
+
+class Team(models.Model):
+    name = models.CharField(max_length=50)
+    def __str__(self):
+        return self.name
 
 
 class Profile(models.Model):
