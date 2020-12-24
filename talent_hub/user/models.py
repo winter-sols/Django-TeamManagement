@@ -9,6 +9,15 @@ class User(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
 
+    def is_developer(self):
+        return self.role == constants.ROLE_DEVELOPER
+
+    def is_team_manager(self):
+        return self.role == constants.ROLE_TEAM_MANAGER
+
+    def is_admin(self):
+        return self.role == constants.ROLE_ADMIN
+
     def __str__(self):
         return '{} {} ({})'.format(self.first_name, self.last_name, self.email)
 
