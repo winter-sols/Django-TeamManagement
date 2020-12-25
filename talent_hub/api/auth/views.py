@@ -1,6 +1,6 @@
 from django.contrib.auth.models import update_last_login
 from rest_framework import status, parsers, renderers
-from rest_framework.generics import GenericAPIView
+from rest_framework.generics import GenericAPIView, RetrieveAPIView
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -10,6 +10,7 @@ from rest_framework_jwt.serializers import JSONWebTokenSerializer
 from rest_framework_jwt.utils import jwt_response_payload_handler
 from user.models import User
 from .serializers import UserSerializer, UserCreateSerializer
+from ..common.serializers import UserDetailSerializer
 
 
 class LoginView(APIView):
@@ -44,3 +45,11 @@ class RegisterView(CreateModelMixin, GenericAPIView):
     def post(self, request):
         """User registration view."""
         return self.create(request)
+
+
+class MeView(RetrieveAPIView):
+    serializer_class = UserDetailSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
