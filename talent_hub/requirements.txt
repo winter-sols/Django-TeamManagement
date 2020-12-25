@@ -6,3 +6,6 @@ django-extensions==2.2.1
 djangorestframework==3.9.0
 djangorestframework_jwt==1.11.0
 django-cors-headers==2.1.0
+
+drf-yasg==1.16.1
+packaging==19.1
