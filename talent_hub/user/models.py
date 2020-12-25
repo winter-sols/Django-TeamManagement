@@ -1,3 +1,4 @@
+from django.utils.functional import cached_property
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from . import constants
@@ -9,12 +10,15 @@ class User(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
 
+    @cached_property
     def is_developer(self):
         return self.role == constants.ROLE_DEVELOPER
 
+    @cached_property
     def is_team_manager(self):
         return self.role == constants.ROLE_TEAM_MANAGER
 
+    @cached_property
     def is_admin(self):
         return self.role == constants.ROLE_ADMIN
 
