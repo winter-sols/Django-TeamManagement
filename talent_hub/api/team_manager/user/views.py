@@ -1,7 +1,7 @@
 from rest_framework.generics import  RetrieveUpdateAPIView, ListAPIView
 from rest_framework.permissions import IsAuthenticated
 
-from ...common.serializers import TeamSerializer
+from ...common.serializers import TeamSerializer, ProfileSerializer
 from .serializers import TeamUserListSerializer
 from api.permission import IsTeamManager
 from django.shortcuts import get_object_or_404
@@ -23,3 +23,8 @@ class TeamUserListView(ListAPIView):
     
     def get_queryset(self):
         return self.request.user.team.user_set.all()
+
+
+# team-manager/users/:id/profiles (LIST)
+# class TeamProfilesByUser(ListAPIView):
+#     serializer_class = ProfileSerializer
