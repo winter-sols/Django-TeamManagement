@@ -23,7 +23,7 @@ class UserSerializer(serializers.ModelSerializer):
 class UserCreateSerializer(serializers.ModelSerializer, RoleValidatorMixin):
     class Meta:
         model = User
-        fields = ('id', 'first_name', 'last_name', 'email', 'role', 'password')
+        fields = ('id', 'first_name', 'last_name', 'email', 'role', 'password', 'team')
         read_only_fields = ('id', 'role')
         extra_kwargs = { 'password': { 'write_only': True } }
 
