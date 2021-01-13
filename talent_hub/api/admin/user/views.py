@@ -51,3 +51,10 @@ class AccountsAdminViewSet(viewsets.ModelViewSet):
     serializer_class = AccountSerializer
     permission_classes = [IsAdmin]
     queryset = Account.objects.all()
+
+class TeamUserListView(ListAPIView):
+    serializer_class = UserAdminSerializer
+    permission_classes = [IsAdmin]
+
+    def get_queryset(self):
+        return User.objects.filter(team=self.kwargs['pk'])
