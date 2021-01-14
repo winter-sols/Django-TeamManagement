@@ -25,8 +25,8 @@ class AccountSerializer(serializers.ModelSerializer):
 
 class ProfileSerializer(serializers.ModelSerializer):
     accounts = AccountSerializer(many=True, source='account_set', required=False)
-    user = UserSerializer(required=False)
-
+    user = UserSerializer(required=False, )
+    read_only_fields = ('user')
     def create(self, validated_data):
         print(validated_data)
         accounts = validated_data.pop('account_set', None)
@@ -37,6 +37,13 @@ class ProfileSerializer(serializers.ModelSerializer):
             instance.account_set.all().delete()
             accounts_ser.save(profile=instance)
         return instance
+    
+    def validate(self, data):
+        print(data)
+        user_id = self.initial_data['user_id']
+        user = User.objects.get(pk=user_id)
+        data.update({ 'user': user })
+        return data
 
     class Meta:
         model = Profile
