@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from user.models import User, Profile, Account, Team
-
+from user.serializer import UserSerializer
 
 class TeamSerializer(serializers.ModelSerializer):
     class Meta:
@@ -25,6 +25,7 @@ class AccountSerializer(serializers.ModelSerializer):
 
 class ProfileSerializer(serializers.ModelSerializer):
     accounts = AccountSerializer(many=True, source='account_set', required=False)
+    user = UserSerializer(required=False)
 
     def create(self, validated_data):
         print(validated_data)
@@ -50,6 +51,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             'gender',
             'user_id',
             'accounts',
+            'user'
         )
 
 
