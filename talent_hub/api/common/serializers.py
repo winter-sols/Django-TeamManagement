@@ -39,7 +39,6 @@ class ProfileSerializer(serializers.ModelSerializer):
         return instance
     
     def validate(self, data):
-        print(data)
         user_id = self.initial_data['user_id']
         user = User.objects.get(pk=user_id)
         data.update({ 'user': user })
