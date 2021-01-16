@@ -9,7 +9,14 @@ class TeamSerializer(serializers.ModelSerializer):
         fields = ('id', 'name')
 
 
+class ProfileLinkedWithAccountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ('first_name', 'last_name')
+
+
 class AccountSerializer(serializers.ModelSerializer):
+    profile = ProfileLinkedWithAccountSerializer(required=False)
     class Meta:
         model = Account
         fields = (
@@ -18,7 +25,8 @@ class AccountSerializer(serializers.ModelSerializer):
             'password',
             'location',
             'recovery_email',
-            'url'
+            'url',
+            'profile'
         )
     
 # Handle nested Serializer : I give up!
