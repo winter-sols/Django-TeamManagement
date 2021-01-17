@@ -16,7 +16,8 @@ class ProfileLinkedWithAccountSerializer(serializers.ModelSerializer):
 
 
 class AccountSerializer(serializers.ModelSerializer):
-    profile = ProfileLinkedWithAccountSerializer(required=False)
+    profile = ProfileLinkedWithAccountSerializer(required=False, read_only=True)
+
     class Meta:
         model = Account
         fields = (
@@ -28,13 +29,14 @@ class AccountSerializer(serializers.ModelSerializer):
             'url',
             'profile'
         )
+        read_only_fields = ('profile',)
     
 # Handle nested Serializer : I give up!
 
 class ProfileSerializer(serializers.ModelSerializer):
     accounts = AccountSerializer(many=True, source='account_set', required=False)
     user = UserSerializer(required=False, )
-    read_only_fields = ('user')
+    
     def create(self, validated_data):
         print(validated_data)
         accounts = validated_data.pop('account_set', None)
@@ -67,6 +69,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             'accounts',
             'user'
         )
+        read_only_fields = ('user',)
 
 
 class UserDetailSerializer(serializers.ModelSerializer):
