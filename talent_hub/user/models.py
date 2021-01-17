@@ -56,7 +56,7 @@ class Account(models.Model):
     # TODO: Implement Linked Profile here...
 
     class Meta:
-        unique_together = ('profile', 'email')
+        unique_together = ('profile', 'email', 'platform_type')
     
     def __str__(self):
         return '{}({})'.format(self.recovery_email, self.platform_type)

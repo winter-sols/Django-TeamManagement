@@ -23,6 +23,7 @@ class AccountSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'platform_type',
+            'email',
             'password',
             'location',
             'recovery_email',
