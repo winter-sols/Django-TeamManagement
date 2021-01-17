@@ -47,6 +47,7 @@ class Profile(models.Model):
 
 class Account(models.Model):
     profile = models.ForeignKey('Profile', on_delete=models.CASCADE)
+    email = models.EmailField(null=True)
     platform_type = models.CharField(max_length=30, choices=constants.PLATFORM_TYPES)
     password = models.CharField(max_length=50)
     location = models.CharField(max_length=200)
@@ -54,6 +55,9 @@ class Account(models.Model):
     url = models.CharField('URL', max_length=200)
     # TODO: Implement Linked Profile here...
 
+    class Meta:
+        unique_together = ('profile', 'email')
+    
     def __str__(self):
         return '{}({})'.format(self.recovery_email, self.platform_type)
 
