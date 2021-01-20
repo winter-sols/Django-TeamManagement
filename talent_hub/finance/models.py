@@ -1,4 +1,5 @@
 from django.db import models
+from jsonfield.fields import JSONField
 from . import constants
 
 class Client(models.Model):
@@ -24,5 +25,24 @@ class FinancialRequest(models.Model):
     status = models.IntegerField(choices=constants.FINANCIAL_STATUS, default=constants.FINANCIAL_STATUS_PENDING)
     amount = models.FloatField(null=True)
     counter_party = models.CharField(max_length=50)
+    requested_at = models.DateTimeField(auto_now_add=True)
 
+
+class Transaction(models.Model):
+    client = models.ForeignKey('Client', on_delete=models.CASCADE)
+    project = models.ForeignKey('Project', on_delete=models.CASCADE)
+    description = models.TextField(null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    gross_amount = models.FloatField()
+    net_amount = models.FloatField()
+    payment_platform = models.CharField(choices=constants.PAYMENT_PLATFORMS)
+    related_financial = models.ForeignKey('FinancialRequest', on_delete=models.CASCADE)
+
+class Partner(models.Model):
+    full_name = models.CharField(max_length=50)
+    email = models.EmailField(unique=True)
+    address = models.CharField(max_length=200, null=True)
+    dob = models.DateField()
+    phone_num = models.CharField(max_length=50, null=True)
+    contact_method = JSONField()
 
