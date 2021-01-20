@@ -20,7 +20,7 @@ class Project(models.Model):
     participants = models.ManyToManyField('user.User', related_name='related_participants')
     project_starter = models.ForeignKey('user.User', on_delete=models.CASCADE, related_name='related_project_starter')
     started_at = models.DateField(null=True)
-    ended_at = models.DateField(null=True)
+    ended_at = models.DateField(null=True, blank=True)
     status = models.IntegerField(choices=constants.PROJECT_STATUS)
 
     def __str__(self):
