@@ -28,6 +28,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+environment = 'dev' # os.environ["ENVIRONMENT"]
 
 # Application definition
 
@@ -94,13 +95,28 @@ WSGI_APPLICATION = 'talent_hub.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
+USE_POSTGRES = 1
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+if USE_POSTGRES:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': os.environ.get('DB_NAME', "talent_hub_{}".format(environment)),
+            'HOST': '127.0.0.1',
+            'USER': 'postgres', # os.environ.get('DB_USER', 'betasmartz_{}'.format(environment)),
+            'PASSWORD': 'password', # os.environ["DB_PASSWORD"],
+            'TEST': {
+                'NAME': 'test_talent_hub'
+            }
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
 
 
 # Password validation
