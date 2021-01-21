@@ -4,7 +4,7 @@ from finance.models import Client, Partner, Project
 class ClientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Client
-        fields = ('id', 'type', 'full_name', 'company_name')
+        fields = ('id', 'type', 'full_name', 'company_name', 'started_at')
  
 
 class PartnerSerializer(serializers.ModelSerializer):
