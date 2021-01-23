@@ -34,6 +34,7 @@ class FinancialRequest(models.Model):
     amount = models.FloatField(null=True)
     counter_party = models.CharField(max_length=50)
     requested_at = models.DateTimeField(auto_now_add=True)
+    requester = models.ForeignKey('user.User', on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return '{} {}'.format(self.type, self.status)
