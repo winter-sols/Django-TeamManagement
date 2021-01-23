@@ -15,6 +15,7 @@ class Client(models.Model):
 class Project(models.Model):
     title = models.CharField(max_length=100)
     type = models.IntegerField(choices=constants.PROJECT_TYPES)
+    weakly_limit = models.IntegerField(default=40)
     price = models.FloatField(null=True)
     client = models.ForeignKey('Client', on_delete=models.CASCADE)
     participants = models.ManyToManyField('user.User', related_name='related_participants')
