@@ -1,12 +1,19 @@
 from django.urls import  include, path
-from .user.views import UserAdminViewSet, TeamListViewSet, ProfileListAdminView, ProfilesAdminViewSet, AccountListByProfileIdView, AccountsAdminViewSet, TeamUserListView
 from rest_framework import routers
+from .user.views import UserAdminViewSet, TeamListViewSet, ProfileListAdminView, ProfilesAdminViewSet, AccountListByProfileIdView, AccountsAdminViewSet, TeamUserListView
+from api.common.finance.views import ClientViewSet, PartnerViewSet, ProjectViewSet, FinancialRequestListCreateView
 
 router = routers.DefaultRouter()
 router.register('users', UserAdminViewSet)
 router.register('teams', TeamListViewSet)
 router.register('profiles', ProfilesAdminViewSet)
 router.register('accounts', AccountsAdminViewSet)
+
+#api end-points for finance app
+
+router.register('clients', ClientViewSet)
+router.register('partners', PartnerViewSet)
+router.register('projects', ProjectViewSet)
 
 urlpatterns = router.urls + [
     path('users/<int:pk>/profiles/', ProfileListAdminView.as_view(), name='user_profiles'),
