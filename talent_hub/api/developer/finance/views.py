@@ -3,7 +3,7 @@ from rest_framework.generics import ListCreateAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from ...permission import IsDeveloper
-from .serializers import ClientSerializer, PartnerSerializer, ProjectSerializer, FinancialRequestDetailSerializer, FinancialRequestSerializer
+from api.common.finance.serializers import ClientSerializer, PartnerSerializer, ProjectSerializer, FinancialRequestDetailSerializer, FinancialRequestSerializer
 from finance.models import Client, Partner, Project, FinancialRequest
 
 class ClientViewSet(viewsets.ModelViewSet):
