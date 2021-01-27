@@ -1,16 +1,8 @@
 from django.db import models
 from jsonfield.fields import JSONField
+from django.contrib.contenttypes.fields import GenericRelation, GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from . import constants
-
-class Client(models.Model):
-    type = models.IntegerField(choices=constants.CLIENT_TYPES)
-    full_name = models.CharField(max_length=50)
-    company_name = models.CharField(max_length=100, null=True, blank=True)
-    started_at = models.DateField(auto_now_add=True)
-
-    def __str__(self):
-        return '{}({})'.format(self.full_name, self.type)
-
 
 class Project(models.Model):
     title = models.CharField(max_length=100)
@@ -32,7 +24,9 @@ class FinancialRequest(models.Model):
     type = models.IntegerField(choices=constants.FINANCIAL_TYPES)
     status = models.IntegerField(choices=constants.FINANCIAL_STATUS, default=constants.FINANCIAL_STATUS_PENDING)
     amount = models.FloatField(null=True)
-    counter_party = models.CharField(max_length=50)
+    counter_party_type =  models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    counter_party_id = models.PositiveIntegerField()
+    counter_party = GenericForeignKey('counter_party_type', 'counter_party_id')
     requested_at = models.DateTimeField(auto_now_add=True)
     requester = models.ForeignKey('user.User', on_delete=models.CASCADE)
     project = models.ForeignKey('Project', on_delete=models.CASCADE)
@@ -62,7 +56,18 @@ class Partner(models.Model):
     dob = models.DateField()
     phone_num = models.CharField(max_length=50, null=True)
     contact_method = JSONField()
+    financial = GenericRelation(FinancialRequest)
 
     def __str__(self):
         return '{}({})'.format(self.full_name, self.email)
 
+
+class Client(models.Model):
+    type = models.IntegerField(choices=constants.CLIENT_TYPES)
+    full_name = models.CharField(max_length=50)
+    company_name = models.CharField(max_length=100, null=True, blank=True)
+    started_at = models.DateField(auto_now_add=True)
+    financial = GenericRelation(FinancialRequest)
+
+    def __str__(self):
+        return '{}({})'.format(self.full_name, self.type)
