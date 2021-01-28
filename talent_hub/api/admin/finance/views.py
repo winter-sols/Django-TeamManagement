@@ -14,3 +14,14 @@ class ApproveFinanicalRequestView(UpdateAPIView):
         serializer = self.get_serializer(instance)
         instance.save()
         return Response(serializer.data)
+
+class DeclineFinanicalRequestView(UpdateAPIView):
+    serializer_class = FinancialRequestDetailSerializer
+    queryset = FinancialRequest.objects.all()
+
+    def update(self, request, pk):
+        instance = self.get_object()
+        instance.status = FINANCIAL_STATUS_DECLINED
+        serializer = self.get_serializer(instance)
+        instance.save()
+        return Response(serializer.data)
