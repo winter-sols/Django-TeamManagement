@@ -47,6 +47,7 @@ class FinancialRequestDetailSerializer(serializers.ModelSerializer):
 
 
 class FinancialRequestSerializer(serializers.ModelSerializer):
+    
     def validate(self, data):
         data = super().validate(data)
         counter_party = self.initial_data['counter_party']
@@ -61,3 +62,4 @@ class FinancialRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = FinancialRequest
         fields = ('id', 'type', 'status', 'amount', 'counter_party', 'requested_at', 'requester', 'project')
+        read_only_fields = ('status',)
