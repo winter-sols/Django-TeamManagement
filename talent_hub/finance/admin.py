@@ -10,11 +10,11 @@ class ProjectModelAdmin(admin.ModelAdmin):
 
 
 class FinancialRequestModelAdmin(admin.ModelAdmin):
-    list_display = ('type', 'status', 'amount', 'counter_party', 'requested_at')
+    list_display = ('type', 'status', 'amount', 'counter_party', 'requester', 'requested_at')
 
 
 class TransactionModelAdmin(admin.ModelAdmin):
-    list_display = ('client', 'project', 'created_at', 'gross_amount', 'net_amount', 'payment_platform', 'related_financial')
+    list_display = ('created_at', 'gross_amount', 'net_amount', 'payment_platform', 'related_financial')
 
 
 class PartnerModelAdmin(admin.ModelAdmin):
