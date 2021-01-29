@@ -9,19 +9,16 @@ from finance.models import Client, Partner, Project, FinancialRequest
 
 class ClientViewSet(viewsets.ModelViewSet):
     serializer_class = ClientSerializer
-    permission_classes = [IsDeveloper]
     queryset = Client.objects.all()
 
 
 class PartnerViewSet(viewsets.ModelViewSet):
     serializer_class = PartnerSerializer
-    permission_classes = [IsDeveloper]
     queryset = Partner.objects.all()
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
-    permission_classes = [IsDeveloper]
     queryset = Project.objects.all()
 
 class FinancialRequestViewSet(  mixins.CreateModelMixin,
