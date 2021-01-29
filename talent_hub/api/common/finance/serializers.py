@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.contenttypes.models import ContentType
-from finance.models import Client, Partner, Project, FinancialRequest
+from finance.models import Client, Partner, Project, FinancialRequest, Transaction
 from user.serializer import UserSerializer
 from finance import constants as cs
 
@@ -63,3 +63,13 @@ class FinancialRequestSerializer(serializers.ModelSerializer):
         model = FinancialRequest
         fields = ('id', 'type', 'status', 'amount', 'counter_party', 'requested_at', 'requester', 'project')
         read_only_fields = ('status',)
+
+class TransactionDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Transaction
+        fields = ('id', 'gross_amount', 'net_amount', 'payment_platform', 'description', 'created_at', 'related_financial')
+
+class TransactionCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Transaction
+        fields = ('id', 'gross_amount', 'net_amount', 'payment_platform', 'description', 'created_at', 'related_financial')
