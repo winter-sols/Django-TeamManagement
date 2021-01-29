@@ -36,8 +36,6 @@ class FinancialRequest(models.Model):
 
 
 class Transaction(models.Model):
-    client = models.ForeignKey('Client', on_delete=models.CASCADE)
-    project = models.ForeignKey('Project', on_delete=models.CASCADE)
     description = models.TextField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     gross_amount = models.FloatField()
@@ -46,7 +44,7 @@ class Transaction(models.Model):
     related_financial = models.ForeignKey('FinancialRequest', on_delete=models.CASCADE)
     
     def __str__(self):
-        return '{} {} ({})'.format(self.client, self.project, self.payment_platform)
+        return '{}'.format(self.payment_platform)
 
 
 class Partner(models.Model):
