@@ -50,9 +50,9 @@ class Transaction(models.Model):
 class Partner(models.Model):
     full_name = models.CharField(max_length=50)
     email = models.EmailField(unique=True)
-    address = models.CharField(max_length=200, null=True)
-    dob = models.DateField()
-    phone_num = models.CharField(max_length=50, null=True)
+    address = models.CharField(max_length=200, null=True, blank=True)
+    dob = models.DateField(null=True, blank=True)
+    phone_num = models.CharField(max_length=50, null=True, blank=True)
     contact_method = JSONField()
     financial = GenericRelation(FinancialRequest, content_type_field='counter_party_type', object_id_field='counter_party_id',)
     owner = models.ForeignKey('user.User', on_delete=models.CASCADE)
