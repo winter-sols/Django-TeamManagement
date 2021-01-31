@@ -55,6 +55,7 @@ class Partner(models.Model):
     phone_num = models.CharField(max_length=50, null=True)
     contact_method = JSONField()
     financial = GenericRelation(FinancialRequest, content_type_field='counter_party_type', object_id_field='counter_party_id',)
+    owner = models.ForeignKey('user.User', on_delete=models.CASCADE)
 
     def __str__(self):
         return '{}({})'.format(self.full_name, self.email)
@@ -66,6 +67,7 @@ class Client(models.Model):
     company_name = models.CharField(max_length=100, null=True, blank=True)
     started_at = models.DateField(auto_now_add=True)
     financial = GenericRelation(FinancialRequest, content_type_field='counter_party_type', object_id_field='counter_party_id',)
+    owner = models.ForeignKey('user.User', on_delete=models.CASCADE)
 
     def __str__(self):
         return '{}({})'.format(self.full_name, self.type)
