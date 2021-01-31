@@ -21,7 +21,7 @@ class ClientViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.request.method == 'GET':
             return ClientDetailSerializer
-        elif self.request.method == 'PUT':
+        elif self.request.method in ['PUT', 'POST']:
             return ClientUpdateSerializer
 
 
