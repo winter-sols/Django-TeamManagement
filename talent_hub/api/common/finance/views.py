@@ -4,7 +4,15 @@ from rest_framework import mixins
 from rest_framework.response import Response
 from rest_framework import status
 from ...permission import IsDeveloper, IsTeamManager
-from api.common.finance.serializers import ClientDetailSerializer, ClientUpdateSerializer, PartnerSerializer, ProjectSerializer, FinancialRequestDetailSerializer, FinancialRequestSerializer
+from api.common.finance.serializers import (
+    ClientDetailSerializer,
+    ClientUpdateSerializer,
+    PartnerSerializer,
+    PartnerDetailSerializer,
+    ProjectSerializer,
+    FinancialRequestDetailSerializer,
+    FinancialRequestSerializer
+)
 from finance.models import Client, Partner, Project, FinancialRequest
 
 class ClientViewSet(viewsets.ModelViewSet):
@@ -26,7 +34,6 @@ class ClientViewSet(viewsets.ModelViewSet):
 
 
 class PartnerViewSet(viewsets.ModelViewSet):
-    serializer_class = PartnerSerializer
     queryset = Partner.objects.all()
     
     def get_queryset(self):
@@ -36,6 +43,12 @@ class PartnerViewSet(viewsets.ModelViewSet):
             return Partner.objects.filter(owner=self.request.user)
         elif self.request.user.is_team_manager:
             return Partner.objects.filter(owner__in=self.request.user.team.user_set.all())
+
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return PartnerDetailSerializer
+        elif self.request.method in ['PUT', 'POST']:
+            return PartnerSerializer
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
@@ -48,7 +61,7 @@ class FinancialRequestViewSet(  mixins.CreateModelMixin,
                                 mixins.RetrieveModelMixin,
                                 viewsets.GenericViewSet):
     queryset = FinancialRequest.objects.all()
-    
+
     def get_queryset(self):
         if self.request.user.is_admin:
             return FinancialRequest.objects.all()

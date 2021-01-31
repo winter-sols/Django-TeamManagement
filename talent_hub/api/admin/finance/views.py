@@ -37,4 +37,3 @@ class DeclineFinanicalRequestView(UpdateAPIView):
 
 class TransactionViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     queryset = Transaction.objects.all()
-    

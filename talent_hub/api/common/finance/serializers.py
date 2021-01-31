@@ -26,6 +26,15 @@ class PartnerSerializer(serializers.ModelSerializer):
          fields = ('id', 'full_name', 'email', 'address', 'dob', 'phone_num', 'contact_method', 'owner')
 
 
+class PartnerDetailSerializer(serializers.ModelSerializer):
+    contact_method = serializers.JSONField()
+    owner = UserSerializer()
+
+    class Meta:
+         model = Partner
+         fields = ('id', 'full_name', 'email', 'address', 'dob', 'phone_num', 'contact_method', 'owner')
+
+
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
