@@ -84,9 +84,9 @@ class FinancialRequestSerializer(serializers.ModelSerializer):
 class TransactionDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
-        fields = ('id', 'gross_amount', 'net_amount', 'payment_platform', 'description', 'created_at', 'related_financial')
+        fields = ('id', 'gross_amount', 'net_amount', 'payment_platform', 'description', 'created_at', 'financial_request')
 
 class TransactionCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
-        fields = ('id', 'gross_amount', 'net_amount', 'payment_platform', 'description', 'created_at', 'related_financial')
+        fields = ('id', 'gross_amount', 'net_amount', 'payment_platform', 'description', 'created_at', 'financial_request')

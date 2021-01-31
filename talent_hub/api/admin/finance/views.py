@@ -12,7 +12,7 @@ class ApproveFinanicalRequestView(UpdateAPIView):
 
     def update(self, request, pk):
         transaction_data = request.data
-        transaction_data['related_financial'] = pk
+        transaction_data['financial_request'] = pk
         transaction_ser = TransactionCreateSerializer(data=transaction_data)
         transaction_ser.is_valid(raise_exception=True)
         transaction_ser.save()
