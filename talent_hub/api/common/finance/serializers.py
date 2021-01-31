@@ -7,7 +7,7 @@ from finance import constants as cs
 class ClientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Client
-        fields = ('id', 'type', 'full_name', 'company_name', 'started_at')
+        fields = ('id', 'type', 'full_name', 'company_name', 'started_at', 'owner')
  
 
 class PartnerSerializer(serializers.ModelSerializer):
@@ -15,7 +15,7 @@ class PartnerSerializer(serializers.ModelSerializer):
 
     class Meta:
          model = Partner
-         fields = ('id', 'full_name', 'email', 'address', 'dob', 'phone_num', 'contact_method')
+         fields = ('id', 'full_name', 'email', 'address', 'dob', 'phone_num', 'contact_method', 'owner')
 
 
 class ProjectSerializer(serializers.ModelSerializer):
