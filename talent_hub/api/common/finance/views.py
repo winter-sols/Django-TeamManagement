@@ -4,11 +4,10 @@ from rest_framework import mixins
 from rest_framework.response import Response
 from rest_framework import status
 from ...permission import IsDeveloper, IsTeamManager
-from api.common.finance.serializers import ClientSerializer, PartnerSerializer, ProjectSerializer, FinancialRequestDetailSerializer, FinancialRequestSerializer
+from api.common.finance.serializers import ClientDetailSerializer, ClientUpdateSerializer, PartnerSerializer, ProjectSerializer, FinancialRequestDetailSerializer, FinancialRequestSerializer
 from finance.models import Client, Partner, Project, FinancialRequest
 
 class ClientViewSet(viewsets.ModelViewSet):
-    serializer_class = ClientSerializer
     queryset = Client.objects.all()
 
     def get_queryset(self):
@@ -18,6 +17,12 @@ class ClientViewSet(viewsets.ModelViewSet):
             return Client.objects.filter(owner=self.request.user)
         elif self.request.user.is_team_manager:
             return Client.objects.filter(owner__in=self.request.user.team.user_set.all())
+
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return ClientDetailSerializer
+        elif self.request.method == 'PUT':
+            return ClientUpdateSerializer
 
 
 class PartnerViewSet(viewsets.ModelViewSet):

@@ -4,11 +4,19 @@ from finance.models import Client, Partner, Project, FinancialRequest, Transacti
 from user.serializer import UserSerializer
 from finance import constants as cs
 
-class ClientSerializer(serializers.ModelSerializer):
+class ClientDetailSerializer(serializers.ModelSerializer):
+    owner = UserSerializer()
+
     class Meta:
         model = Client
         fields = ('id', 'type', 'full_name', 'company_name', 'started_at', 'owner')
- 
+
+
+class ClientUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Client
+        fields = ('id', 'type', 'full_name', 'company_name', 'started_at', 'owner')
+
 
 class PartnerSerializer(serializers.ModelSerializer):
     contact_method = serializers.JSONField()
