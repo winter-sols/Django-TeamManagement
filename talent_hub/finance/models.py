@@ -65,7 +65,7 @@ class Client(models.Model):
     type = models.IntegerField(choices=constants.CLIENT_TYPES)
     full_name = models.CharField(max_length=50)
     company_name = models.CharField(max_length=100, null=True, blank=True)
-    started_at = models.DateField(auto_now_add=True)
+    started_at = models.DateField()
     financial = GenericRelation(FinancialRequest, content_type_field='counter_party_type', object_id_field='counter_party_id',)
     owner = models.ForeignKey('user.User', on_delete=models.CASCADE)
 
