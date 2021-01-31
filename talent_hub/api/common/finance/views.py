@@ -11,15 +11,32 @@ class ClientViewSet(viewsets.ModelViewSet):
     serializer_class = ClientSerializer
     queryset = Client.objects.all()
 
+    def get_queryset(self):
+        if self.request.user.is_admin:
+            return Client.objects.all()
+        elif self.request.user.is_developer:
+            return Client.objects.filter(owner=self.request.user)
+        elif self.request.user.is_team_manager:
+            return Client.objects.filter(owner__in=self.request.user.team.user_set.all())
+
 
 class PartnerViewSet(viewsets.ModelViewSet):
     serializer_class = PartnerSerializer
     queryset = Partner.objects.all()
+    
+    def get_queryset(self):
+        if self.request.user.is_admin:
+            return Partner.objects.all()
+        elif self.request.user.is_developer:
+            return Partner.objects.filter(owner=self.request.user)
+        elif self.request.user.is_team_manager:
+            return Partner.objects.filter(owner__in=self.request.user.team.user_set.all())
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
     queryset = Project.objects.all()
+
 
 class FinancialRequestViewSet(  mixins.CreateModelMixin,
                                 mixins.ListModelMixin,

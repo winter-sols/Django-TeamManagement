@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import Client, Project, FinancialRequest, Partner, Transaction
 
 class ClientModelAdmin(admin.ModelAdmin):
-    list_display = ('type', 'full_name', 'company_name', 'started_at')
+    list_display = ('type', 'full_name', 'company_name', 'started_at', 'owner')
 
 
 class ProjectModelAdmin(admin.ModelAdmin):
@@ -18,7 +18,7 @@ class TransactionModelAdmin(admin.ModelAdmin):
 
 
 class PartnerModelAdmin(admin.ModelAdmin):
-    list_display = ('full_name', 'email')
+    list_display = ('full_name', 'email', 'owner')
 
 
 admin.site.register(Client, ClientModelAdmin)

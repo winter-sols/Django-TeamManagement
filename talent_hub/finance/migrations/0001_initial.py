@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
             name='FinancialRequest',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('type', models.IntegerField(choices=[(1, 'Send Invoice'), (2, 'Send Payment'), (3, 'Receive Payment')])),
+                ('type', models.IntegerField(choices=[(1, 'Send Invoice'), (2, 'Send Payment'), (3, 'Receive Payment'), (4, 'Refund payment')])),
                 ('status', models.IntegerField(choices=[(1, 'Pending'), (2, 'Approved'), (3, 'Declined'), (4, 'Canceled')], default=1)),
                 ('amount', models.FloatField(null=True)),
                 ('counter_party', models.CharField(max_length=50)),
