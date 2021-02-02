@@ -80,6 +80,8 @@ class FinancialRequestViewSet(  mixins.CreateModelMixin,
             return FinancialRequestSerializer
 
     def create(self, request):
+        serializer_data = request.data
+        serializer_data['requester'] = self.request.user.id
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
