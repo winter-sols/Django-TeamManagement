@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractUser
 from . import constants
 
 class User(AbstractUser):
-    team = models.ForeignKey('Team', on_delete=models.CASCADE, null=True)
+    team = models.ForeignKey('Team', on_delete=models.CASCADE, null=True, blank=True)
     email = models.EmailField(unique=True)
     role = models.IntegerField(choices=constants.ROLE_TYPES, default=constants.ROLE_DEVELOPER)
     USERNAME_FIELD = 'email'
