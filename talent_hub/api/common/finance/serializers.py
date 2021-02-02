@@ -45,9 +45,9 @@ class ProjectSerializer(serializers.ModelSerializer):
 class CounterPartyRelatedField(serializers.RelatedField):
     def to_representation(self, value):
         if isinstance(value, Client):
-            serializer = ClientSerializer(instance=value)
+            serializer = ClientDetailSerializer(instance=value)
         elif isinstance(value, Partner):
-            serializer = PartnerSerializer(instance=value)
+            serializer = PartnerDetailSerializer(instance=value)
         else:
             raise Exception('Unexpected type of counter party')
     

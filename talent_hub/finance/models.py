@@ -29,7 +29,7 @@ class FinancialRequest(models.Model):
     counter_party = GenericForeignKey('counter_party_type', 'counter_party_id')
     requested_at = models.DateTimeField(auto_now_add=True)
     requester = models.ForeignKey('user.User', on_delete=models.CASCADE)
-    project = models.ForeignKey('Project', on_delete=models.CASCADE)
+    project = models.ForeignKey('Project', on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return '{} {}'.format(self.type, self.status)
