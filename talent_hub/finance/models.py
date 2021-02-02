@@ -32,7 +32,7 @@ class FinancialRequest(models.Model):
     project = models.ForeignKey('Project', on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
-        return '{} {}'.format(self.type, self.status)
+        return 'req={} counter={} project={}'.format(self.requester, self.counter_party, self.project)
 
 
 class Transaction(models.Model):
