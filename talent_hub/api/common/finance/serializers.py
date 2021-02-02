@@ -41,6 +41,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         # fields = ('id', 'title', 'type', 'price', 'client', 'participants', 'project_starter', 'started_at', 'ended_at', 'status')
         fields = '__all__'
 
+
 class CounterPartyRelatedField(serializers.RelatedField):
     def to_representation(self, value):
         if isinstance(value, Client):
@@ -81,10 +82,12 @@ class FinancialRequestSerializer(serializers.ModelSerializer):
         fields = ('id', 'type', 'status', 'amount', 'counter_party', 'requested_at', 'requester', 'project')
         read_only_fields = ('status',)
 
+
 class TransactionDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
         fields = ('id', 'gross_amount', 'net_amount', 'payment_platform', 'description', 'created_at', 'financial_request')
+
 
 class TransactionCreateSerializer(serializers.ModelSerializer):
     class Meta:
