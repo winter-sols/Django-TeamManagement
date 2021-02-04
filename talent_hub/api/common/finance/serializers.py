@@ -38,7 +38,19 @@ class PartnerDetailSerializer(serializers.ModelSerializer):
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
-        fields = ('id', 'title', 'type', 'price', 'client', 'participants', 'project_starter', 'started_at', 'ended_at', 'status')
+        fields = (
+            'id', 
+            'title',
+            'type',
+            'weakly_limit', 
+            'price', 
+            'client', 
+            'participants', 
+            'project_starter', 
+            'started_at', 
+            'ended_at', 
+            'status'
+        )
 
 
 class ProjectListSerializer(serializers.ModelSerializer):
@@ -46,7 +58,19 @@ class ProjectListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Project
-        fields = ('id', 'title', 'type', 'price', 'client', 'participants', 'project_starter', 'started_at', 'ended_at', 'status')
+        fields = (
+            'id', 
+            'title',
+            'type',
+            'weakly_limit', 
+            'price', 
+            'client', 
+            'participants', 
+            'project_starter', 
+            'started_at', 
+            'ended_at', 
+            'status'
+        )
 
 
 class CounterPartyRelatedField(serializers.RelatedField):
