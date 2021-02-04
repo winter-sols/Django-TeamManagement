@@ -61,6 +61,15 @@ class ProjectViewSet(viewsets.ModelViewSet):
             return ProjectListSerializer
         else:
             return ProjectSerializer
+    
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_admin:
+            return Project.objects.all()
+        elif user.is_developer:
+            return Project.objects.filter(project_starter=user)
+        elif user.is_team_manager:
+            return Project.objects.filter(project_starter__in=user.team.user_set.all())
 
 
 class FinancialRequestViewSet(  mixins.CreateModelMixin,
