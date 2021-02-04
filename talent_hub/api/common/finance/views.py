@@ -10,6 +10,7 @@ from api.common.finance.serializers import (
     PartnerSerializer,
     PartnerDetailSerializer,
     ProjectSerializer,
+    ProjectListSerializer,
     FinancialRequestDetailSerializer,
     FinancialRequestSerializer
 )
@@ -54,6 +55,12 @@ class PartnerViewSet(viewsets.ModelViewSet):
 class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
     queryset = Project.objects.all()
+
+    def get_serializer_class(self):
+        if self.request.method == 'GET' and self.action == 'list':
+            return ProjectListSerializer
+        else:
+            return ProjectSerializer
 
 
 class FinancialRequestViewSet(  mixins.CreateModelMixin,

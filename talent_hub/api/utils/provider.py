@@ -3,16 +3,20 @@ from datetime import date, timedelta
 from finance.models import Project
 from finance import constants as cs
 
-def get_weekly_income(user):
-    """
-     calculate weekly incomes and return it with series
-    """
+def get_ongoing_projects(user):
     if user.is_admin:
         queryset = Project.ongoing_projects.all()
     elif user.is_team_manager:
         queryset = Project.objects.ongoing_projects().filter(participants__in=user.team.user_set.all())
     elif user.is_developer:
         queryset = user.projects.ongoing_projects()
+    return queryset
+
+def get_weekly_income(user):
+    """
+    calculate weekly incomes and return it with series
+    """
+    queryset = get_ongoing_projects(user)
     
     today = date.today()
     week_of_today = today.weekday()
