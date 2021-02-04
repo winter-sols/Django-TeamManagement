@@ -2,7 +2,6 @@ import pandas as pd
 from datetime import date, timedelta
 from finance.models import Project
 from finance import constants as cs
-from api.common.finance.serializers import ProjectListSerializer
 
 def get_ongoing_projects(user):
     if user.is_admin:
