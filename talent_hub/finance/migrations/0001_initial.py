@@ -59,7 +59,7 @@ class Migration(migrations.Migration):
                 ('ended_at', models.DateField(blank=True, null=True)),
                 ('status', models.IntegerField(choices=[(1, 'Ongoing'), (2, 'Paused'), (3, 'Ended')])),
                 ('client', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='finance.Client')),
-                ('participants', models.ManyToManyField(related_name='related_participants', to=settings.AUTH_USER_MODEL)),
+                ('participants', models.ManyToManyField(related_name='projects', to=settings.AUTH_USER_MODEL)),
                 ('project_starter', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='related_project_starter', to=settings.AUTH_USER_MODEL)),
             ],
         ),

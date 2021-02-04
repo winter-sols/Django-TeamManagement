@@ -3,14 +3,16 @@ from jsonfield.fields import JSONField
 from django.contrib.contenttypes.fields import GenericRelation, GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from . import constants
+from .manager import OngoingProjectQuerySet
 
 class Project(models.Model):
+    objects = OngoingProjectQuerySet.as_manager()
     title = models.CharField(max_length=100)
     type = models.IntegerField(choices=constants.PROJECT_TYPES)
     weakly_limit = models.IntegerField(default=40, null=True, blank=True)
     price = models.FloatField(null=True)
     client = models.ForeignKey('Client', on_delete=models.CASCADE)
-    participants = models.ManyToManyField('user.User', related_name='related_participants')
+    participants = models.ManyToManyField('user.User', related_name='projects')
     project_starter = models.ForeignKey('user.User', on_delete=models.CASCADE, related_name='related_project_starter')
     started_at = models.DateField(null=True)
     ended_at = models.DateField(null=True, blank=True)
