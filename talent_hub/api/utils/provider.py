@@ -2,6 +2,7 @@ import pandas as pd
 from datetime import date, timedelta
 from finance.models import Project
 from finance import constants as cs
+from api.common.finance.serializers import ProjectListSerializer
 
 def get_ongoing_projects(user):
     if user.is_admin:
@@ -17,7 +18,6 @@ def get_weekly_income(user):
     calculate weekly incomes and return it with series
     """
     queryset = get_ongoing_projects(user)
-    
     today = date.today()
     week_of_today = today.weekday()
     w_start_date = today - timedelta(days=week_of_today)
