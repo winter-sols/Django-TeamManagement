@@ -3,6 +3,7 @@ from rest_framework import routers
 from .user.views import UserAdminViewSet, TeamListViewSet, ProfileListAdminView, ProfilesAdminViewSet, AccountListByProfileIdView, AccountsAdminViewSet, TeamUserListView
 from api.common.finance.views import ClientViewSet, PartnerViewSet, ProjectViewSet, FinancialRequestViewSet
 from api.admin.finance.views import ApproveFinanicalRequestView, DeclineFinanicalRequestView
+from api.common.dashboard.views import WeeklyIncomingView
 
 router = routers.DefaultRouter()
 router.register('users', UserAdminViewSet)
@@ -23,4 +24,5 @@ urlpatterns = router.urls + [
     path('teams/<int:pk>/users/', TeamUserListView.as_view(), name='users_by_team_id'),
     path('financial-requests/<int:pk>/approve/', ApproveFinanicalRequestView.as_view(), name='approve_financial_requests'),
     path('financial-requests/<int:pk>/decline/', DeclineFinanicalRequestView.as_view(), name='decline_financial_requests'),
+    path('dashboard/', WeeklyIncomingView.as_view(), name='dashboard_weekly_incoming'),
 ]
