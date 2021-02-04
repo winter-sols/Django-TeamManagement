@@ -21,14 +21,20 @@ def get_weekly_income(user):
     week_of_today = today.weekday()
     w_start_date = today - timedelta(days=week_of_today)
     w_end_date = today + timedelta(days=6-week_of_today)
-    now_week_dates = pd.bdate_range(w_start_date, w_end_date, freq='B')
+    now_week_dates = pd.date_range(w_start_date, periods=7)
     weekly_income_series = pd.Series(0, index=now_week_dates)
     for item in queryset:
         start_date = max(w_start_date, item.started_at)
-        if item.type == cs.PROJECT_TYPE_BUDGET and item.ended_at <= w_end_date:
-            start_date = item.ended_at
+        if item.type == cs.PROJECT_TYPE_BUDGET:
+            if item.ended_at <= w_end_date and item.ended_at >= w_start_date:
+                start_date = item.ended_at
+            else:
+                continue
         end_date = min(w_end_date, item.ended_at) if item.ended_at is not None else w_end_date
-        proj_week_dates = pd.bdate_range(start_date, end_date, freq='B')
+        if item.type == cs.PROJECT_TYPE_BUDGET:
+            proj_week_dates = pd.date_range(start_date, end_date)
+        else:
+            proj_week_dates = pd.bdate_range(start_date, end_date, freq='B')
         if item.type != cs.PROJECT_TYPE_BUDGET:
             weekly_working_hours_series = pd.Series((item.weakly_limit or 0) / 5, index=proj_week_dates) 
         else:
