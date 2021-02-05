@@ -5,7 +5,7 @@ from finance import constants as cs
 
 def get_ongoing_projects(user):
     if user.is_admin:
-        queryset = Project.ongoing_projects.all()
+        queryset = Project.objects.ongoing_projects()
     elif user.is_team_manager:
         queryset = Project.objects.ongoing_projects().filter(participants__in=user.team.user_set.all())
     elif user.is_developer:
