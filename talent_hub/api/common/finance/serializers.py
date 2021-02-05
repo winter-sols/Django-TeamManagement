@@ -100,7 +100,7 @@ class FinancialRequestSerializer(serializers.ModelSerializer):
     def validate(self, data):
         data = super().validate(data)
         counter_party = self.initial_data['counter_party']
-        if data['type'] in [cs.FINANCIAL_TYPE_SND_INVOICE, cs.FINANCIAL_TYPE_RCV_PAYMENT]:
+        if data['type'] in [cs.FINANCIAL_TYPE_SND_INVOICE, cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT]:
             counter_party_type_id = ContentType.objects.get(app_label='finance', model='client').id
         elif data['type'] == cs.FINANCIAL_TYPE_SND_PAYMENT:
             counter_party_type_id = ContentType.objects.get(app_label='finance', model='partner').id
