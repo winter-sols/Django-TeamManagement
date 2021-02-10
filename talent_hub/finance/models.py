@@ -3,10 +3,10 @@ from jsonfield.fields import JSONField
 from django.contrib.contenttypes.fields import GenericRelation, GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from . import constants
-from .manager import OngoingProjectQuerySet
+from .manager import ProjectManager
 
 class Project(models.Model):
-    objects = OngoingProjectQuerySet.as_manager()
+    objects = ProjectManager.as_manager()
     title = models.CharField(max_length=100)
     type = models.IntegerField(choices=constants.PROJECT_TYPES)
     weakly_limit = models.IntegerField(default=40, null=True, blank=True)
