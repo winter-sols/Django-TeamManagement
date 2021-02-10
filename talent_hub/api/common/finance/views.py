@@ -12,9 +12,16 @@ from api.common.finance.serializers import (
     ProjectSerializer,
     ProjectListSerializer,
     FinancialRequestDetailSerializer,
-    FinancialRequestSerializer
+    FinancialRequestSerializer,
+    TransactionDetailSerializer
 )
-from finance.models import Client, Partner, Project, FinancialRequest
+from finance.models import (
+    Client, 
+    Partner,
+    Project,
+    FinancialRequest,
+    Transaction
+)
 
 class ClientViewSet(viewsets.ModelViewSet):
     queryset = Client.objects.all()
@@ -114,3 +121,18 @@ class FinancialRequestViewSet(  mixins.CreateModelMixin,
         updated = serializer.update(instance, serializer.validated_data)
         formated = FinancialRequestDetailSerializer(updated)
         return Response(formated.data)
+
+
+class TransactionViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    serializer_class = TransactionDetailSerializer
+    queryset = Transaction.objects.all()
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_admin:
+            return Transaction.objects.all()
+        elif user.is_developer:
+            return Transaction.objects.filter(financial_request__requester=user)
+        elif user.is_team_manager:
+            return Transaction.objects.filter(financial_request__requester__in=user.team.user_set.all())
+

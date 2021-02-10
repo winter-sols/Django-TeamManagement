@@ -115,6 +115,8 @@ class FinancialRequestSerializer(serializers.ModelSerializer):
 
 
 class TransactionDetailSerializer(serializers.ModelSerializer):
+    financial_request = FinancialRequestDetailSerializer(required=False)
+    
     class Meta:
         model = Transaction
         fields = ('id', 'gross_amount', 'net_amount', 'payment_platform', 'description', 'created_at', 'financial_request')

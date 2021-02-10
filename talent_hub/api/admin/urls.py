@@ -1,7 +1,7 @@
 from django.urls import  include, path
 from rest_framework import routers
 from .user.views import UserAdminViewSet, TeamListViewSet, ProfileListAdminView, ProfilesAdminViewSet, AccountListByProfileIdView, AccountsAdminViewSet, TeamUserListView
-from api.common.finance.views import ClientViewSet, PartnerViewSet, ProjectViewSet, FinancialRequestViewSet
+from api.common.finance.views import ClientViewSet, PartnerViewSet, ProjectViewSet, FinancialRequestViewSet, TransactionViewSet
 from api.admin.finance.views import ApproveFinanicalRequestView, DeclineFinanicalRequestView
 from api.common.dashboard.views import WeeklyIncomingView
 
@@ -17,6 +17,7 @@ router.register('clients', ClientViewSet)
 router.register('partners', PartnerViewSet)
 router.register('projects', ProjectViewSet)
 router.register('financial-requests', FinancialRequestViewSet)
+router.register('transactions', TransactionViewSet)
 
 urlpatterns = router.urls + [
     path('users/<int:pk>/profiles/', ProfileListAdminView.as_view(), name='user_profiles'),
