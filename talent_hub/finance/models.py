@@ -3,7 +3,7 @@ from jsonfield.fields import JSONField
 from django.contrib.contenttypes.fields import GenericRelation, GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from . import constants
-from .manager import ProjectManager
+from .manager import ProjectManager, FinancialRequestMangager
 
 class Project(models.Model):
     objects = ProjectManager.as_manager()
@@ -23,6 +23,7 @@ class Project(models.Model):
 
 
 class FinancialRequest(models.Model):
+    objects = FinancialRequestMangager.as_manager()
     type = models.IntegerField(choices=constants.FINANCIAL_TYPES)
     status = models.IntegerField(choices=constants.FINANCIAL_STATUS, default=constants.FINANCIAL_STATUS_PENDING)
     amount = models.FloatField(null=True)

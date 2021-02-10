@@ -1,6 +1,6 @@
 import pandas as pd
 from datetime import date, timedelta
-from finance.models import Project
+from finance.models import Project, FinancialRequest
 from finance import constants as cs
 
 def get_ongoing_projects(user):
@@ -42,3 +42,12 @@ def get_weekly_income(user):
         weekly_working_rate_series = pd.Series(item.price, index=proj_week_dates)
         weekly_income_series = weekly_income_series.add(weekly_working_hours_series * weekly_working_rate_series, fill_value=0)
     return weekly_income_series
+
+def get_pending_financial_requests(user):
+    if user.is_admin:
+        return FinancialRequest.objects.pending_requests()
+    elif user.is_team_manager:
+        return FinancialRequest.objects.pending_requests().filter(requester__in=user.team.user_set.all())
+    elif user.is_developer:
+        print(dir(user))
+        return user.financialrequest_set.pending_requests()
