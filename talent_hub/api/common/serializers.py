@@ -119,6 +119,6 @@ class UserDetailUpdateSerializer(serializers.ModelSerializer):
             'last_name',
             'email',
             'role',
-            'team_id',
+            'team',
             'profiles',
         )
