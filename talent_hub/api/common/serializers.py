@@ -93,6 +93,10 @@ class UserDetailSerializer(serializers.ModelSerializer):
 class UserDetailUpdateSerializer(serializers.ModelSerializer):
     profiles = ProfileSerializer(many=True, source='profile_set', required=False)
 
+    def validate(self, data):
+        data['username'] = self.initial_data['email']
+        return data
+    
     def update(self, instance, validated_data):
         # # Update team data
         # team = validated_data.pop('team', None)
