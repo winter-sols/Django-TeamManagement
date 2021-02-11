@@ -9,7 +9,8 @@ from api.utils.provider import (
     get_weekly_income,
     get_ongoing_projects,
     get_pending_financial_requests,
-    get_this_month_expectation
+    get_this_month_expectation,
+    get_current_earning
 )
 from api.common.finance.serializers import (
     ProjectListSerializer,
@@ -35,10 +36,12 @@ class WeeklyIncomingView(APIView):
             pending_requests[index] = FinancialRequestDetailSerializer(queryset[index]).data
 
         this_month_expectation = get_this_month_expectation(self.request.user)
+        current_earning = get_current_earning(self.request.user)
 
         return Response({
             "weekly_income":income_series.to_list(),
             "ongoing_projects": ongoing_projects,
             "pending_financial_requests": pending_requests,
-            "this_month_expectation": this_month_expectation
+            "this_month_expectation": this_month_expectation,
+            "current_earning": current_earning
         })

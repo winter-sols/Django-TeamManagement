@@ -47,7 +47,7 @@ class Transaction(models.Model):
     financial_request = models.ForeignKey('FinancialRequest', on_delete=models.CASCADE)
     
     def __str__(self):
-        return '{}'.format(self.payment_platform)
+        return '{} {}'.format(self.financial_request.requester, self.financial_request.project)
 
 
 class Partner(models.Model):

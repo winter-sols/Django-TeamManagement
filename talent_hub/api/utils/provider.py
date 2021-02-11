@@ -1,6 +1,7 @@
 import pandas as pd
 from datetime import date, timedelta
-from finance.models import Project, FinancialRequest
+from django.db.models import Sum
+from finance.models import Project, FinancialRequest, Transaction
 from finance import constants as cs
 
 def get_ongoing_projects(user):
@@ -68,3 +69,10 @@ def get_this_month_expectation(user):
     this_month = (date.today() + pd.tseries.offsets.BMonthEnd(0)).date()
     end_date = get_last_wednesday_of_month(this_month) - timedelta(days=10)
     return get_incomes_of_period(user, start_date, end_date).sum()
+
+def get_current_earning(user):
+    """
+    calculate current earning of developer
+    """
+    sum = Transaction.objects.filter(financial_request__requester=user, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT]).aggregate(Sum('net_amount'))
+    return sum['net_amount__sum']
