@@ -24,9 +24,7 @@ class WeeklyIncomeView(APIView):
 
     def get(self, request):
         income_series = get_weekly_income(self.request.user)
-        return Response({
-            "weekly_income":income_series.to_list(),
-        })
+        return Response(income_series.to_list())
 
 
 class OngoingProjectsView(APIView):
@@ -38,9 +36,7 @@ class OngoingProjectsView(APIView):
         ongoing_projects = list(range(project_count))
         for index in range(project_count):
             ongoing_projects[index] = ProjectListSerializer(queryset[index]).data
-        return Response({
-            "ongoing_projects": ongoing_projects,
-        })
+        return Response(ongoing_projects)
 
 
 class PendingRequestsView(APIView):
@@ -52,9 +48,7 @@ class PendingRequestsView(APIView):
         pending_requests = list(range(requests_count))
         for index in range(requests_count):
             pending_requests[index] = FinancialRequestDetailSerializer(queryset[index]).data
-        return Response({
-            "pending_financial_requests": pending_requests,
-        })
+        return Response(pending_requests)
 
 
 class ApprovedRequestView(APIView):
@@ -62,9 +56,7 @@ class ApprovedRequestView(APIView):
 
     def get(self, request):
         approved_requests = get_this_week_approved_requests(self.request.user)
-        return Response({
-            "approved_requests":  approved_requests
-        })
+        return Response(approved_requests)
 
 
 class StatsView(APIView):
