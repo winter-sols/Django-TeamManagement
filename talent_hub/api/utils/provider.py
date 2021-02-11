@@ -69,7 +69,7 @@ def get_this_month_expectation(user):
     end_date = get_last_wednesday_of_month(this_month) - timedelta(days=10)
     return get_incomes_of_period(user, start_date, end_date).sum()
 
-def get_this_month_current_earning(user):
+def get_this_month_earning(user):
     """
     calculate current earning of developer
     """
@@ -91,3 +91,15 @@ def get_this_quarter_expectation(user):
     end_date = get_last_wednesday_of_month(this_quarter_end) - timedelta(days=10)
 
     return get_incomes_of_period(user, start_date, end_date).sum()
+
+def get_this_quarter_earning(user):
+    """
+    calculate current earning of this quarter
+    """
+    prev_quarter_end = (date.today() - pd.tseries.offsets.BQuarterEnd(1)).date()
+    start_date = get_last_wednesday_of_month(prev_quarter_end) - timedelta(days=9)
+
+    this_quarter_end = (date.today() + pd.tseries.offsets.BQuarterEnd(0)).date()
+    end_date = get_last_wednesday_of_month(this_quarter_end) - timedelta(days=10)
+    sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date, financial_request__requester=user, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT]).aggregate(Sum('net_amount'))
+    return sum['net_amount__sum']
