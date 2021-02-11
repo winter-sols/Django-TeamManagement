@@ -10,6 +10,11 @@ from api.common.dashboard.views import (
     StatsView,
     ApprovedRequestView
 )
+from .report.views import (
+    DeveloperMonthlyReportView,
+    DeveloperQuarterlyReportView,
+    DeveloperWeeklyReportView
+)
 
 router = routers.DefaultRouter()
 router.register('users', UserAdminViewSet)
@@ -36,4 +41,7 @@ urlpatterns = router.urls + [
     path('dashboard/pending-requests/', PendingRequestsView.as_view(), name='dashboard_pending_requests'),
     path('dashboard/stats/', StatsView.as_view(), name='dashboard_stats'),
     path('dashboard/approved-requests/', ApprovedRequestView.as_view(), name='dashboard_approved_requests'),
+    path('reports/developer/monthly/', DeveloperMonthlyReportView.as_view(), name='report_developer_monthly'),
+    path('reports/developer/quarterly/', DeveloperQuarterlyReportView.as_view(), name='report_developer_quarterly'),
+    path('reports/developer/weekly/', DeveloperWeeklyReportView.as_view(), name='report_developer_weekly'),
 ]
