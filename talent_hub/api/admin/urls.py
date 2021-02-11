@@ -3,7 +3,13 @@ from rest_framework import routers
 from .user.views import UserAdminViewSet, TeamListViewSet, ProfileListAdminView, ProfilesAdminViewSet, AccountListByProfileIdView, AccountsAdminViewSet, TeamUserListView
 from api.common.finance.views import ClientViewSet, PartnerViewSet, ProjectViewSet, FinancialRequestViewSet, TransactionViewSet
 from api.admin.finance.views import ApproveFinanicalRequestView, DeclineFinanicalRequestView
-from api.common.dashboard.views import WeeklyIncomingView
+from api.common.dashboard.views import (
+    WeeklyIncomeView,
+    OngoingProjectsView,
+    PendingRequestsView,
+    StatsView,
+    ApprovedRequestView
+)
 
 router = routers.DefaultRouter()
 router.register('users', UserAdminViewSet)
@@ -25,5 +31,9 @@ urlpatterns = router.urls + [
     path('teams/<int:pk>/users/', TeamUserListView.as_view(), name='users_by_team_id'),
     path('financial-requests/<int:pk>/approve/', ApproveFinanicalRequestView.as_view(), name='approve_financial_requests'),
     path('financial-requests/<int:pk>/decline/', DeclineFinanicalRequestView.as_view(), name='decline_financial_requests'),
-    path('dashboard/', WeeklyIncomingView.as_view(), name='dashboard_weekly_incoming'),
+    path('dashboard/weekly-income/', WeeklyIncomeView.as_view(), name='dashboard_weekly_incoming'),
+    path('dashboard/ongoing-projects/', OngoingProjectsView.as_view(), name='dashboard_ongoing_projects'),
+    path('dashboard/pending-requests/', PendingRequestsView.as_view(), name='dashboard_pending_requests'),
+    path('dashboard/stats/', StatsView.as_view(), name='dashboard_stats'),
+    path('dashboard/approved-requests/', ApprovedRequestView.as_view(), name='dashboard_approved_requests'),
 ]
