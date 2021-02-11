@@ -1,6 +1,7 @@
 from django.urls import  include, path
 from rest_framework import routers
 from .user.views import TeamView, TeamUserListView
+from api.common.user.views import ProfilesAdminViewSet, AccountsAdminViewSet
 from api.common.finance.views import ClientViewSet, PartnerViewSet, ProjectViewSet, FinancialRequestViewSet, TransactionViewSet
 from .finance.views import CancelFinanicalRequestView
 from api.common.dashboard.views import (
@@ -21,6 +22,8 @@ router.register('partners', PartnerViewSet)
 router.register('projects', ProjectViewSet)
 router.register('financial-requests', FinancialRequestViewSet)
 router.register('transactions', TransactionViewSet)
+router.register('profiles', ProfilesAdminViewSet)
+router.register('accounts', AccountsAdminViewSet)
 
 urlpatterns = [
     path('team/', TeamView.as_view(), name='team'),

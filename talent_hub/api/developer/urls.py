@@ -9,6 +9,7 @@ from api.common.dashboard.views import (
     StatsView,
     ApprovedRequestView
 )
+from api.common.user.views import ProfilesAdminViewSet, AccountsAdminViewSet
 
 router = routers.DefaultRouter()
 router.register('clients', ClientViewSet)
@@ -16,6 +17,8 @@ router.register('partners', PartnerViewSet)
 router.register('projects', ProjectViewSet)
 router.register('financial-requests', FinancialRequestViewSet)
 router.register('transactions', TransactionViewSet)
+router.register('profiles', ProfilesAdminViewSet)
+router.register('accounts', AccountsAdminViewSet)
 
 urlpatterns = router.urls + [
     path('financial-requests/<int:pk>/cancel/', CancelFinanicalRequestView.as_view(), name='cancel_financial_request'),
