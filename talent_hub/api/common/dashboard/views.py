@@ -7,9 +7,15 @@ from ...permission import IsDeveloper, IsTeamManager
 from finance.models import Project
 from api.utils.provider import (
     get_weekly_income,
-    get_ongoing_projects
+    get_ongoing_projects,
+    get_pending_financial_requests,
+    get_this_month_expectation,
+    get_current_earning
 )
-from api.common.finance.serializers import ProjectListSerializer
+from api.common.finance.serializers import (
+    ProjectListSerializer,
+    FinancialRequestDetailSerializer
+)
 
 class WeeklyIncomingView(APIView):
     permission_classes = [IsAuthenticated]
@@ -23,7 +29,19 @@ class WeeklyIncomingView(APIView):
         for index in range(project_count):
             ongoing_projects[index] = ProjectListSerializer(queryset[index]).data
         
+        queryset = get_pending_financial_requests(self.request.user)
+        requests_count = queryset.count()
+        pending_requests = list(range(requests_count))
+        for index in range(requests_count):
+            pending_requests[index] = FinancialRequestDetailSerializer(queryset[index]).data
+
+        this_month_expectation = get_this_month_expectation(self.request.user)
+        current_earning = get_current_earning(self.request.user)
+
         return Response({
             "weekly_income":income_series.to_list(),
-            "ongoing_projects": ongoing_projects
+            "ongoing_projects": ongoing_projects,
+            "pending_financial_requests": pending_requests,
+            "this_month_expectation": this_month_expectation,
+            "current_earning": current_earning
         })
