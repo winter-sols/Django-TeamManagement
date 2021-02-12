@@ -2,7 +2,8 @@ from rest_framework import filters
 from django_filters import FilterSet
 
 from finance.models import (
-    Project
+    Project,
+    FinancialRequest
 )
 
 class ProjectFilter(FilterSet):
@@ -12,3 +13,11 @@ class ProjectFilter(FilterSet):
     class Meta:
         model = Project
         fields = ['type', 'status']
+
+class FinancialRequestFilter(FilterSet):
+    """
+    filter financial requests by type, status, and requested_at
+    """
+    class Meta:
+        model = FinancialRequest
+        fields = ['type', 'status', 'requested_at']

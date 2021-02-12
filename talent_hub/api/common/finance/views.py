@@ -24,7 +24,8 @@ from finance.models import (
     Transaction
 )
 from .filters import (
-    ProjectFilter
+    ProjectFilter,
+    FinancialRequestFilter
 )
 
 class ClientViewSet(viewsets.ModelViewSet):
@@ -90,6 +91,8 @@ class FinancialRequestViewSet(  mixins.CreateModelMixin,
                                 mixins.RetrieveModelMixin,
                                 viewsets.GenericViewSet):
     queryset = FinancialRequest.objects.all()
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = FinancialRequestFilter
 
     def get_queryset(self):
         if self.request.user.is_admin:
