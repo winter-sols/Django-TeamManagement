@@ -25,7 +25,8 @@ from finance.models import (
 )
 from .filters import (
     ProjectFilter,
-    FinancialRequestFilter
+    FinancialRequestFilter,
+    TransactionFilter
 )
 
 class ClientViewSet(viewsets.ModelViewSet):
@@ -135,6 +136,8 @@ class FinancialRequestViewSet(  mixins.CreateModelMixin,
 class TransactionViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     serializer_class = TransactionDetailSerializer
     queryset = Transaction.objects.all()
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = TransactionFilter
 
     def get_queryset(self):
         user = self.request.user

@@ -3,7 +3,8 @@ from django_filters import FilterSet
 
 from finance.models import (
     Project,
-    FinancialRequest
+    FinancialRequest,
+    Transaction
 )
 
 class ProjectFilter(FilterSet):
@@ -14,6 +15,7 @@ class ProjectFilter(FilterSet):
         model = Project
         fields = ['type', 'status']
 
+
 class FinancialRequestFilter(FilterSet):
     """
     filter financial requests by type, status, and requested_at
@@ -21,3 +23,12 @@ class FinancialRequestFilter(FilterSet):
     class Meta:
         model = FinancialRequest
         fields = ['type', 'status', 'requested_at']
+
+
+class TransactionFilter(FilterSet):
+    """
+    filter transactions by created_at, payment_platform
+    """
+    class Meta:
+        model = Transaction
+        fields = ['created_at', 'payment_platform']
