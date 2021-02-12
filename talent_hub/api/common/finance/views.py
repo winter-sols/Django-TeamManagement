@@ -3,6 +3,7 @@ from rest_framework.generics import UpdateAPIView
 from rest_framework import mixins
 from rest_framework.response import Response
 from rest_framework import status
+from django_filters.rest_framework import DjangoFilterBackend
 from ...permission import IsDeveloper, IsTeamManager
 from api.common.finance.serializers import (
     ClientDetailSerializer,
@@ -21,6 +22,9 @@ from finance.models import (
     Project,
     FinancialRequest,
     Transaction
+)
+from .filters import (
+    ProjectFilter
 )
 
 class ClientViewSet(viewsets.ModelViewSet):
@@ -62,6 +66,8 @@ class PartnerViewSet(viewsets.ModelViewSet):
 class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
     queryset = Project.objects.all()
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = ProjectFilter
 
     def get_serializer_class(self):
         if self.request.method == 'GET' and self.action == 'list':
