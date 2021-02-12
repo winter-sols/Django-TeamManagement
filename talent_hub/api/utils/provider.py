@@ -3,6 +3,9 @@ from datetime import date, timedelta
 from django.db.models import Sum
 from finance.models import Project, FinancialRequest, Transaction
 from finance import constants as cs
+from api.common.finance.serializers import (
+    FinancialRequestDetailSerializer
+)
 
 def get_ongoing_projects(user):
     if user.is_admin:
@@ -103,3 +106,23 @@ def get_this_quarter_earning(user):
     end_date = get_last_wednesday_of_month(this_quarter_end) - timedelta(days=10)
     sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date, financial_request__requester=user, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT]).aggregate(Sum('net_amount'))
     return sum['net_amount__sum']
+
+def get_this_week_approved_requests(user):
+    """
+    report approved financial requests of this week
+    """
+    queryset = FinancialRequest.objects.approved_requests()
+    
+    if user.is_admin:
+        approved = FinancialRequest.objects.approved_requests()
+    elif user.is_team_manager:
+        approved = FinancialRequest.objects.approved_requests().filter(requester__in=user.team.user_set.all())
+    elif user.is_developer:
+        approved = user.financialrequest_set.approved_requests()
+    
+    count = approved.count()
+    request_list = list(range(count))
+    for index in range(count):
+        request_list[index] = FinancialRequestDetailSerializer(approved[index]).data
+    
+    return request_list

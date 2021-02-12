@@ -12,7 +12,8 @@ from api.utils.provider import (
     get_this_month_expectation,
     get_this_month_earning,
     get_this_quarter_expectation,
-    get_this_quarter_earning
+    get_this_quarter_earning,
+    get_this_week_approved_requests
 )
 from api.common.finance.serializers import (
     ProjectListSerializer,
@@ -41,6 +42,7 @@ class WeeklyIncomingView(APIView):
         this_month_earning = get_this_month_earning(self.request.user)
         this_quarter_expectation = get_this_quarter_expectation(self.request.user)
         this_quarter_earning = get_this_quarter_earning(self.request.user)
+        approved_requests = get_this_week_approved_requests(self.request.user)
 
         return Response({
             "weekly_income":income_series.to_list(),
@@ -49,5 +51,6 @@ class WeeklyIncomingView(APIView):
             "this_month_expectation": this_month_expectation,
             "this_month_earning": this_month_earning,
             "this_quarter_expectation": this_quarter_expectation,
-            "this_quarter_earning": this_quarter_earning
+            "this_quarter_earning": this_quarter_earning,
+            "approved_requests": approved_requests
         })
