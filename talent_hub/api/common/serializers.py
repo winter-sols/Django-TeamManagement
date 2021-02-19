@@ -12,7 +12,7 @@ class TeamSerializer(serializers.ModelSerializer):
 class ProfileLinkedWithAccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = ('first_name', 'last_name')
+        fields = ('id', 'first_name', 'last_name')
 
 
 class AccountSerializer(serializers.ModelSerializer):
