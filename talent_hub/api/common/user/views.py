@@ -65,7 +65,7 @@ class AccountsAdminViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
-        if self.request.method == 'PUT':
+        if self.request.method == 'PUT' or self.request.method == 'POST':
             return AccountUpdateSerializer
         else:
             return AccountSerializer
