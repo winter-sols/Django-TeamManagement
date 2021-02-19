@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from user.models import User, Team, Profile, Account
 from .serializers import UserAdminSerializer
 from ...permission import IsAdmin
-from ...common.serializers import TeamSerializer, UserDetailSerializer, UserDetailUpdateSerializer, ProfileSerializer, AccountSerializer
+from ...common.serializers import TeamSerializer, UserDetailSerializer, UserDetailUpdateSerializer, ProfileSerializer, AccountSerializer, AccountUpdateSerializer
 
 
 class UserAdminViewSet(viewsets.ModelViewSet):
@@ -64,6 +64,12 @@ class AccountsAdminViewSet(viewsets.ModelViewSet):
     queryset = Account.objects.all()
     permission_classes = [IsAuthenticated]
 
+    def get_serializer_class(self):
+        if self.request.method == 'PUT':
+            return AccountUpdateSerializer
+        else:
+            return AccountSerializer
+    
     def get_queryset(self):
         user = self.request.user
         if user.is_admin:
