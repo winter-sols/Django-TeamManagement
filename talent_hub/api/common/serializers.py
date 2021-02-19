@@ -31,7 +31,21 @@ class AccountSerializer(serializers.ModelSerializer):
             'profile'
         )
         read_only_fields = ('profile',)
-    
+
+
+class AccountUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Account
+        fields = (
+            'id',
+            'platform_type',
+            'email',
+            'password',
+            'location',
+            'recovery_email',
+            'url',
+            'profile'
+        )
 # Handle nested Serializer : I give up!
 
 class ProfileSerializer(serializers.ModelSerializer):

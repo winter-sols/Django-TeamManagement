@@ -126,3 +126,11 @@ def get_this_week_approved_requests(user):
         request_list[index] = FinancialRequestDetailSerializer(approved[index]).data
     
     return request_list
+
+def get_this_week_earning(user):
+    today = date.today()
+    week_of_today = today.weekday()
+    w_start_date = today - timedelta(days=week_of_today)
+    w_end_date = today + timedelta(days=6-week_of_today)
+    sum = Transaction.objects.filter(created_at__gte=w_start_date, created_at__lte=w_end_date, financial_request__requester=user, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT]).aggregate(Sum('net_amount'))
+    return sum['net_amount__sum'] or 0
