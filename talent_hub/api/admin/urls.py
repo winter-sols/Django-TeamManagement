@@ -13,7 +13,10 @@ from api.common.dashboard.views import (
 from .report.views import (
     DeveloperMonthlyReportView,
     DeveloperQuarterlyReportView,
-    DeveloperWeeklyReportView
+    DeveloperWeeklyReportView,
+    TeamMonthlyReportView,
+    TeamQuarterlyReportView,
+    TeamWeeklyReportView,
 )
 
 router = routers.DefaultRouter()
@@ -44,4 +47,7 @@ urlpatterns = router.urls + [
     path('reports/developer/monthly/', DeveloperMonthlyReportView.as_view(), name='report_developer_monthly'),
     path('reports/developer/quarterly/', DeveloperQuarterlyReportView.as_view(), name='report_developer_quarterly'),
     path('reports/developer/weekly/', DeveloperWeeklyReportView.as_view(), name='report_developer_weekly'),
+    path('reports/team/monthly/', TeamMonthlyReportView.as_view(), name='report_team_monthly'),
+    path('reports/team/quarterly/', TeamQuarterlyReportView.as_view(), name='report_team_quarterly'),
+    path('reports/team/weekly/', TeamWeeklyReportView.as_view(), name='report_team_weekly'),
 ]
