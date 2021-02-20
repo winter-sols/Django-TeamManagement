@@ -1,6 +1,7 @@
 import numpy as np
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
 from django_filters.rest_framework import DjangoFilterBackend
 from api.permission import IsAdmin
 from api.utils.provider import (
@@ -10,117 +11,59 @@ from api.utils.provider import (
 )
 from user.models import User, Team
 from .serializers import (
-    DeveloperReportSerializer, 
-    TeamReportSerializer
+    DeveloperMonthlyReportSerializer,
+    DeveloperQuarterlyReportSerializer,
+    DeveloperWeeklyReportSerializer, 
+    TeamMonthlyReportSerializer,
+    TeamQuarterlyReportSerializer,
+    TeamWeeklyReportSerializer
 )
-from .filters import DeveloperReportFilter
+from .filters import DeveloperReportFilter, TeamReportFilter
 
-class DeveloperMonthlyReportView(APIView):
+
+class DeveloperMonthlyReportView(ListAPIView):
     permission_classes = [IsAdmin]
     filter_backends = (DjangoFilterBackend,)
     filterset_class = DeveloperReportFilter
-
-    def get(self, request):
-        queryset = User.objects.all()
-        count = queryset.count()
-        reports = list(range(count))
-
-        for index in range(count):
-            reports[index] = DeveloperReportSerializer(queryset[index]).data
-            reports[index]['earning'] = get_this_month_earning(queryset[index])
-
-        return Response(reports)
+    serializer_class = DeveloperMonthlyReportSerializer
+    queryset = User.objects.all()
 
 
-class TeamMonthlyReportView(APIView):
-    permission_classes = [IsAdmin]
-
-    def get(self, request):
-        queryset = Team.objects.all()
-        count = queryset.count()
-        reports = list(range(count))
-
-        for index in range(count):
-            reports[index] = TeamReportSerializer(queryset[index]).data
-            member_set = queryset[index].user_set.all()
-            member_cnt = member_set.count()
-            team_earnings = list(range(member_cnt))
-            for member_index in range(member_cnt):
-                team_earnings[member_index] = get_this_month_earning(member_set[member_index])
-            reports[index]['earning'] = np.sum(team_earnings)
-        
-        return Response(reports)
-
-
-class DeveloperQuarterlyReportView(APIView):
+class DeveloperQuarterlyReportView(ListAPIView):
     permission_classes = [IsAdmin]
     filter_backends = (DjangoFilterBackend,)
     filterset_class = DeveloperReportFilter
-
-    def get(self, request):
-        queryset = User.objects.all()
-        count = queryset.count()
-        reports = list(range(count))
-
-        for index in range(count):
-            reports[index] = DeveloperReportSerializer(queryset[index]).data
-            reports[index]['earning'] = get_this_quarter_earning(queryset[index])
-
-        return Response(reports)
+    serializer_class = DeveloperQuarterlyReportSerializer
+    queryset = User.objects.all()
 
 
-class TeamQuarterlyReportView(APIView):
-    permission_classes = [IsAdmin]
-
-    def get(self, request):
-        queryset = Team.objects.all()
-        count = queryset.count()
-        reports = list(range(count))
-
-        for index in range(count):
-            reports[index] = TeamReportSerializer(queryset[index]).data
-            member_set = queryset[index].user_set.all()
-            member_cnt = member_set.count()
-            team_earnings = list(range(member_cnt))
-            for member_index in range(member_cnt):
-                team_earnings[member_index] = get_this_quarter_earning(member_set[member_index])
-            reports[index]['earning'] = np.sum(team_earnings)
-        
-        return Response(reports)
-
-
-class DeveloperWeeklyReportView(APIView):
+class DeveloperWeeklyReportView(ListAPIView):
     permission_classes = [IsAdmin]
     filter_backends = (DjangoFilterBackend,)
     filterset_class = DeveloperReportFilter
-
-    def get(self, request):
-        queryset = User.objects.all()
-        count = queryset.count()
-        reports = list(range(count))
-
-        for index in range(count):
-            reports[index] = DeveloperReportSerializer(queryset[index]).data
-            reports[index]['earning'] = get_this_week_earning(queryset[index])
-
-        return Response(reports)
+    serializer_class = DeveloperWeeklyReportSerializer
+    queryset = User.objects.all()
 
 
-class TeamWeeklyReportView(APIView):
+class TeamMonthlyReportView(ListAPIView):
     permission_classes = [IsAdmin]
+    serializer_class = TeamMonthlyReportSerializer
+    queryset = Team.objects.all()
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = TeamReportFilter
 
-    def get(self, request):
-        queryset = Team.objects.all()
-        count = queryset.count()
-        reports = list(range(count))
 
-        for index in range(count):
-            reports[index] = TeamReportSerializer(queryset[index]).data
-            member_set = queryset[index].user_set.all()
-            member_cnt = member_set.count()
-            team_earnings = list(range(member_cnt))
-            for member_index in range(member_cnt):
-                team_earnings[member_index] = get_this_week_earning(member_set[member_index])
-            reports[index]['earning'] = np.sum(team_earnings)
-        
-        return Response(reports)
+class TeamQuarterlyReportView(ListAPIView):
+    permission_classes = [IsAdmin]
+    serializer_class = TeamQuarterlyReportSerializer
+    queryset = Team.objects.all()
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = TeamReportFilter
+
+
+class TeamWeeklyReportView(ListAPIView):
+    permission_classes = [IsAdmin]
+    serializer_class = TeamWeeklyReportSerializer
+    queryset = Team.objects.all()
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = TeamReportFilter
