@@ -11,6 +11,7 @@ from user.models import (
 )
 from finance.models import (
     Partner,
+    Client,
 )
 
 
@@ -36,9 +37,19 @@ class SearchProfileView(ListAPIView):
 
 class SearchPartnerView(ListAPIView):
     """
-    search Profile by first_name, last_name field start with given keyword
+    search Partner by fullname field start with given keyword
     """
     queryset = Partner.objects.all()
+    serializer_class = SearchPartnerSerializer
+    filter_backends = [SearchFilter]
+    search_fields = ['full_name']
+
+
+class SearchClientView(ListAPIView):
+    """
+    search Client by fullname field start with given keyword
+    """
+    queryset = Client.objects.all()
     serializer_class = SearchPartnerSerializer
     filter_backends = [SearchFilter]
     search_fields = ['full_name']
