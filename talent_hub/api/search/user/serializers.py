@@ -3,7 +3,9 @@ from user.models import (
     User,
     Profile
 )
-
+from finance.models import (
+    Partner,
+)
 
 class SearchUserSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
@@ -24,4 +26,10 @@ class SearchProfileSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Profile
+        fields = ('id', 'full_name')
+
+
+class SearchPartnerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Partner
         fields = ('id', 'full_name')
