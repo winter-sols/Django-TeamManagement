@@ -1,7 +1,10 @@
 from rest_framework.filters import SearchFilter
 from rest_framework.generics import ListAPIView
 from .serializers import SearchUserSerializer
-from user.models import User
+from user.models import (
+    User,
+    Profile
+)
 
 
 class SearchUserView(ListAPIView):
@@ -12,3 +15,13 @@ class SearchUserView(ListAPIView):
     serializer_class = SearchUserSerializer
     filter_backends = [SearchFilter]
     search_fields = ['username', 'first_name', 'last_name']
+
+
+class SearchProfileView(ListAPIView):
+    """
+    search Profile by first_name, last_name field start with given keyword
+    """
+    queryset = Profile.objects.all()
+    serializer_class = SearchUserSerializer
+    filter_backends = [SearchFilter]
+    search_fields = ['first_name', 'last_name']
