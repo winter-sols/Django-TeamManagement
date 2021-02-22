@@ -4,6 +4,8 @@ from .serializers import (
     SearchUserSerializer,
     SearchProfileSerializer,
     SearchPartnerSerializer,
+    SearchClientSerializer,
+    SearchProjectSerializer
 )
 from user.models import (
     User,
@@ -12,6 +14,7 @@ from user.models import (
 from finance.models import (
     Partner,
     Client,
+    Project
 )
 
 
@@ -50,6 +53,16 @@ class SearchClientView(ListAPIView):
     search Client by fullname field start with given keyword
     """
     queryset = Client.objects.all()
-    serializer_class = SearchPartnerSerializer
+    serializer_class = SearchClientSerializer
     filter_backends = [SearchFilter]
     search_fields = ['full_name']
+
+
+class SearchProjectView(ListAPIView):
+    """
+    search Project by title field start with given keyword
+    """
+    queryset = Project.objects.all()
+    serializer_class = SearchProjectSerializer
+    filter_backends = [SearchFilter]
+    search_fields = ['title']

@@ -6,6 +6,7 @@ from user.models import (
 from finance.models import (
     Partner,
     Client,
+    Project
 )
 
 class SearchUserSerializer(serializers.ModelSerializer):
@@ -40,3 +41,9 @@ class SearchClientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Client
         fields = ('id', 'full_name')
+
+
+class SearchProjectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Project
+        fields = ('id', 'title')
