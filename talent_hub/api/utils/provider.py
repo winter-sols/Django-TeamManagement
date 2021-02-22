@@ -104,7 +104,7 @@ def get_this_quarter_earning(user):
 
     this_quarter_end = (date.today() + pd.tseries.offsets.BQuarterEnd(0)).date()
     end_date = get_last_wednesday_of_month(this_quarter_end) - timedelta(days=10)
-    sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date, financial_request__requester=user, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT]).aggregate(Sum('net_amount'))
+    sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date, financial_request__requester=user, financial_request__project__project_starter=user, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT]).aggregate(Sum('net_amount'))
     return sum['net_amount__sum'] or 0
 
 def get_this_week_approved_requests(user):
@@ -144,6 +144,27 @@ def get_this_month_project_earning(user):
     this_month = (date.today() + pd.tseries.offsets.BMonthEnd(0)).date()
     end_date = get_last_wednesday_of_month(this_month) - timedelta(days=10)
     
+    my_projects = Project.objects.filter(project_starter=user)
+    project_count = my_projects.count()
+    project_earning = list(range(project_count))
+
+    for index in range(project_count):
+        project = my_projects[index]
+        sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date, financial_request__project=project, financial_request__requester=user, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT]).aggregate(Sum('net_amount'))
+        project_earning[index] = {'project_title': project.title, 'earning': sum['net_amount__sum'] or 0}
+
+    return project_earning
+
+def get_this_quarter_project_earning(user):
+    """
+    calculate current earning of this quarter
+    """
+    prev_quarter_end = (date.today() - pd.tseries.offsets.BQuarterEnd(1)).date()
+    start_date = get_last_wednesday_of_month(prev_quarter_end) - timedelta(days=9)
+
+    this_quarter_end = (date.today() + pd.tseries.offsets.BQuarterEnd(0)).date()
+    end_date = get_last_wednesday_of_month(this_quarter_end) - timedelta(days=10)
+
     my_projects = Project.objects.filter(project_starter=user)
     project_count = my_projects.count()
     project_earning = list(range(project_count))

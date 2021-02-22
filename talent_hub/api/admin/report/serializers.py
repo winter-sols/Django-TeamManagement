@@ -5,7 +5,8 @@ from api.utils.provider import (
     get_this_month_earning,
     get_this_quarter_earning,
     get_this_week_earning,
-    get_this_month_project_earning
+    get_this_month_project_earning,
+    get_this_quarter_project_earning,
 )
 
 
@@ -26,13 +27,17 @@ class DeveloperMonthlyReportSerializer(serializers.ModelSerializer):
 
 class DeveloperQuarterlyReportSerializer(serializers.ModelSerializer):
     earning = serializers.SerializerMethodField()
+    project_earnings = serializers.SerializerMethodField()
 
     def get_earning(self, obj):
         return get_this_quarter_earning(obj)
 
+    def get_project_earnings(self, obj):
+        return get_this_quarter_project_earning(obj)
+
     class Meta:
         model = User
-        fields = ('id', 'first_name', 'last_name', 'earning')
+        fields = ('id', 'first_name', 'last_name', 'earning', 'project_earnings')
 
 
 class DeveloperWeeklyReportSerializer(serializers.ModelSerializer):
