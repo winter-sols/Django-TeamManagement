@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
-
+from rest_framework.filters import SearchFilter
 from user.models import User, Team, Profile, Account
 from .serializers import UserAdminSerializer
 from ...permission import IsAdmin
@@ -12,7 +12,9 @@ class UserAdminViewSet(viewsets.ModelViewSet):
     # serializer_class = UserAdminSerializer
     permission_classes = [IsAdmin]
     queryset = User.objects.all()
-
+    filter_backends = [SearchFilter]
+    search_fields = ['@username', '^first_name', '@last_name']
+    
     def get_serializer_class(self):
         if self.action == 'list':
             return UserAdminSerializer
