@@ -8,6 +8,9 @@ from api.utils.provider import (
     get_this_month_project_earning,
     get_this_quarter_project_earning,
     get_this_week_project_earning,
+    get_this_month_team_project_earning,
+    get_this_quarter_team_project_earning,
+    get_this_week_team_project_earning
 )
 
 
@@ -58,6 +61,7 @@ class DeveloperWeeklyReportSerializer(serializers.ModelSerializer):
 
 class TeamMonthlyReportSerializer(serializers.ModelSerializer):
     earning = serializers.SerializerMethodField()
+    project_earnings = serializers.SerializerMethodField()
 
     def get_earning(self, obj):
         member_set = obj.user_set.all()
@@ -67,13 +71,17 @@ class TeamMonthlyReportSerializer(serializers.ModelSerializer):
             team_earnings[member_index] = get_this_month_earning(member_set[member_index])
         return np.sum(team_earnings)
 
+    def get_project_earnings(self, obj):
+        return get_this_month_team_project_earning(obj)
+
     class Meta:
         model = Team
-        fields = ('id', 'name', 'earning')
+        fields = ('id', 'name', 'earning', 'project_earnings')
 
 
 class TeamQuarterlyReportSerializer(serializers.ModelSerializer):
     earning = serializers.SerializerMethodField()
+    project_earnings = serializers.SerializerMethodField()
 
     def get_earning(self, obj):
         member_set = obj.user_set.all()
@@ -83,13 +91,17 @@ class TeamQuarterlyReportSerializer(serializers.ModelSerializer):
             team_earnings[member_index] = get_this_quarter_earning(member_set[member_index])
         return np.sum(team_earnings)
 
+    def get_project_earnings(self, obj):
+        return get_this_quarter_team_project_earning(obj)
+    
     class Meta:
         model = Team
-        fields = ('id', 'name', 'earning')
+        fields = ('id', 'name', 'earning', 'project_earnings')
 
 
 class TeamWeeklyReportSerializer(serializers.ModelSerializer):
     earning = serializers.SerializerMethodField()
+    project_earnings = serializers.SerializerMethodField()
 
     def get_earning(self, obj):
         member_set = obj.user_set.all()
@@ -99,6 +111,9 @@ class TeamWeeklyReportSerializer(serializers.ModelSerializer):
             team_earnings[member_index] = get_this_week_earning(member_set[member_index])
         return np.sum(team_earnings)
 
+    def get_project_earnings(self, obj):
+        return get_this_week_team_project_earning(obj)
+
     class Meta:
         model = Team
-        fields = ('id', 'name', 'earning')
+        fields = ('id', 'name', 'earning', 'project_earnings')
