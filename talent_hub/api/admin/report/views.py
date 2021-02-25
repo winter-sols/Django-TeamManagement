@@ -51,7 +51,6 @@ class TeamMonthlyReportView(ListAPIView):
     queryset = Team.objects.all()
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TeamReportFilter
-    pagination_class = None
 
 
 class TeamQuarterlyReportView(ListAPIView):
@@ -60,7 +59,6 @@ class TeamQuarterlyReportView(ListAPIView):
     queryset = Team.objects.all()
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TeamReportFilter
-    pagination_class = None
 
 
 class TeamWeeklyReportView(ListAPIView):
@@ -69,4 +67,3 @@ class TeamWeeklyReportView(ListAPIView):
     queryset = Team.objects.all()
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TeamReportFilter
-    pagination_class = None
