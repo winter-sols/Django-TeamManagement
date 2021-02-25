@@ -67,6 +67,7 @@ class TeamMonthlyReportSerializer(serializers.ModelSerializer):
         for member_index in range(member_cnt):
             member = member_set[member_index]
             team_earnings[member_index] = {
+                "id": member.id,
                 "full_name": member.first_name + " " + member.last_name,
                 "earning": get_this_month_earning(member_set[member_index])
             }
@@ -97,6 +98,7 @@ class TeamQuarterlyReportSerializer(serializers.ModelSerializer):
         for member_index in range(member_cnt):
             member = member_set[member_index]
             team_earnings[member_index] = {
+                "id": member.id,
                 "full_name": member.first_name + " " + member.last_name,
                 "earning": get_this_quarter_earning(member_set[member_index])
             }
@@ -127,6 +129,7 @@ class TeamWeeklyReportSerializer(serializers.ModelSerializer):
         for member_index in range(member_cnt):
             member = member_set[member_index]
             team_earnings[member_index] = {
+                "id": member.id,
                 "full_name": member.first_name + " " + member.last_name,
                 "earning": get_this_week_earning(member_set[member_index])
             }

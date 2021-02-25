@@ -151,7 +151,11 @@ def get_this_month_project_earning(user):
     for index in range(project_count):
         project = my_projects[index]
         sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date, financial_request__project=project, financial_request__requester=user, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT]).aggregate(Sum('net_amount'))
-        project_earning[index] = {'project_title': project.title, 'earning': sum['net_amount__sum'] or 0}
+        project_earning[index] = {
+            'id': project.id,
+            'project_title': project.title,
+            'earning': sum['net_amount__sum'] or 0
+        }
 
     return project_earning
 
@@ -172,7 +176,11 @@ def get_this_quarter_project_earning(user):
     for index in range(project_count):
         project = my_projects[index]
         sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date, financial_request__project=project, financial_request__requester=user, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT]).aggregate(Sum('net_amount'))
-        project_earning[index] = {'project_title': project.title, 'earning': sum['net_amount__sum'] or 0}
+        project_earning[index] = {
+            'id': project.id,
+            'project_title': project.title,
+            'earning': sum['net_amount__sum'] or 0
+        }
 
     return project_earning
 
@@ -189,7 +197,11 @@ def get_this_week_project_earning(user):
     for index in range(project_count):
         project = my_projects[index]
         sum = Transaction.objects.filter(created_at__gte=w_start_date, created_at__lte=w_end_date, financial_request__project=project, financial_request__requester=user, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT]).aggregate(Sum('net_amount'))
-        project_earning[index] = {'project_title': project.title, 'earning': sum['net_amount__sum'] or 0}
+        project_earning[index] = {
+            'id': project.id,
+            'project_title': project.title,
+            'earning': sum['net_amount__sum'] or 0
+        }
 
     return project_earning
 
