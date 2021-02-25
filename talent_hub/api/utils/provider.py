@@ -289,3 +289,29 @@ def get_this_week_team_project_earning(team_instance):
             })
 
     return reports
+
+def get_custom_earning(user, start_date, end_date):
+    """
+    returns developer's earning by given period
+    """
+    sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date, financial_request__requester=user, financial_request__project__project_starter=user, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT]).aggregate(Sum('net_amount'))
+    return sum['net_amount__sum'] or 0
+
+def get_custom_project_earning(user, start_date, end_date):
+    """
+    calculate current earning of developer by projects according to given period
+    """
+    my_projects = Project.objects.filter(project_starter=user)
+    project_count = my_projects.count()
+    project_earning = list(range(project_count))
+
+    for index in range(project_count):
+        project = my_projects[index]
+        sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date, financial_request__project=project, financial_request__requester=user, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT]).aggregate(Sum('net_amount'))
+        project_earning[index] = {
+            'id': project.id,
+            'project_title': project.title,
+            'earning': sum['net_amount__sum'] or 0
+        }
+
+    return project_earning
