@@ -92,7 +92,7 @@ class FinancialRequestDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FinancialRequest
-        fields = ('id', 'type', 'status', 'amount', 'counter_party', 'requested_at', 'requester', 'project')
+        fields = ('id', 'type', 'status', 'amount', 'counter_party', 'requested_at', 'requester', 'project', 'description')
 
 
 class FinancialRequestSerializer(serializers.ModelSerializer):
@@ -110,7 +110,7 @@ class FinancialRequestSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FinancialRequest
-        fields = ('id', 'type', 'status', 'amount', 'counter_party', 'requested_at', 'requester', 'project')
+        fields = ('id', 'type', 'status', 'amount', 'counter_party', 'requested_at', 'requester', 'project', 'description')
         read_only_fields = ('status',)
 
 
