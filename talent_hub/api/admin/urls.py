@@ -17,7 +17,8 @@ from .report.views import (
     TeamMonthlyReportView,
     TeamQuarterlyReportView,
     TeamWeeklyReportView,
-    DeveloperCustomReportView
+    DeveloperCustomReportView,
+    TeamCustomReportView,
 )
 
 router = routers.DefaultRouter()
@@ -51,5 +52,6 @@ urlpatterns = router.urls + [
     path('reports/team/this-month/', TeamMonthlyReportView.as_view(), name='report_team_monthly'),
     path('reports/team/this-quarter/', TeamQuarterlyReportView.as_view(), name='report_team_quarterly'),
     path('reports/team/this-week/', TeamWeeklyReportView.as_view(), name='report_team_weekly'),
-    path('reports/developer/custom/', DeveloperCustomReportView.as_view(), name='report_dev_custom_this_mon')
+    path('reports/developer/custom/', DeveloperCustomReportView.as_view(), name='report_dev_custom'),
+    path('reports/team/custom/', TeamCustomReportView.as_view(), name='report_team_custom')
 ]
