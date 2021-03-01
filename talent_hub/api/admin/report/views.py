@@ -12,7 +12,7 @@ from api.utils.provider import (
     get_custom_project_earning
 )
 from user.models import User, Team
-from .serializers import (
+from api.common.report.serializers import (
     DeveloperMonthlyReportSerializer,
     DeveloperQuarterlyReportSerializer,
     DeveloperWeeklyReportSerializer, 
@@ -21,7 +21,7 @@ from .serializers import (
     TeamWeeklyReportSerializer,
     DeveloperCustomReportSerializer
 )
-from .filters import DeveloperReportFilter, TeamReportFilter
+from api.common.report.filters import DeveloperReportFilter, TeamReportFilter
 
 
 class DeveloperMonthlyReportView(ListAPIView):
