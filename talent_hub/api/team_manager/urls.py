@@ -13,6 +13,7 @@ from api.common.dashboard.views import (
 )
 from .report.views import (
     TeamMonthlyReportView,
+    TeamCustomReportView
 )
 
 router = routers.DefaultRouter()
@@ -37,5 +38,6 @@ urlpatterns = [
     path('dashboard/pending-requests/', PendingRequestsView.as_view(), name='dashboard_pending_requests'),
     path('dashboard/stats/', StatsView.as_view(), name='dashboard_stats'),
     path('dashboard/approved-requests/', ApprovedRequestView.as_view(), name='dashboard_approved_requests'),
-    path('reports/team/this-month/', TeamMonthlyReportView.as_view(), name='reports_team_this-month')
+    path('reports/team/this-month/', TeamMonthlyReportView.as_view(), name='reports_team_this-month'),
+    path('reports/team/custom/', TeamCustomReportView.as_view(), name='reports_team_custom')
 ] + router.urls
