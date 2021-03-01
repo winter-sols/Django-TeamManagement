@@ -45,11 +45,11 @@ urlpatterns = router.urls + [
     path('dashboard/pending-requests/', PendingRequestsView.as_view(), name='dashboard_pending_requests'),
     path('dashboard/stats/', StatsView.as_view(), name='dashboard_stats'),
     path('dashboard/approved-requests/', ApprovedRequestView.as_view(), name='dashboard_approved_requests'),
-    path('reports/developer/monthly/', DeveloperMonthlyReportView.as_view(), name='report_developer_monthly'),
-    path('reports/developer/quarterly/', DeveloperQuarterlyReportView.as_view(), name='report_developer_quarterly'),
-    path('reports/developer/weekly/', DeveloperWeeklyReportView.as_view(), name='report_developer_weekly'),
-    path('reports/team/monthly/', TeamMonthlyReportView.as_view(), name='report_team_monthly'),
-    path('reports/team/quarterly/', TeamQuarterlyReportView.as_view(), name='report_team_quarterly'),
-    path('reports/team/weekly/', TeamWeeklyReportView.as_view(), name='report_team_weekly'),
+    path('reports/developer/this-month/', DeveloperMonthlyReportView.as_view(), name='report_developer_monthly'),
+    path('reports/developer/this-quarter/', DeveloperQuarterlyReportView.as_view(), name='report_developer_quarterly'),
+    path('reports/developer/this-week/', DeveloperWeeklyReportView.as_view(), name='report_developer_weekly'),
+    path('reports/team/this-month/', TeamMonthlyReportView.as_view(), name='report_team_monthly'),
+    path('reports/team/this-quarter/', TeamQuarterlyReportView.as_view(), name='report_team_quarterly'),
+    path('reports/team/this-week/', TeamWeeklyReportView.as_view(), name='report_team_weekly'),
     path('reports/developer/custom/', DeveloperCustomReportView.as_view(), name='report_dev_custom_this_mon')
 ]
