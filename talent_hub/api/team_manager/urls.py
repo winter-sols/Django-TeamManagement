@@ -40,8 +40,8 @@ urlpatterns = [
     path('dashboard/pending-requests/', PendingRequestsView.as_view(), name='dashboard_pending_requests'),
     path('dashboard/stats/', StatsView.as_view(), name='dashboard_stats'),
     path('dashboard/approved-requests/', ApprovedRequestView.as_view(), name='dashboard_approved_requests'),
-    path('reports/team/this-month/', TeamMonthlyReportView.as_view(), name='reports_team_this-month'),
-    path('reports/team/custom/', TeamCustomReportView.as_view(), name='reports_team_custom'),
-    path('reports/team/this-quarter/', TeamQuarterlyReportView.as_view(), name='report_team_quarterly'),
-    path('reports/team/this-week/', TeamWeeklyReportView.as_view(), name='report_team_weekly'),
+    path('reports/this-month/', TeamMonthlyReportView.as_view(), name='reports_team_this-month'),
+    path('reports/custom/', TeamCustomReportView.as_view(), name='reports_team_custom'),
+    path('reports/this-quarter/', TeamQuarterlyReportView.as_view(), name='report_team_quarterly'),
+    path('reports/this-week/', TeamWeeklyReportView.as_view(), name='report_team_weekly'),
 ] + router.urls
