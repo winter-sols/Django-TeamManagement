@@ -11,7 +11,9 @@ from api.common.dashboard.views import (
 )
 from api.common.user.views import ProfilesAdminViewSet, AccountsAdminViewSet
 from .report.views import (
-    DeveloperMonthlyReportView
+    DeveloperMonthlyReportView,
+    DeveloperQuarterlyReportView,
+    DeveloperWeeklyReportView
 )
 
 router = routers.DefaultRouter()
@@ -30,5 +32,7 @@ urlpatterns = router.urls + [
     path('dashboard/pending-requests/', PendingRequestsView.as_view(), name='dashboard_pending_requests'),
     path('dashboard/stats/', StatsView.as_view(), name='dashboard_stats'),
     path('dashboard/approved-requests/', ApprovedRequestView.as_view(), name='dashboard_approved_requests'),
-    path('reports/developer/this-month/', DeveloperMonthlyReportView.as_view(), name='reports_developer_this-month'),
+    path('reports/this-month/', DeveloperMonthlyReportView.as_view(), name='reports_developer_this-month'),
+    path('reports/this-quarter/', DeveloperQuarterlyReportView.as_view(), name='report_developer_quarterly'),
+    path('reports/this-week/', DeveloperWeeklyReportView.as_view(), name='report_developer_weekly'),
 ]
