@@ -11,6 +11,9 @@ from api.common.dashboard.views import (
     StatsView,
     ApprovedRequestView
 )
+from .report.views import (
+    TeamMonthlyReportView,
+)
 
 router = routers.DefaultRouter()
 # router.register('users/', UserTeamViewSet)
@@ -34,4 +37,5 @@ urlpatterns = [
     path('dashboard/pending-requests/', PendingRequestsView.as_view(), name='dashboard_pending_requests'),
     path('dashboard/stats/', StatsView.as_view(), name='dashboard_stats'),
     path('dashboard/approved-requests/', ApprovedRequestView.as_view(), name='dashboard_approved_requests'),
+    path('reports/team/this-month/', TeamMonthlyReportView.as_view(), name='reports_team_this-month')
 ] + router.urls

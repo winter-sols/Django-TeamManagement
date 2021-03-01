@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from django_filters.rest_framework import DjangoFilterBackend
-from api.permission import IsAdmin
+from api.permission import IsDeveloper
 from api.utils.provider import (
     get_this_month_earning,
     get_this_quarter_earning,
@@ -16,68 +16,50 @@ from api.common.report.serializers import (
     DeveloperMonthlyReportSerializer,
     DeveloperQuarterlyReportSerializer,
     DeveloperWeeklyReportSerializer, 
-    TeamMonthlyReportSerializer,
-    TeamQuarterlyReportSerializer,
-    TeamWeeklyReportSerializer,
     DeveloperCustomReportSerializer
 )
-from api.common.report.filters import DeveloperReportFilter, TeamReportFilter
+from api.common.report.filters import DeveloperReportFilter
 
 
 class DeveloperMonthlyReportView(ListAPIView):
-    permission_classes = [IsAdmin]
+    permission_classes = [IsDeveloper]
     filter_backends = (DjangoFilterBackend,)
     filterset_class = DeveloperReportFilter
     serializer_class = DeveloperMonthlyReportSerializer
-    queryset = User.objects.all()
+    
+    def get_queryset(self):
+        return User.objects.filter(id=self.request.user.id)
 
 
 class DeveloperQuarterlyReportView(ListAPIView):
-    permission_classes = [IsAdmin]
+    permission_classes = [IsDeveloper]
     filter_backends = (DjangoFilterBackend,)
     filterset_class = DeveloperReportFilter
     serializer_class = DeveloperQuarterlyReportSerializer
-    queryset = User.objects.all()
+    
+    def get_queryset(self):
+        return User.objects.filter(id=self.request.user.id)
 
 
 class DeveloperWeeklyReportView(ListAPIView):
-    permission_classes = [IsAdmin]
+    permission_classes = [IsDeveloper]
     filter_backends = (DjangoFilterBackend,)
     filterset_class = DeveloperReportFilter
     serializer_class = DeveloperWeeklyReportSerializer
-    queryset = User.objects.all()
-
-
-class TeamMonthlyReportView(ListAPIView):
-    permission_classes = [IsAdmin]
-    serializer_class = TeamMonthlyReportSerializer
-    queryset = Team.objects.all()
-    filter_backends = (DjangoFilterBackend,)
-    filterset_class = TeamReportFilter
-
-
-class TeamQuarterlyReportView(ListAPIView):
-    permission_classes = [IsAdmin]
-    serializer_class = TeamQuarterlyReportSerializer
-    queryset = Team.objects.all()
-    filter_backends = (DjangoFilterBackend,)
-    filterset_class = TeamReportFilter
-
-
-class TeamWeeklyReportView(ListAPIView):
-    permission_classes = [IsAdmin]
-    serializer_class = TeamWeeklyReportSerializer
-    queryset = Team.objects.all()
-    filter_backends = (DjangoFilterBackend,)
-    filterset_class = TeamReportFilter
+    
+    def get_queryset(self):
+        return User.objects.filter(id=self.request.user.id)
 
 
 class DeveloperCustomReportView(APIView):
-    permission_classes = [IsAdmin]
+    permission_classes = [IsDeveloper]
     # filter_backends = (DjangoFilterBackend,)
     # filterset_class = DeveloperReportFilter
     # serializer_class = DeveloperCustomReportSerializer
     # queryset = User.objects.all()
+
+    def get_queryset(self):
+        return User.objects.filter(id=self.request.user.id)
 
     def get(self, request):
         start_date = self.request.query_params.get('from')
