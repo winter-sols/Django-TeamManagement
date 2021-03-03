@@ -127,7 +127,9 @@ class TeamCustomReportView(APIView):
                 }
             
             response[idx] = {
-                'team_earnings': sub_res,
-                'total': total
+                'earning': sub_res,
+                'total': total,
+                'id': team.id,
+                'name': team.name,
             }
         return Response(response)

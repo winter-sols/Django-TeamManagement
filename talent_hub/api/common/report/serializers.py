@@ -57,10 +57,10 @@ class DeveloperWeeklyReportSerializer(serializers.ModelSerializer):
 
 
 class TeamMonthlyReportSerializer(serializers.ModelSerializer):
-    earning = serializers.SerializerMethodField()
+    team_earnings = serializers.SerializerMethodField()
     total = serializers.SerializerMethodField()
 
-    def get_earning(self, obj):
+    def get_team_earnings(self, obj):
         member_set = obj.user_set.all()
         member_cnt = member_set.count()
         team_earnings = list(range(member_cnt))
@@ -84,14 +84,14 @@ class TeamMonthlyReportSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Team
-        fields = ('id', 'name', 'earning', 'total')
+        fields = ('id', 'name', 'team_earnings', 'total')
 
 
 class TeamQuarterlyReportSerializer(serializers.ModelSerializer):
-    earning = serializers.SerializerMethodField()
+    team_earnings = serializers.SerializerMethodField()
     total = serializers.SerializerMethodField()
 
-    def get_earning(self, obj):
+    def get_team_earnings(self, obj):
         member_set = obj.user_set.all()
         member_cnt = member_set.count()
         team_earnings = list(range(member_cnt))
@@ -115,14 +115,14 @@ class TeamQuarterlyReportSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Team
-        fields = ('id', 'name', 'earning', 'total')
+        fields = ('id', 'name', 'team_earnings', 'total')
 
 
 class TeamWeeklyReportSerializer(serializers.ModelSerializer):
-    earning = serializers.SerializerMethodField()
+    team_earnings = serializers.SerializerMethodField()
     total = serializers.SerializerMethodField()
 
-    def get_earning(self, obj):
+    def get_team_earnings(self, obj):
         member_set = obj.user_set.all()
         member_cnt = member_set.count()
         team_earnings = list(range(member_cnt))
@@ -146,7 +146,7 @@ class TeamWeeklyReportSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Team
-        fields = ('id', 'name', 'earning', 'total')
+        fields = ('id', 'name', 'team_earnings', 'total')
 
 
 class DeveloperCustomReportSerializer(serializers.ModelSerializer):
