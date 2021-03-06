@@ -1,7 +1,8 @@
 import numpy as np
+import pandas as pd
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView
 from django_filters.rest_framework import DjangoFilterBackend
 from api.permission import IsAdmin
 from api.utils.provider import (
@@ -22,7 +23,7 @@ from api.common.report.serializers import (
     DeveloperCustomReportSerializer
 )
 from api.common.report.filters import DeveloperReportFilter, TeamReportFilter
-
+from api.utils.download import get_download_response
 
 class DeveloperMonthlyReportView(ListAPIView):
     permission_classes = [IsAdmin]
@@ -133,3 +134,27 @@ class TeamCustomReportView(APIView):
                 'name': team.name,
             }
         return Response(response)
+
+
+class DeveloperThisMonthReportDownloadView(RetrieveAPIView):
+    permission_classes = [IsAdmin]
+    serializer_class = DeveloperMonthlyReportSerializer
+    queryset = User.objects.all()
+
+    def get(self, request):
+        queryset = User.objects.all()
+        count = queryset.count()
+
+        full_name = list(range(count))
+        earning = list(range(count))
+        
+        for idx in range(count):
+            user = queryset[idx]
+            full_name[idx] = user.first_name + ' ' + user.last_name
+            earning[idx] = get_this_month_earning(user)
+        
+        df = pd.DataFrame({
+            'earning': earning
+        }, index=full_name)
+
+        return get_download_response(df, "developer.csv")
