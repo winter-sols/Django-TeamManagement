@@ -19,7 +19,10 @@ from .report.views import (
     TeamWeeklyReportView,
     DeveloperCustomReportView,
     TeamCustomReportView,
-    DeveloperThisMonthReportDownloadView
+    DeveloperThisMonthReportDownloadView,
+    DeveloperThisQuarterReportDownloadView,
+    DeveloperThisWeekReportDownloadView,
+    DeveloperCustomReportDownloadView,
 )
 
 router = routers.DefaultRouter()
@@ -50,10 +53,13 @@ urlpatterns = router.urls + [
     path('reports/developer/this-month/', DeveloperMonthlyReportView.as_view(), name='report_developer_monthly'),
     path('reports/developer/this-month/download/', DeveloperThisMonthReportDownloadView.as_view(), name='report_developer_monthly_download'),
     path('reports/developer/this-quarter/', DeveloperQuarterlyReportView.as_view(), name='report_developer_quarterly'),
+    path('reports/developer/this-quarter/download/', DeveloperThisQuarterReportDownloadView.as_view(), name='report_developer_quarterly'),
     path('reports/developer/this-week/', DeveloperWeeklyReportView.as_view(), name='report_developer_weekly'),
+    path('reports/developer/this-week/download/', DeveloperThisWeekReportDownloadView.as_view(), name='report_developer_weekly'),
     path('reports/team/this-month/', TeamMonthlyReportView.as_view(), name='report_team_monthly'),
     path('reports/team/this-quarter/', TeamQuarterlyReportView.as_view(), name='report_team_quarterly'),
     path('reports/team/this-week/', TeamWeeklyReportView.as_view(), name='report_team_weekly'),
     path('reports/developer/custom/', DeveloperCustomReportView.as_view(), name='report_dev_custom'),
+    path('reports/developer/custom/', DeveloperCustomReportDownloadView.as_view(), name='report_dev_custom'),
     path('reports/team/custom/', TeamCustomReportView.as_view(), name='report_team_custom')
 ]
