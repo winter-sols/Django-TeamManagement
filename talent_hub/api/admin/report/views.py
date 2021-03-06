@@ -154,7 +154,83 @@ class DeveloperThisMonthReportDownloadView(RetrieveAPIView):
             earning[idx] = get_this_month_earning(user)
         
         df = pd.DataFrame({
+            'full name': full_name,
             'earning': earning
-        }, index=full_name)
+        }, index=range(1, count + 1))
+
+        return get_download_response(df, "developer.csv")
+
+
+class DeveloperThisQuarterReportDownloadView(RetrieveAPIView):
+    permission_classes = [IsAdmin]
+    serializer_class = DeveloperQuarterlyReportSerializer
+    queryset = User.objects.all()
+
+    def get(self, request):
+        queryset = User.objects.all()
+        count = queryset.count()
+
+        full_name = list(range(count))
+        earning = list(range(count))
+        
+        for idx in range(count):
+            user = queryset[idx]
+            full_name[idx] = user.first_name + ' ' + user.last_name
+            earning[idx] = get_this_quarter_earning(user)
+        
+        df = pd.DataFrame({
+            'full name': full_name,
+            'earning': earning
+        }, index=range(1, count + 1))
+
+        return get_download_response(df, "developer.csv")
+
+
+class DeveloperThisWeekReportDownloadView(RetrieveAPIView):
+    permission_classes = [IsAdmin]
+    serializer_class = DeveloperWeeklyReportSerializer
+    queryset = User.objects.all()
+
+    def get(self, request):
+        queryset = User.objects.all()
+        count = queryset.count()
+
+        full_name = list(range(count))
+        earning = list(range(count))
+        
+        for idx in range(count):
+            user = queryset[idx]
+            full_name[idx] = user.first_name + ' ' + user.last_name
+            earning[idx] = get_this_week_earning(user)
+        
+        df = pd.DataFrame({
+            'full name': full_name,
+            'earning': earning
+        }, index=range(1, count + 1))
+
+        return get_download_response(df, "developer.csv")
+
+
+class DeveloperCustomReportDownloadView(RetrieveAPIView):
+    permission_classes = [IsAdmin]
+    serializer_class = DeveloperWeeklyReportSerializer
+    queryset = User.objects.all()
+
+    def get(self, request):
+        start_date = self.request.query_params.get('from')
+        end_date = self.request.query_params.get('to')
+        queryset = User.objects.all()
+        count = queryset.count()
+        full_name = list(range(count))
+        earning = list(range(count))
+        for idx in range(count):
+            user = queryset[idx]
+            full_name[idx] = user.first_name + ' ' + user.last_name
+            earning[idx] = get_custom_earning(user, start_date, end_date)
+
+        df = pd.DataFrame({
+            'full name': full_name,
+            'earning': earning
+        }, index=range(1, count + 1))
 
         return get_download_response(df, "developer.csv")
