@@ -27,9 +27,10 @@ class FinancialRequest(models.Model):
     type = models.IntegerField(choices=constants.FINANCIAL_TYPES)
     status = models.IntegerField(choices=constants.FINANCIAL_STATUS, default=constants.FINANCIAL_STATUS_PENDING)
     amount = models.FloatField(null=True)
-    counter_party_type =  models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    counter_party_id = models.PositiveIntegerField()
-    counter_party = GenericForeignKey('counter_party_type', 'counter_party_id')
+    # counter_party_type =  models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    # counter_party_id = models.PositiveIntegerField()
+    # counter_party = GenericForeignKey('counter_party_type', 'counter_party_id')
+    address = models.CharField(max_length=200, null=True, blank=True)
     requested_at = models.DateTimeField(auto_now_add=True)
     requester = models.ForeignKey('user.User', on_delete=models.CASCADE)
     project = models.ForeignKey('Project', on_delete=models.CASCADE, null=True, blank=True)
@@ -41,7 +42,7 @@ class FinancialRequest(models.Model):
 
 class Transaction(models.Model):
     description = models.TextField(null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateField(null=True)
     gross_amount = models.FloatField()
     net_amount = models.FloatField()
     payment_platform = models.CharField(choices=constants.PAYMENT_PLATFORMS, max_length=10)

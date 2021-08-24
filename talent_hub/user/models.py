@@ -40,6 +40,7 @@ class Profile(models.Model):
     country = models.CharField(max_length=50)
     dob = models.DateField('Date of Birth', null=True)
     gender = models.IntegerField(choices=constants.PROFILE_GENDERS, default=constants.PROFILE_GENDER_MALE)
+    extra_info = models.CharField(max_length=1024, null=True)
     
     def __str__(self):
         return '{} {}'.format(self.first_name, self.last_name)
@@ -51,7 +52,7 @@ class Account(models.Model):
     platform_type = models.CharField(max_length=30, choices=constants.PLATFORM_TYPES)
     password = models.CharField(max_length=50)
     location = models.CharField(max_length=200)
-    recovery_email = models.EmailField()
+    extra_info = models.CharField(max_length=1024, null=True)
     url = models.CharField('URL', max_length=200)
     # TODO: Implement Linked Profile here...
 

@@ -17,13 +17,13 @@ class RoleValidatorMixin(object):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'first_name', 'last_name', 'email', 'role')
+        fields = ('id', 'first_name', 'last_name', 'email', 'role', 'username')
 
 
 class UserCreateSerializer(serializers.ModelSerializer, RoleValidatorMixin):
     class Meta:
         model = User
-        fields = ('id', 'first_name', 'last_name', 'email', 'role', 'password', 'team')
+        fields = ('id', 'first_name', 'last_name', 'email', 'role', 'password', 'team', 'username')
         read_only_fields = ('id', 'role')
         extra_kwargs = { 'password': { 'write_only': True } }
 

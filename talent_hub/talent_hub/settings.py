@@ -26,7 +26,7 @@ SECRET_KEY = 'rlzf^1r4imo-vs9s-y=m#7g4oq*o1(+mis+pkn@5p8l44!k4=1'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['talent.hub']
 
 environment = 'dev' # os.environ["ENVIRONMENT"]
 
@@ -107,10 +107,12 @@ if USE_POSTGRES:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': os.environ.get('DB_NAME', "talent_hub_{}".format(environment)),
+            # 'NAME': os.environ.get('DB_NAME', "talent_hub_{}".format(environment)),
+            'NAME': 'talent_hub',
             'HOST': '127.0.0.1',
             'USER': 'postgres', # os.environ.get('DB_USER', 'betasmartz_{}'.format(environment)),
-            'PASSWORD': 'password', # os.environ["DB_PASSWORD"],
+            'PASSWORD': 'qwert',
+            # 'PASSWORD': os.environ.get("DB_PASSWORD", 'password'),
             'TEST': {
                 'NAME': 'test_talent_hub'
             }
@@ -173,5 +175,6 @@ CORS_ORIGIN_WHITELIST = (
     'google.com',
     'localhost:3000',
     'localhost:8000',
-    '127.0.0.1:9000'
+    '127.0.0.1:9000',
+    'talent.hub'
 )

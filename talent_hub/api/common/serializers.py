@@ -26,7 +26,7 @@ class AccountSerializer(serializers.ModelSerializer):
             'email',
             'password',
             'location',
-            'recovery_email',
+            'extra_info',
             'url',
             'profile'
         )
@@ -42,7 +42,7 @@ class AccountUpdateSerializer(serializers.ModelSerializer):
             'email',
             'password',
             'location',
-            'recovery_email',
+            'extra_info',
             'url',
             'profile'
         )
@@ -82,7 +82,8 @@ class ProfileSerializer(serializers.ModelSerializer):
             'gender',
             'user_id',
             'accounts',
-            'user'
+            'user',
+            'extra_info'
         )
         read_only_fields = ('user',)
 

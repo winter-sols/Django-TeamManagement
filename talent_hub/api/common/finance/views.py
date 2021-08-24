@@ -97,11 +97,11 @@ class FinancialRequestViewSet(  mixins.CreateModelMixin,
 
     def get_queryset(self):
         if self.request.user.is_admin:
-            return FinancialRequest.objects.all()
+            return FinancialRequest.objects.order_by('-requested_at')
         elif self.request.user.is_developer:
-            return FinancialRequest.objects.filter(requester=self.request.user)
+            return FinancialRequest.objects.filter(requester=self.request.user).order_by('-requested_at')
         elif self.request.user.is_team_manager:
-            sets = FinancialRequest.objects.filter(requester__in=self.request.user.team.user_set.all())
+            sets = FinancialRequest.objects.filter(requester__in=self.request.user.team.user_set.all()).order_by('-requested_at')
             return sets
 
 
@@ -142,9 +142,9 @@ class TransactionViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, views
     def get_queryset(self):
         user = self.request.user
         if user.is_admin:
-            return Transaction.objects.all()
+            return Transaction.objects.order_by('-created_at')
         elif user.is_developer:
-            return Transaction.objects.filter(financial_request__requester=user)
+            return Transaction.objects.filter(financial_request__requester=user).order_by('-created_at')
         elif user.is_team_manager:
-            return Transaction.objects.filter(financial_request__requester__in=user.team.user_set.all())
+            return Transaction.objects.filter(financial_request__requester__in=user.team.user_set.all()).order_by('-created_at')
 
