@@ -110,9 +110,8 @@ if USE_POSTGRES:
             # 'NAME': os.environ.get('DB_NAME', "talent_hub_{}".format(environment)),
             'NAME': 'talent_hub',
             'HOST': '127.0.0.1',
-            'USER': 'postgres', # os.environ.get('DB_USER', 'betasmartz_{}'.format(environment)),
-            'PASSWORD': 'qwert',
-            # 'PASSWORD': os.environ.get("DB_PASSWORD", 'password'),
+            'USER': os.environ.get('DB_USER', 'postgres'),
+            'PASSWORD': os.environ.get("DB_PASSWORD", 'password'),
             'TEST': {
                 'NAME': 'test_talent_hub'
             }
