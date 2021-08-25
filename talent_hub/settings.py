@@ -26,7 +26,7 @@ SECRET_KEY = 'rlzf^1r4imo-vs9s-y=m#7g4oq*o1(+mis+pkn@5p8l44!k4=1'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['talent.hub']
+ALLOWED_HOSTS = ['talent.hub', '127.0.0.1', 'localhost']
 
 environment = 'dev' # os.environ["ENVIRONMENT"]
 
@@ -175,9 +175,9 @@ CORS_ORIGIN_WHITELIST = [
     'localhost:3000',
     'localhost:8000',
     '127.0.0.1:9000',
+    '127.0.0.1',
     'talent.hub'
 ]
 
-if os.environ.get('FE_REFERER') is not None:
-    CORS_ORIGIN_WHITELIST.append(os.environ.get('FE_REFERER'))
-
+if os.environ.get('FE_ORIGIN') is not None:
+    CORS_ORIGIN_WHITELIST.append(os.environ.get('FE_ORIGIN'))
