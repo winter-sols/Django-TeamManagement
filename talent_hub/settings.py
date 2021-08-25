@@ -178,6 +178,6 @@ CORS_ORIGIN_WHITELIST = [
     'talent.hub'
 ]
 
-if os.environ['FE_REFERER'] is not None:
+if os.environ.get('FE_REFERER') is not None:
     CORS_ORIGIN_WHITELIST.append(os.environ.get('FE_REFERER'))
 
