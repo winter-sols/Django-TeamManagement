@@ -179,5 +179,5 @@ CORS_ORIGIN_WHITELIST = [
 ]
 
 if os.environ['FE_REFERER'] is not None:
-    CORS_ORIGIN_WHITELIST.append(os.environ.get('FE_REFERER')
+    CORS_ORIGIN_WHITELIST.append(os.environ.get('FE_REFERER'))
 
