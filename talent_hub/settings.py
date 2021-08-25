@@ -170,10 +170,14 @@ JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=86400),
 }
 
-CORS_ORIGIN_WHITELIST = (
+CORS_ORIGIN_WHITELIST = [
     'google.com',
     'localhost:3000',
     'localhost:8000',
     '127.0.0.1:9000',
     'talent.hub'
-)
+]
+
+if os.environ.get('FE_REFERER') is not None:
+    CORS_ORIGIN_WHITELIST.append(os.environ.get('FE_REFERER'))
+
