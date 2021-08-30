@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'reporting.apps.ReportingConfig',
     'user.apps.UserConfig',
     'finance.apps.FinanceConfig',
+    'notification.apps.NotificationConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
