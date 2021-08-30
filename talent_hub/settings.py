@@ -33,6 +33,7 @@ environment = 'dev' # os.environ["ENVIRONMENT"]
 # Application definition
 
 INSTALLED_APPS = [
+    'reporting.apps.ReportingConfig',
     'user.apps.UserConfig',
     'finance.apps.FinanceConfig',
     'django.contrib.admin',
