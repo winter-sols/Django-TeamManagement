@@ -3,7 +3,7 @@ LOG_TYPE = [
   ('report', 'Report')
 ]
 
-INTERVAL = [
+REPORTING_INTERVAL = [
   ('daily', 'Daily'),
   ('weekly', 'Weekly'),
   ('monthly', 'Monthly')
