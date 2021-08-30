@@ -1,4 +1,4 @@
-LOG_TYPE = [
+REPORTING_LOG_TYPE = [
   ('plan', 'Plan'),
   ('report', 'Report')
 ]
