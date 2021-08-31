@@ -4,6 +4,7 @@ from .user.views import TeamView, TeamUserListView
 from api.common.user.views import ProfilesAdminViewSet, AccountsAdminViewSet
 from api.common.finance.views import ClientViewSet, PartnerViewSet, ProjectViewSet, FinancialRequestViewSet, TransactionViewSet
 from .finance.views import CancelFinanicalRequestView
+from .logging.views import DailyLogsForTodayView, DailyLogsForCertainDateView, DailyLogDetailView
 from api.common.dashboard.views import (
     WeeklyIncomeView,
     OngoingProjectsView,
@@ -44,4 +45,7 @@ urlpatterns = [
     path('reports/custom/', TeamCustomReportView.as_view(), name='reports_team_custom'),
     path('reports/this-quarter/', TeamQuarterlyReportView.as_view(), name='report_team_quarterly'),
     path('reports/this-week/', TeamWeeklyReportView.as_view(), name='report_team_weekly'),
+    path('logging/daily-logs/', DailyLogsForTodayView.as_view(), name='logging_dev_for_manager_today'),
+    path('logging/daily-logs/<int:year>-<int:month>-<int:day>/', DailyLogsForCertainDateView.as_view()),
+    path('logging/daily-logs/<int:pk>/', DailyLogDetailView.as_view())
 ] + router.urls

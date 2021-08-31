@@ -3,6 +3,7 @@ from rest_framework import routers
 from api.common.user.views import UserAdminViewSet, TeamListViewSet, ProfileListAdminView, ProfilesAdminViewSet, AccountListByProfileIdView, AccountsAdminViewSet, TeamUserListView
 from api.common.finance.views import ClientViewSet, PartnerViewSet, ProjectViewSet, FinancialRequestViewSet, TransactionViewSet
 from api.admin.finance.views import ApproveFinanicalRequestView, DeclineFinanicalRequestView
+from api.admin.logging.views import DailyLogsForTodayView, DailyLogDetailView, DailyLogsForCertainDateView
 from api.common.dashboard.views import (
     WeeklyIncomeView,
     OngoingProjectsView,
@@ -25,12 +26,12 @@ from .report.views import (
     DeveloperCustomReportDownloadView,
 )
 
+
 router = routers.DefaultRouter()
 router.register('users', UserAdminViewSet)
 router.register('teams', TeamListViewSet)
 router.register('profiles', ProfilesAdminViewSet)
 router.register('accounts', AccountsAdminViewSet)
-
 #api end-points for finance app
 
 router.register('clients', ClientViewSet)
@@ -61,5 +62,8 @@ urlpatterns = router.urls + [
     path('reports/team/this-week/', TeamWeeklyReportView.as_view(), name='report_team_weekly'),
     path('reports/developer/custom/', DeveloperCustomReportView.as_view(), name='report_dev_custom'),
     path('reports/developer/custom/', DeveloperCustomReportDownloadView.as_view(), name='report_dev_custom'),
-    path('reports/team/custom/', TeamCustomReportView.as_view(), name='report_team_custom')
+    path('reports/team/custom/', TeamCustomReportView.as_view(), name='report_team_custom'),
+    path('logging/daily-logs/', DailyLogsForTodayView.as_view(), name='logging_dev_today'),
+    path('logging/daily-logs/<int:year>-<int:month>-<int:day>/', DailyLogsForCertainDateView.as_view()),
+    path('logging/daily-logs/<int:pk>/', DailyLogDetailView.as_view()),
 ]
