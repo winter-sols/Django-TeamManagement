@@ -37,7 +37,7 @@ class FinancialRequest(models.Model):
     description = models.TextField(null=True, blank=True)
 
     def __str__(self):
-        return 'req={} counter={} project={}'.format(self.requester, self.counter_party, self.project)
+        return 'req={}  project={}'.format(self.requester, self.project)
 
 
 class Transaction(models.Model):

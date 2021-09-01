@@ -15,6 +15,7 @@ from .report.views import (
     DeveloperQuarterlyReportView,
     DeveloperWeeklyReportView
 )
+from api.common.notification.views import NotificationListView, NotificationUpdateView
 
 router = routers.DefaultRouter()
 router.register('clients', ClientViewSet)
@@ -35,4 +36,6 @@ urlpatterns = router.urls + [
     path('reports/this-month/', DeveloperMonthlyReportView.as_view(), name='reports_developer_this-month'),
     path('reports/this-quarter/', DeveloperQuarterlyReportView.as_view(), name='report_developer_quarterly'),
     path('reports/this-week/', DeveloperWeeklyReportView.as_view(), name='report_developer_weekly'),
+    path('notifications/', NotificationListView.as_view(), name='unread_notification_lists'),
+    path('notifications/<int:pk>/read/', NotificationUpdateView.as_view(), name='update_unread_notification'),
 ]

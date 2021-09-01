@@ -6,6 +6,7 @@ from .constants import (
     FINANCIAL_TYPE_RCV_PAYMENT,
 )
 
+
 class ProjectManager(QuerySet):
     def ongoing_projects(self):
         return self.filter(status=PROJECT_STATUS_ONGOING)

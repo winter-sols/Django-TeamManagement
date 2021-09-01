@@ -25,6 +25,8 @@ from .report.views import (
     DeveloperThisWeekReportDownloadView,
     DeveloperCustomReportDownloadView,
 )
+from api.common.notification.views import NotificationListView, NotificationUpdateView
+
 
 
 router = routers.DefaultRouter()
@@ -39,6 +41,7 @@ router.register('partners', PartnerViewSet)
 router.register('projects', ProjectViewSet)
 router.register('financial-requests', FinancialRequestViewSet)
 router.register('transactions', TransactionViewSet)
+
 
 urlpatterns = router.urls + [
     path('users/<int:pk>/profiles/', ProfileListAdminView.as_view(), name='user_profiles'),
@@ -66,4 +69,6 @@ urlpatterns = router.urls + [
     path('logging/daily-logs/', DailyLogsForTodayView.as_view(), name='logging_dev_today'),
     path('logging/daily-logs/<int:year>-<int:month>-<int:day>/', DailyLogsForCertainDateView.as_view()),
     path('logging/daily-logs/<int:pk>/', DailyLogDetailView.as_view()),
+    path('notifications/', NotificationListView.as_view(), name='unread_notification_lists'),
+    path('notifications/<int:pk>/read/', NotificationUpdateView.as_view(), name='update_unread_notification'),
 ]
