@@ -4,7 +4,14 @@ from .user.views import TeamView, TeamUserListView
 from api.common.user.views import ProfilesAdminViewSet, AccountsAdminViewSet
 from api.common.finance.views import ClientViewSet, PartnerViewSet, ProjectViewSet, FinancialRequestViewSet, TransactionViewSet
 from .finance.views import CancelFinanicalRequestView
-from .logging.views import DailyLogsForTodayView, DailyLogsForCertainDateView, DailyLogDetailView
+from .logging.views import (
+    DailyLogsForTodayView,
+    DailyLogsForCertainDateView,
+    DailyLogDetailView,
+    MonthlyLogsForThisMonthView,
+    MonthlyLogsForCertainMonthView,
+    MonthlyLogDetailView
+)
 from api.common.dashboard.views import (
     WeeklyIncomeView,
     OngoingProjectsView,
@@ -50,6 +57,9 @@ urlpatterns = [
     path('logging/daily-logs/', DailyLogsForTodayView.as_view(), name='logging_dev_for_manager_today'),
     path('logging/daily-logs/<int:year>-<int:month>-<int:day>/', DailyLogsForCertainDateView.as_view()),
     path('logging/daily-logs/<int:pk>/', DailyLogDetailView.as_view()),
+    path('logging/monthly-logs/', MonthlyLogsForThisMonthView.as_view(), name="logging_for_this_month"),
+    path('logging/monthly-logs/<int:year>-<int:month>/', MonthlyLogsForCertainMonthView.as_view(), name="logging_for_some_month"),
+    path('logging/monthly-logs/<int:pk>/', MonthlyLogDetailView.as_view(), name="monthly_logging_for_team"),
     path('notifications/', NotificationListView.as_view(), name='unread_notification_lists'),
     path('notifications/<int:pk>/read/', NotificationUpdateView.as_view(), name='update_unread_notification'),
 ] + router.urls
