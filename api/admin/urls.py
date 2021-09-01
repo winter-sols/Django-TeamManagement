@@ -11,6 +11,7 @@ from api.admin.logging.views import (
     MonthlyLogsForCertainMonthView,
     MonthlyLogDetailView
 )
+from api.admin.logging.views import  WeeklyLogsForThisWeekView, WeeklyLogsforCertainWeekView, WeeklyLogDetailView
 from api.common.dashboard.views import (
     WeeklyIncomeView,
     OngoingProjectsView,
@@ -79,6 +80,9 @@ urlpatterns = router.urls + [
     path('logging/monthly-logs/', MonthlyLogsForThisMonthView.as_view(), name="logging_for_this_month"), 
     path('logging/monthly-logs/<int:year>-<int:month>/', MonthlyLogsForCertainMonthView.as_view(), name="logging_for_certain_month"),
     path('logging/monthly-logs/<int:pk>/', MonthlyLogDetailView.as_view(), name="detail_logging_monthly"),
+    path('logging/weekly-logs/', WeeklyLogsForThisWeekView.as_view(), name='logging_for_this_week'),
+    path('logging/weekly-logs/<int:year>-<int:week>/', WeeklyLogsforCertainWeekView.as_view(), name='logging_for_certain_week'),
+    path('logging/weekly-logs/<int:pk>/', WeeklyLogDetailView.as_view(), name='detail_logging_until_thisweek'),
     path('notifications/', NotificationListView.as_view(), name='unread_notification_lists'),
     path('notifications/<int:pk>/read/', NotificationUpdateView.as_view(), name='update_unread_notification'),
 ]

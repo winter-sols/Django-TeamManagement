@@ -18,4 +18,4 @@ class Log(models.Model):
         return '{} log for {} ({})'.format(self.interval, self.owner, self.created_at)
 
     class Meta:
-        unique_together = ['owner', 'created_at']
+        unique_together = ['owner', 'created_at', 'interval']

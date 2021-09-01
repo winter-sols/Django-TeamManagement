@@ -2,7 +2,6 @@ from django.db import models
 import datetime
 from .constants import REPORTING_INTERVAL_DAILY, REPORTING_INTERVAL_WEEKLY, REPORTING_INTERVAL_MONTHLY
 
-
 class LogManager(models.Manager):
     def daily_logs_for_today(self):
         return super().get_queryset().filter(
@@ -74,3 +73,36 @@ class LogManager(models.Manager):
             interval=REPORTING_INTERVAL_MONTHLY
         )
     
+    def weekly_logs_for_thisweek(self):
+        dt = datetime.date.today()
+        week = int(dt.strftime('%U'))
+        return super().get_queryset().filter(
+            created_at__year=dt.year,
+            created_at__week=week,
+            interval=REPORTING_INTERVAL_WEEKLY
+        )
+
+    def weekly_logs_for_week(self, year, week):
+        return super().get_queryset().filter(
+            created_at__year=year,
+            created_at__week=week,
+            interval=REPORTING_INTERVAL_WEEKLY
+        )
+
+    def weekly_logs_weekly_logs_for_thisweek_for_team(self, team_manager):
+        dt = datetime.datetime.now()
+        week = int(dt.strftime('%w'))
+        return super().get_queryset().filter(
+            created_at__year=dt.year,
+            created_at__week=week,
+            interval=REPORTING_INTERVAL_WEEKLY,
+            owner__in=team_manager.team.user_set.all()
+        )
+    
+    def weekly_logs_for_week_for_team(self,year, week, team_manager):
+        return super().get_queryset().filter(
+            created_at__year=year,
+            created_at__week=week,
+            interval=REPORTING_INTERVAL_WEEKLY,
+            owner__in=team_manager.team.user_set.all()
+        )
