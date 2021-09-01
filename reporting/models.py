@@ -6,9 +6,8 @@ from . import constants
 
 class Log(models.Model):
     owner = models.ForeignKey('user.User', on_delete=models.CASCADE)
-    plan = models.TextField(null=True)
-    achievements = models.TextField(null=True)
-    log_type = models.CharField(choices=constants.REPORTING_LOG_TYPE, max_length=20)
+    plan = models.TextField(null=True, blank=True)
+    achievements = models.TextField(null=True, blank=True)
     created_at = models.DateField('Created Date of Log', null=True)
     updated_at = models.DateTimeField('Updated Date of Log', auto_now=True, null=True)
     interval = models.CharField(choices=constants.REPORTING_INTERVAL, max_length=20)
