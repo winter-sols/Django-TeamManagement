@@ -5,9 +5,9 @@ from reporting.models import Log
 from ...permission import IsAdmin
 
 class DailyLogsForTodayView(ListAPIView):
-  serializer_class = LogDetailSerializer
-  permission_classes = [IsAdmin]
-  queryset = Log.objects.for_today()
+    serializer_class = LogDetailSerializer
+    permission_classes = [IsAdmin]
+    queryset = Log.objects.daily_logs_for_today()
 
 
 class DailyLogsForCertainDateView(ListAPIView):
@@ -19,11 +19,11 @@ class DailyLogsForCertainDateView(ListAPIView):
         month = self.kwargs['month']
         day = self.kwargs['day']
         dt = datetime.date(year, month, day)
-        return Log.objects.for_date(dt)
+        return Log.objects.daily_logs_for_date(dt)
 
 
 class DailyLogDetailView(RetrieveAPIView):
-  serializer_class = LogDetailSerializer
-  permission_classes = [IsAdmin]
-  queryset = Log.objects.all()
+    serializer_class = LogDetailSerializer
+    permission_classes = [IsAdmin]
+    queryset = Log.objects.daily_logs()
 

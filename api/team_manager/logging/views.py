@@ -4,12 +4,13 @@ import datetime
 from reporting.models import Log
 from ...permission import IsTeamManager
 
+
 class DailyLogsForTodayView(ListAPIView):
     serializer_class = LogDetailSerializer
     permission_classes = [IsTeamManager]
 
     def get_queryset(self):
-        return Log.objects.for_today_for_team(self.request.user)
+        return Log.objects.daily_logs_for_today_for_team(self.request.user)
 
 
 class DailyLogsForCertainDateView(ListAPIView):
@@ -21,7 +22,7 @@ class DailyLogsForCertainDateView(ListAPIView):
         month = self.kwargs['month']
         day = self.kwargs['day']
         dt = datetime.date(year, month, day)
-        return Log.objects.for_date_for_team(dt, self.request.user)
+        return Log.objects.daily_logs_for_date_for_team(dt, self.request.user)
 
 
 class DailyLogDetailView(RetrieveAPIView):
@@ -29,5 +30,5 @@ class DailyLogDetailView(RetrieveAPIView):
     permission_classes = [IsTeamManager]
 
     def get_queryset(self):
-        return Log.objects.for_team(self.request.user)
+        return Log.objects.daily_logs_for_team(self.request.user)
 
