@@ -3,7 +3,14 @@ from rest_framework import routers
 from api.common.user.views import UserAdminViewSet, TeamListViewSet, ProfileListAdminView, ProfilesAdminViewSet, AccountListByProfileIdView, AccountsAdminViewSet, TeamUserListView
 from api.common.finance.views import ClientViewSet, PartnerViewSet, ProjectViewSet, FinancialRequestViewSet, TransactionViewSet
 from api.admin.finance.views import ApproveFinanicalRequestView, DeclineFinanicalRequestView
-from api.admin.logging.views import DailyLogsForTodayView, DailyLogDetailView, DailyLogsForCertainDateView
+from api.admin.logging.views import (
+    DailyLogsForTodayView,
+    DailyLogDetailView,
+    DailyLogsForCertainDateView,
+    MonthlyLogsForThisMonthView,
+    MonthlyLogsForCertainMonthView,
+    MonthlyLogDetailView
+)
 from api.common.dashboard.views import (
     WeeklyIncomeView,
     OngoingProjectsView,
@@ -69,6 +76,9 @@ urlpatterns = router.urls + [
     path('logging/daily-logs/', DailyLogsForTodayView.as_view(), name='logging_dev_today'),
     path('logging/daily-logs/<int:year>-<int:month>-<int:day>/', DailyLogsForCertainDateView.as_view()),
     path('logging/daily-logs/<int:pk>/', DailyLogDetailView.as_view()),
+    path('logging/monthly-logs/', MonthlyLogsForThisMonthView.as_view(), name="logging_for_this_month"), 
+    path('logging/monthly-logs/<int:year>-<int:month>/', MonthlyLogsForCertainMonthView.as_view(), name="logging_for_certain_month"),
+    path('logging/monthly-logs/<int:pk>/', MonthlyLogDetailView.as_view(), name="detail_logging_monthly"),
     path('notifications/', NotificationListView.as_view(), name='unread_notification_lists'),
     path('notifications/<int:pk>/read/', NotificationUpdateView.as_view(), name='update_unread_notification'),
 ]

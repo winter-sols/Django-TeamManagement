@@ -32,3 +32,28 @@ class DailyLogDetailView(RetrieveAPIView):
     def get_queryset(self):
         return Log.objects.daily_logs_for_team(self.request.user)
 
+
+class MonthlyLogsForThisMonthView(ListAPIView):
+    serializer_class = LogDetailSerializer
+    permission_classes = [IsTeamManager]
+
+    def get_queryset(self):
+        return Log.objects.monthly_logs_for_this_month_for_team(self.request.user)
+
+
+class MonthlyLogsForCertainMonthView(ListAPIView):
+    serializer_class = LogDetailSerializer
+    permission_classes = [IsTeamManager]
+
+    def get_queryset(self):
+        year = self.kwargs['year']
+        month = self.kwargs['month']
+        return Log.objects.monthly_logs_for_month_for_team(year, month, self.request.user)
+
+
+class MonthlyLogDetailView(RetrieveAPIView):
+    serializer_class = LogDetailSerializer
+    permission_classes = [IsTeamManager]
+
+    def get_queryset(self):
+        return Log.objects.monthly_logs_for_team(self.request.user)
