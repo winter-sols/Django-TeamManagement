@@ -3,7 +3,7 @@ from .models import Log
 
 
 class LogModelAdmin(admin.ModelAdmin):
-  list_display = ('owner', 'plan', 'achievements', 'log_type', 'created_at', 'interval')
+  list_display = ('owner', 'plan', 'achievements', 'created_at', 'interval')
 
 admin.site.register(Log, LogModelAdmin)
 
