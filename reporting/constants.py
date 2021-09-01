@@ -1,5 +1,9 @@
+REPORTING_INTERVAL_DAILY = 'daily'
+REPORTING_INTERVAL_WEEKLY = 'weekly'
+REPORTING_INTERVAL_MONTHLY = 'monthly'
+
 REPORTING_INTERVAL = [
-    ('daily', 'Daily'),
-    ('weekly', 'Weekly'),
-    ('monthly', 'Monthly')
+    (REPORTING_INTERVAL_DAILY, 'Daily'),
+    (REPORTING_INTERVAL_WEEKLY, 'Weekly'),
+    (REPORTING_INTERVAL_MONTHLY, 'Monthly')
 ]
