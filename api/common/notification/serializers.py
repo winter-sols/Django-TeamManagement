@@ -48,7 +48,10 @@ class NotificationListSerializer(serializers.ModelSerializer):
     content_name = serializers.SerializerMethodField()
 
     def get_content_name(self, obj):
-        return obj.content_type.app_label + "_" + obj.content_type.model
+        content_name = obj.content_type.app_label + "_" + obj.content_type.model
+        if obj.content_type.app_label == 'reporting':
+            content_name = content_name + "_" + obj.content_object.interval
+        return content_name
 
     class Meta:
         model = Notification
@@ -62,7 +65,10 @@ class NotificationUpdateSerializer(serializers.ModelSerializer):
     content_name = serializers.SerializerMethodField()
 
     def get_content_name(self, obj):
-        return obj.content_type.app_label + "_" + obj.content_type.model
+        content_name = obj.content_type.app_label + "_" + obj.content_type.model
+        if obj.content_type.app_label == 'reporting':
+            content_name = content_name + "_" + obj.content_object.interval
+        return content_name
 
     class Meta:
         model = Notification
