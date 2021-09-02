@@ -45,16 +45,26 @@ class NotificationListSerializer(serializers.ModelSerializer):
     notify_to = NotificationUserSerializer()
     creator = NotificationUserSerializer()
     content_object = NotificationObjectRelatedField(read_only=True)
+    content_name = serializers.SerializerMethodField()
+
+    def get_content_name(self, obj):
+        return obj.content_type.app_label + "_" + obj.content_type.model
+
     class Meta:
         model = Notification
-        fields = ('id', 'notify_to', 'creator', 'message', 'content_object', 'read_at')
+        fields = ('id', 'notify_to', 'creator', 'message', 'content_name', 'content_object', 'read_at')
 
 
 class NotificationUpdateSerializer(serializers.ModelSerializer):
     notify_to = NotificationUserSerializer(read_only=True)
     creator = NotificationUserSerializer(read_only=True)
     content_object = NotificationObjectRelatedField(read_only=True)
+    content_name = serializers.SerializerMethodField()
+
+    def get_content_name(self, obj):
+        return obj.content_type.app_label + "_" + obj.content_type.model
+
     class Meta:
         model = Notification
-        fields = ('id', 'notify_to', 'creator', 'message', 'content_object', 'read_at')
+        fields = ('id', 'notify_to', 'creator', 'message',  'content_name','content_object', 'read_at')
         read_only_fields = ('id', 'notify_to', 'creator', 'message', 'content_object', 'read_at')
