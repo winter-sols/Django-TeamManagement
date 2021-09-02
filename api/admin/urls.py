@@ -33,7 +33,7 @@ from .report.views import (
     DeveloperThisWeekReportDownloadView,
     DeveloperCustomReportDownloadView,
 )
-from api.common.notification.views import NotificationListView, NotificationUpdateView
+from api.common.notification.views import NotificationListView, NotificationUpdateView, NotificationUpdateListView
 
 
 
@@ -74,9 +74,9 @@ urlpatterns = router.urls + [
     path('reports/developer/custom/', DeveloperCustomReportView.as_view(), name='report_dev_custom'),
     path('reports/developer/custom/', DeveloperCustomReportDownloadView.as_view(), name='report_dev_custom'),
     path('reports/team/custom/', TeamCustomReportView.as_view(), name='report_team_custom'),
-    path('logging/daily-logs/', DailyLogsForTodayView.as_view(), name='logging_dev_today'),
-    path('logging/daily-logs/<int:year>-<int:month>-<int:day>/', DailyLogsForCertainDateView.as_view()),
-    path('logging/daily-logs/<int:pk>/', DailyLogDetailView.as_view()),
+    path('logging/daily-logs/', DailyLogsForTodayView.as_view(), name='logging_for_today'),
+    path('logging/daily-logs/<int:year>-<int:month>-<int:day>/', DailyLogsForCertainDateView.as_view(), name='logging_for_certain_day'),
+    path('logging/daily-logs/<int:pk>/', DailyLogDetailView.as_view(), name='detain_logging_daily'),
     path('logging/monthly-logs/', MonthlyLogsForThisMonthView.as_view(), name="logging_for_this_month"), 
     path('logging/monthly-logs/<int:year>-<int:month>/', MonthlyLogsForCertainMonthView.as_view(), name="logging_for_certain_month"),
     path('logging/monthly-logs/<int:pk>/', MonthlyLogDetailView.as_view(), name="detail_logging_monthly"),
@@ -85,4 +85,5 @@ urlpatterns = router.urls + [
     path('logging/weekly-logs/<int:pk>/', WeeklyLogDetailView.as_view(), name='detail_logging_until_thisweek'),
     path('notifications/', NotificationListView.as_view(), name='unread_notification_lists'),
     path('notifications/<int:pk>/read/', NotificationUpdateView.as_view(), name='update_unread_notification'),
+    path('notifications/read-all/', NotificationUpdateListView.as_view(), name='update_all_unread_notification')
 ]

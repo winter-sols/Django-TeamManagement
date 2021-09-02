@@ -26,7 +26,7 @@ from .report.views import (
     TeamWeeklyReportView,
     TeamCustomReportView
 )
-from api.common.notification.views import NotificationListView, NotificationUpdateView
+from api.common.notification.views import NotificationListView, NotificationUpdateView, NotificationUpdateListView
 
 
 router = routers.DefaultRouter()
@@ -66,4 +66,5 @@ urlpatterns = [
     path('logging/weekly-logs/<int:pk>/', WeeklyLogDetailView.as_view(), name='detail_logging_until_thisweek'),
     path('notifications/', NotificationListView.as_view(), name='unread_notification_lists'),
     path('notifications/<int:pk>/read/', NotificationUpdateView.as_view(), name='update_unread_notification'),
+    path('notifications/read-all/', NotificationUpdateListView.as_view(), name='update_all_unread_notification'),
 ] + router.urls
