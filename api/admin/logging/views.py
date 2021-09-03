@@ -1,6 +1,7 @@
-from rest_framework.generics import ListAPIView, RetrieveAPIView 
-from api.common.logging.serializers import LogDetailSerializer
+from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView
+from rest_framework.permissions import IsAuthenticated
 import datetime
+from api.common.logging.serializers import LogDetailSerializer
 from reporting.models import Log
 from api.permission import IsAdmin
 

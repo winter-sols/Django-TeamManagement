@@ -10,6 +10,16 @@ from api.common.dashboard.views import (
     ApprovedRequestView
 )
 from api.common.user.views import ProfilesAdminViewSet, AccountsAdminViewSet
+from api.common.logging.views import (
+    MyLogCreateView,
+    MyDailyLogView,
+    MyWeeklyLogView,
+    MyMonthlyLogView,
+    MyDailyLogForCertainDateView,
+    MyWeeklyLogForCertainWeekView,
+    MyMonthlyLogForCertainMonthView,
+    RetrieveUpdateDestroyLogView
+)
 from .report.views import (
     DeveloperMonthlyReportView,
     DeveloperQuarterlyReportView,
@@ -39,4 +49,12 @@ urlpatterns = router.urls + [
     path('notifications/', NotificationListView.as_view(), name='unread_notification_lists'),
     path('notifications/<int:pk>/read/', NotificationUpdateView.as_view(), name='update_unread_notification'),
     path('notifications/read-all/', NotificationUpdateListView.as_view(), name='update_all_unread_notification'),
+    path('my-logs/', MyLogCreateView.as_view(), name='my_log_create'),
+    path('my-logs/<int:pk>/', RetrieveUpdateDestroyLogView.as_view(), name='retrieve_update_destroy_log'),
+    path('my-logs/daily/',MyDailyLogView.as_view(), name='my_daily_log_today'),
+    path('my-logs/weekly/',MyWeeklyLogView.as_view(), name='my_weekly_log_thisweek'),
+    path('my-logs/monthly/',MyMonthlyLogView.as_view(), name='my_monthly_log_thismonth'),
+    path('my-logs/daily/<int:year>-<int:month>-<int:day>/',MyDailyLogForCertainDateView.as_view(), name='my_daily_log_certain_date'),
+    path('my-logs/weekly/<int:year>-<int:week>/',MyWeeklyLogForCertainWeekView.as_view(), name='my_weekly_log_certain_week'),
+    path('my-logs/monthly/<int:year>-<int:month>/',MyMonthlyLogForCertainMonthView.as_view(), name='my_monthly_log_certain_month'),                         
 ]
