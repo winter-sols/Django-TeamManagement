@@ -70,4 +70,4 @@ class MonthlyLogDetailView(RetrieveAPIView):
 class WeeklyLogDetailView(RetrieveAPIView):
     serializer_class = LogDetailSerializer
     permission_classes = [IsAdmin]
-    queryset = Log.objects.weekly_logs_for_thisweek()
+    queryset = Log.objects.weekly_logs()
