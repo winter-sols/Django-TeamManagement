@@ -83,11 +83,11 @@ class MyDailyLogForCertainDateView(RetrieveAPIView):
     serializer_class = MyLogSerializer
     permission_classes = [IsAuthenticated]
     def get_queryset(self):
-        return Log.objects.my_daily_log_for_certain_date(self.request.user, any(self))
+        return Log.objects.my_daily_log_for_certain_date(self.request.user, get_date_with_anyday(self))
     
     def get_object(self):
         queryset = self.filter_queryset(self.get_queryset())
-        filter_kwargs = {'created_at': any(self)}
+        filter_kwargs = {'created_at': get_date_with_anyday(self)}
         obj = get_object_or_404(queryset, **filter_kwargs)
         # May raise a permission denied
         self.check_object_permissions(self.request, obj)
