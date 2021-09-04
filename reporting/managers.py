@@ -106,7 +106,8 @@ class LogManager(models.Manager):
             interval=REPORTING_INTERVAL_WEEKLY,
             owner__in=team_manager.team.user_set.all()
         )
-
+    def weekly_logs(self):
+        return super().get_queryset().filter(interval=REPORTING_INTERVAL_WEEKLY)
 
     def my_daily_log_for_certain_date(self, owner, date):
         return super().get_queryset().filter(
