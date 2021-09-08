@@ -13,6 +13,7 @@ class Notification(models.Model):
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type','object_id')
     read_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField('Created Date of Notification', auto_now_add=True)
 
     objects = NotificationManager()
     
