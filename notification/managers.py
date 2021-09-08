@@ -9,7 +9,7 @@ class NotificationQuerySet(models.QuerySet):
 
 class NotificationManager(models.Manager):
     def get_queryset(self):
-        return NotificationQuerySet(model=self.model, using=self._db, hints=self._hints)
+        return NotificationQuerySet(model=self.model, using=self._db, hints=self._hints).order_by('-created_at')
 
     def unread_items(self, owner):
         return self.get_queryset().filter(notify_to=owner, read_at__isnull=True)
