@@ -38,7 +38,7 @@ class ClientViewSet(viewsets.ModelViewSet):
         elif self.request.user.is_developer:
             return Client.objects.filter(owner=self.request.user)
         elif self.request.user.is_team_manager:
-            return Client.objects.filter(owner__in=self.request.user.team.user_set.all())
+            return Client.objects.filter(owner__in=self.request.user.team_members)
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -56,7 +56,7 @@ class PartnerViewSet(viewsets.ModelViewSet):
         elif self.request.user.is_developer:
             return Partner.objects.filter(owner=self.request.user)
         elif self.request.user.is_team_manager:
-            return Partner.objects.filter(owner__in=self.request.user.team.user_set.all())
+            return Partner.objects.filter(owner__in=self.request.user.team_members)
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -84,7 +84,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         elif user.is_developer:
             return Project.objects.filter(project_starter=user)
         elif user.is_team_manager:
-            return Project.objects.filter(project_starter__in=user.team.user_set.all())
+            return Project.objects.filter(project_starter__in=user.team_members)
 
 
 class FinancialRequestViewSet(  mixins.CreateModelMixin,
@@ -101,7 +101,7 @@ class FinancialRequestViewSet(  mixins.CreateModelMixin,
         elif self.request.user.is_developer:
             return FinancialRequest.objects.filter(requester=self.request.user).order_by('-requested_at')
         elif self.request.user.is_team_manager:
-            sets = FinancialRequest.objects.filter(requester__in=self.request.user.team.user_set.all()).order_by('-requested_at')
+            sets = FinancialRequest.objects.filter(requester__in=self.request.user.team_members).order_by('-requested_at')
             return sets
 
 
@@ -146,5 +146,5 @@ class TransactionViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, views
         elif user.is_developer:
             return Transaction.objects.filter(financial_request__requester=user).order_by('-created_at')
         elif user.is_team_manager:
-            return Transaction.objects.filter(financial_request__requester__in=user.team.user_set.all()).order_by('-created_at')
+            return Transaction.objects.filter(financial_request__requester__in=user.team_members).order_by('-created_at')
 

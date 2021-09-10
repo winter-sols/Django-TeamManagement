@@ -50,7 +50,7 @@ class ProfilesAdminViewSet(viewsets.ModelViewSet):
         elif user.is_developer:
             return Profile.objects.filter(user=user)
         elif user.is_team_manager:
-            return Profile.objects.filter(user__in=user.team.user_set.all())
+            return Profile.objects.filter(user__in=user.team_members)
 
 
 class AccountListByProfileIdView(ListAPIView):
@@ -79,7 +79,7 @@ class AccountsAdminViewSet(viewsets.ModelViewSet):
         elif user.is_developer:
             return Account.objects.filter(profile__user=user)
         elif user.is_team_manager:
-            return Account.objects.filter(profile__user__in=user.team.user_set.all())
+            return Account.objects.filter(profile__user__in=user.team_members)
 
 
 class TeamUserListView(ListAPIView):

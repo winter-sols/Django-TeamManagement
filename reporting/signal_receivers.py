@@ -3,7 +3,6 @@ from django.dispatch import receiver
 from .models import Log
 from user.models import User
 from notification.models import Notification
-from user.constants import ROLE_ADMIN, ROLE_TEAM_MANAGER, ROLE_DEVELOPER
 
 
 @receiver(post_save, sender=Log)

@@ -31,6 +31,10 @@ class User(AbstractUser):
     @cached_property
     def team_manager(self):
         return self.team.user_set.filter(role=constants.ROLE_TEAM_MANAGER).first()
+    
+    @cached_property
+    def team_members(self):
+        return self.team.user_set.all()
 
 class Team(models.Model):
     name = models.CharField(max_length=50)
