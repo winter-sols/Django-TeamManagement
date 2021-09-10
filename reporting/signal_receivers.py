@@ -8,8 +8,9 @@ from user.constants import ROLE_ADMIN, ROLE_TEAM_MANAGER, ROLE_DEVELOPER
 
 @receiver(post_save, sender=Log)
 def create_notification_whenever_logged(sender, instance, created, **kwargs):
+    print(User.objects.filter_admins())
     if instance.owner.is_team_manager:
-        for admin in User.objects.filter(role=ROLE_ADMIN):
+        for admin in User.objects.filter_admins():
             Notification.objects.create(
                 notify_to=admin,
                 creator=instance.owner,

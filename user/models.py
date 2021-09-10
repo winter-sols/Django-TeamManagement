@@ -1,6 +1,7 @@
 from django.utils.functional import cached_property
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from .managers import UserManager
 from . import constants
 
 class User(AbstractUser):
@@ -9,6 +10,8 @@ class User(AbstractUser):
     role = models.IntegerField(choices=constants.ROLE_TYPES, default=constants.ROLE_DEVELOPER)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
+
+    objects = UserManager()
 
     @cached_property
     def is_developer(self):
