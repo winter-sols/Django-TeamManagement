@@ -22,7 +22,7 @@ class TeamUserListView(ListAPIView):
     permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
-        return self.request.user.team.user_set.all()
+        return self.request.user.team_members
 
 
 # team-manager/users/:id/profiles (LIST)

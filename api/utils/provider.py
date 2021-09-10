@@ -11,7 +11,7 @@ def get_ongoing_projects(user):
     if user.is_admin:
         queryset = Project.objects.ongoing_projects()
     elif user.is_team_manager:
-        queryset = Project.objects.ongoing_projects().filter(participants__in=user.team.user_set.all())
+        queryset = Project.objects.ongoing_projects().filter(participants__in=user.team_members)
     elif user.is_developer:
         queryset = user.projects.ongoing_projects()
     return queryset
@@ -54,7 +54,7 @@ def get_pending_financial_requests(user):
     if user.is_admin:
         return FinancialRequest.objects.pending_requests()
     elif user.is_team_manager:
-        return FinancialRequest.objects.pending_requests().filter(requester__in=user.team.user_set.all())
+        return FinancialRequest.objects.pending_requests().filter(requester__in=user.team_members)
     elif user.is_developer:
         return user.financialrequest_set.pending_requests()
 
@@ -122,7 +122,7 @@ def get_this_week_approved_requests(user):
     if user.is_admin:
         approved = FinancialRequest.objects.approved_requests()
     elif user.is_team_manager:
-        approved = FinancialRequest.objects.approved_requests().filter(requester__in=user.team.user_set.all())
+        approved = FinancialRequest.objects.approved_requests().filter(requester__in=user.team_members)
     elif user.is_developer:
         approved = user.financialrequest_set.approved_requests()
     
