@@ -4,6 +4,8 @@ from django.contrib.contenttypes.fields import GenericRelation, GenericForeignKe
 from django.contrib.contenttypes.models import ContentType
 from . import constants
 from .manager import ProjectManager, FinancialRequestMangager
+from .signals import fr_post_save
+
 
 class Project(models.Model):
     objects = ProjectManager.as_manager()
@@ -35,6 +37,11 @@ class FinancialRequest(models.Model):
     requester = models.ForeignKey('user.User', on_delete=models.CASCADE)
     project = models.ForeignKey('Project', on_delete=models.CASCADE, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
+
+    def save(self, **kwargs):
+        fr = FinancialRequest.objects.get(id=self.id) if self.id is not None else None
+        super().save(**kwargs)
+        fr_post_save.send(sender=self.__class__, instance=self, prev_inst=fr, **kwargs)
 
     def __str__(self):
         return 'req={}  project={}'.format(self.requester, self.project)
