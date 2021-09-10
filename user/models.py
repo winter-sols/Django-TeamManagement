@@ -24,6 +24,10 @@ class User(AbstractUser):
 
     def __str__(self):
         return '{} {} ({})'.format(self.first_name, self.last_name, self.email)
+    
+    @cached_property
+    def team_manager(self):
+        return self.team.user_set.filter(role=constants.ROLE_TEAM_MANAGER).first()
 
 class Team(models.Model):
     name = models.CharField(max_length=50)
