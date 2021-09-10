@@ -36,6 +36,7 @@ class User(AbstractUser):
     def __str__(self):
         return '{} {} ({})'.format(self.first_name, self.last_name, self.email)
     
+
 class Team(models.Model):
     name = models.CharField(max_length=50)
     def __str__(self):
