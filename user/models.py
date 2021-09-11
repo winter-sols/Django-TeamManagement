@@ -27,11 +27,11 @@ class User(AbstractUser):
     
     @cached_property
     def team_manager(self):
-        return self.team.user_set.filter(role=constants.ROLE_TEAM_MANAGER).first()
+        return self.team.user_set.filter(role=constants.ROLE_TEAM_MANAGER).first() if self.team else None
     
     @cached_property
     def team_members(self):
-        return self.team.user_set.all()
+        return self.team.user_set.all() if self.team else User.objects.none()
 
     def __str__(self):
         return '{} {} ({})'.format(self.first_name, self.last_name, self.email)
