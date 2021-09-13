@@ -11,7 +11,7 @@ class Project(models.Model):
     objects = ProjectManager.as_manager()
     title = models.CharField(max_length=100)
     type = models.IntegerField(choices=constants.PROJECT_TYPES)
-    weakly_limit = models.IntegerField(default=40, null=True, blank=True)
+    weekly_limit = models.IntegerField(default=40, null=True, blank=True)
     price = models.FloatField(null=True)
     client = models.ForeignKey('Client', on_delete=models.CASCADE)
     participants = models.ManyToManyField('user.User', related_name='projects')
