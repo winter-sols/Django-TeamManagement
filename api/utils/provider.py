@@ -36,7 +36,7 @@ def get_incomes_of_period(user, start, end):
         else:
             proj_date_index = pd.bdate_range(start_date, end_date, freq='B')
         if item.type != cs.PROJECT_TYPE_BUDGET:
-            working_hours_series = pd.Series((item.weakly_limit or 0) / 5, index=proj_date_index) 
+            working_hours_series = pd.Series((item.weekly_limit or 0) / 5, index=proj_date_index) 
         else:
             working_hours_series = pd.Series(1, index=proj_date_index)     
         working_rate_series = pd.Series(item.price, index=proj_date_index)
