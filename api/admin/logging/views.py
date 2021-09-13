@@ -56,9 +56,9 @@ class MonthlyLogsForCertainMonthView(ListAPIView):
     permission_classes = [IsAdmin]
 
     def get_queryset(self):
-            year = self.kwargs['year']
-            month = self.kwargs['month']
-            return Log.objects.monthly_logs_for_month(year, month)
+        year = self.kwargs['year']
+        month = self.kwargs['month']
+        return Log.objects.monthly_logs_for_month(year, month)
 
 
 class MonthlyLogDetailView(RetrieveAPIView):

@@ -1,6 +1,6 @@
 from django.contrib.auth.models import update_last_login
 from rest_framework import status, parsers, renderers
-from rest_framework.generics import GenericAPIView, RetrieveAPIView
+from rest_framework.generics import GenericAPIView, RetrieveUpdateAPIView
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -47,9 +47,11 @@ class RegisterView(CreateModelMixin, GenericAPIView):
         return self.create(request)
 
 
-class MeView(RetrieveAPIView):
+class MeView(RetrieveUpdateAPIView):
     serializer_class = UserDetailSerializer
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
         return self.request.user
+
+

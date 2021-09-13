@@ -89,7 +89,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 
 class UserDetailSerializer(serializers.ModelSerializer):
-    team = TeamSerializer()
+    team = TeamSerializer(read_only=True)
     profiles = ProfileSerializer(many=True, source='profile_set', required=False)
 
     class Meta:
@@ -103,6 +103,8 @@ class UserDetailSerializer(serializers.ModelSerializer):
             'team',
             'profiles',
         )
+        read_only_fields = ('team', 'profiles')
+
 
 # Handle nested Serializer : I give up!
 class UserDetailUpdateSerializer(serializers.ModelSerializer):
