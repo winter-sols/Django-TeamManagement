@@ -4,6 +4,7 @@ from .constants import (
     FINANCIAL_STATUS_PENDING,
     FINANCIAL_STATUS_APPROVED,
     FINANCIAL_TYPE_RCV_PAYMENT,
+    FINANCIAL_STATUS_DECLINED
 )
 
 
@@ -18,3 +19,6 @@ class FinancialRequestMangager(QuerySet):
     
     def approved_requests(self):
         return self.filter(status=FINANCIAL_STATUS_APPROVED)
+        
+    def declined_requests(self):
+        return self.filter(status=FINANCIAL_STATUS_DECLINED)

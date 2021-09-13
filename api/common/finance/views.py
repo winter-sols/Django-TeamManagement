@@ -3,6 +3,7 @@ from rest_framework.generics import UpdateAPIView
 from rest_framework import mixins
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
 from ...permission import IsDeveloper, IsTeamManager
 from api.common.finance.serializers import (
@@ -92,8 +93,9 @@ class FinancialRequestViewSet(  mixins.CreateModelMixin,
                                 mixins.RetrieveModelMixin,
                                 viewsets.GenericViewSet):
     queryset = FinancialRequest.objects.all()
-    filter_backends = (DjangoFilterBackend,)
     filterset_class = FinancialRequestFilter
+    filter_backends = [filters.OrderingFilter, DjangoFilterBackend]
+    ordering_fields = ['requested_at']
 
     def get_queryset(self):
         if self.request.user.is_admin:
