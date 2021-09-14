@@ -2,10 +2,13 @@ from rest_framework import viewsets
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.filters import SearchFilter
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from user.models import User, Team, Profile, Account
 from .serializers import UserAdminSerializer
 from ...permission import IsAdmin
 from ...common.serializers import TeamSerializer, UserDetailSerializer, UserDetailUpdateSerializer, ProfileSerializer, AccountSerializer, AccountUpdateSerializer
+from user.constants import ROLE_TEAM_MANAGER, ROLE_DEVELOPER
 
 
 class UserAdminViewSet(viewsets.ModelViewSet):
@@ -28,6 +31,15 @@ class TeamListViewSet(viewsets.ModelViewSet):
     serializer_class = TeamSerializer
     permission_classes = [IsAdmin]
     queryset = Team.objects.all()
+
+    @action(detail=False, permission_classes=[IsAdmin], url_path='unassigned-users')
+    def unassigned_users(self, request, *args, **kwargs):
+        SerializerClass = UserAdminSerializer
+        serializer = SerializerClass(
+            User.objects.filter(role__in=[ROLE_DEVELOPER, ROLE_TEAM_MANAGER], team__isnull=True), 
+            many=True
+        )
+        return Response(serializer.data)
 
 
 class ProfileListAdminView(ListAPIView):
