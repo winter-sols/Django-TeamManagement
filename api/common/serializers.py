@@ -134,7 +134,8 @@ class UserDetailUpdateSerializer(serializers.ModelSerializer):
     profiles = ProfileSerializer(many=True, source='profile_set', required=False)
 
     def validate(self, data):
-        data['username'] = self.initial_data['email']
+        if self.initial_data.get('email', None):
+            data['username'] = self.initial_data.get('email')
         return data
     
     def update(self, instance, validated_data):
