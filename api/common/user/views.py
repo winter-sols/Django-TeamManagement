@@ -24,7 +24,7 @@ class UserAdminViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action == 'list':
             return UserAdminSerializer
-        elif self.request.method == 'PUT' or self.request.method == 'POST':
+        elif self.request.method == 'PUT' or self.request.method == 'PATCH' or self.request.method == 'POST':
             return UserDetailUpdateSerializer
         else:
             return UserDetailSerializer
