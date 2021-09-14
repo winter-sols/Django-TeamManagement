@@ -6,7 +6,14 @@ from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from ...common.serializers import TeamSerializer, UserDetailSerializer, UserDetailUpdateSerializer, ProfileSerializer, AccountSerializer, AccountUpdateSerializer
+from ...common.serializers import (
+    TeamSerializer,
+    UserDetailSerializer,
+    UserDetailUpdateSerializer,
+    ProfileSerializer,
+    AccountSerializer,
+    AccountUpdateSerializer
+)
 from ...permission import IsAdmin
 from .filters import ProfileFilter
 from .serializers import UserAdminSerializer
@@ -59,6 +66,15 @@ class ProfilesAdminViewSet(viewsets.ModelViewSet):
     serializer_class = ProfileSerializer
     queryset = Profile.objects.all()
     permission_classes = [IsAuthenticated]
+    filter_backends = [SearchFilter]
+    search_fields = [
+        'user__first_name',
+        'user__last_name',
+        'first_name',
+        'last_name',
+        'address',
+        'country'
+    ]
 
     def get_queryset(self):
         user = self.request.user
@@ -82,6 +98,18 @@ class AccountsAdminViewSet(viewsets.ModelViewSet):
     serializer_class = AccountSerializer
     queryset = Account.objects.all()
     permission_classes = [IsAuthenticated]
+    filter_backends = [SearchFilter]
+    search_fields = [
+        'profile__user__first_name',
+        'profile__user__last_name',
+        'profile__first_name',
+        'profile__last_name',
+        'email',
+        'location',
+        'url',
+        'platform_type'
+    ]
+
 
     def get_serializer_class(self):
         if self.request.method == 'PUT' or self.request.method == 'POST':
