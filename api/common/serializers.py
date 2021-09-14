@@ -9,10 +9,17 @@ class TeamSerializer(serializers.ModelSerializer):
         fields = ('id', 'name')
 
 
+class UserLinkedWithProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'first_name', 'last_name')
+
+
 class ProfileLinkedWithAccountSerializer(serializers.ModelSerializer):
+    user = UserLinkedWithProfileSerializer(required=False, read_only=True)
     class Meta:
         model = Profile
-        fields = ('id', 'first_name', 'last_name')
+        fields = ('id', 'first_name', 'last_name', 'user')
 
 
 class AccountSerializer(serializers.ModelSerializer):
@@ -48,10 +55,26 @@ class AccountUpdateSerializer(serializers.ModelSerializer):
         )
 # Handle nested Serializer : I give up!
 
+
+class ProfileAccountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Account
+        fields = (
+            'id',
+            'platform_type',
+            'email',
+            'password',
+            'location',
+            'extra_info',
+            'url',
+            'profile'
+        )
+
+
 class ProfileSerializer(serializers.ModelSerializer):
-    accounts = AccountSerializer(many=True, source='account_set', required=False)
+    accounts = ProfileAccountSerializer(many=True, source='account_set', required=False)
     user = UserSerializer(required=False, )
-    
+
     def create(self, validated_data):
         print(validated_data)
         accounts = validated_data.pop('account_set', None)
