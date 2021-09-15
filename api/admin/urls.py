@@ -1,6 +1,6 @@
 from django.urls import  include, path
 from rest_framework import routers
-from api.common.user.views import UserAdminViewSet, TeamListViewSet, ProfileListAdminView, ProfilesAdminViewSet, AccountListByProfileIdView, AccountsAdminViewSet, TeamUserListView
+from api.common.user.views import UserAdminViewSet, TeamViewSet, ProfileListAdminView, ProfilesAdminViewSet, AccountListByProfileIdView, AccountsAdminViewSet
 from api.common.finance.views import ClientViewSet, PartnerViewSet, ProjectViewSet, FinancialRequestViewSet, TransactionViewSet
 from api.admin.finance.views import ApproveFinanicalRequestView, DeclineFinanicalRequestView
 from api.admin.logging.views import (
@@ -49,7 +49,7 @@ from api.common.notification.views import NotificationListView, NotificationUpda
 
 router = routers.DefaultRouter()
 router.register('users', UserAdminViewSet)
-router.register('teams', TeamListViewSet)
+router.register('teams', TeamViewSet)
 router.register('profiles', ProfilesAdminViewSet)
 router.register('accounts', AccountsAdminViewSet)
 #api end-points for finance app
@@ -64,7 +64,6 @@ router.register('transactions', TransactionViewSet)
 urlpatterns = router.urls + [
     path('users/<int:pk>/profiles/', ProfileListAdminView.as_view(), name='user_profiles'),
     path('profiles/<int:pk>/accounts/', AccountListByProfileIdView.as_view(), name='profile_accounts'),
-    path('teams/<int:pk>/users/', TeamUserListView.as_view(), name='users_by_team_id'),
     path('financial-requests/<int:pk>/approve/', ApproveFinanicalRequestView.as_view(), name='approve_financial_requests'),
     path('financial-requests/<int:pk>/decline/', DeclineFinanicalRequestView.as_view(), name='decline_financial_requests'),
     path('dashboard/weekly-income/', WeeklyIncomeView.as_view(), name='dashboard_weekly_incoming'),
