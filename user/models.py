@@ -66,7 +66,6 @@ class Account(models.Model):
     location = models.CharField(max_length=200)
     extra_info = models.CharField(max_length=1024, null=True)
     url = models.CharField('URL', max_length=200)
-    recovery_email = models.EmailField(null=True)
 
     class Meta:
         unique_together = ('profile', 'email', 'platform_type')
