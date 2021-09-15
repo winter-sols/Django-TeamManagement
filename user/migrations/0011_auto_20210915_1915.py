@@ -10,11 +10,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='account',
-            name='recovery_email',
-            field=models.EmailField(max_length=254, null=True),
-        ),
         migrations.AlterField(
             model_name='account',
             name='email',
