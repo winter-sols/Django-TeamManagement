@@ -1,5 +1,5 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets
+from rest_framework import viewsets, views, status
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework.generics import ListAPIView
@@ -16,7 +16,7 @@ from ...common.serializers import (
 )
 from ...permission import IsAdmin
 from .filters import ProfileFilter
-from .serializers import UserAdminSerializer
+from .serializers import UserAdminSerializer, ChangePasswordSerializer
 from user.constants import ROLE_TEAM_MANAGER, ROLE_DEVELOPER
 from user.models import User, Team, Profile, Account
 
@@ -36,6 +36,17 @@ class UserAdminViewSet(viewsets.ModelViewSet):
         else:
             return UserDetailSerializer
 
+
+class ChangePasswordView(views.APIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ChangePasswordSerializer
+    def put(self, request):
+        serializer = ChangePasswordSerializer(data=request.data, context={'user':request.user})
+        if serializer.is_valid(raise_exception=True):
+            request.user.set_password(serializer.validated_data['new_password'])
+            request.user.save()
+            return Response('Your password has been changed successfully', status=status.HTTP_200_OK)
+        
 
 class TeamListViewSet(viewsets.ModelViewSet):
     serializer_class = TeamSerializer
