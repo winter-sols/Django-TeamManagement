@@ -60,19 +60,19 @@ class Profile(models.Model):
 
 class Account(models.Model):
     profile = models.ForeignKey('Profile', on_delete=models.CASCADE)
-    email = models.EmailField(null=True)
+    email = models.EmailField()
     platform_type = models.CharField(max_length=30, choices=constants.PLATFORM_TYPES)
     password = models.CharField(max_length=50)
     location = models.CharField(max_length=200)
     extra_info = models.CharField(max_length=1024, null=True)
     url = models.CharField('URL', max_length=200)
-    # TODO: Implement Linked Profile here...
+    recovery_email = models.EmailField(null=True)
 
     class Meta:
         unique_together = ('profile', 'email', 'platform_type')
     
     def __str__(self):
-        return '{}({})'.format(self.recovery_email, self.platform_type)
+        return '{}({})'.format(self.email, self.platform_type)
 
 
 class AccountSecurityQA(models.Model):
