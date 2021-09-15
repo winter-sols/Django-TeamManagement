@@ -48,7 +48,7 @@ class ChangePasswordView(views.APIView):
             return Response('Your password has been changed successfully', status=status.HTTP_200_OK)
         
 
-class TeamListViewSet(viewsets.ModelViewSet):
+class TeamViewSet(viewsets.ModelViewSet):
     serializer_class = TeamSerializer
     permission_classes = [IsAdmin]
     queryset = Team.objects.all()
@@ -58,6 +58,15 @@ class TeamListViewSet(viewsets.ModelViewSet):
         SerializerClass = UserAdminSerializer
         serializer = SerializerClass(
             User.objects.filter(role__in=[ROLE_DEVELOPER, ROLE_TEAM_MANAGER], team__isnull=True), 
+            many=True
+        )
+        return Response(serializer.data)
+    
+    @action(detail=True, permission_classes=[IsAdmin], url_path='members')
+    def members(self, request, *args, **kwargs):
+        SerializerClass = UserAdminSerializer
+        serializer = SerializerClass(
+            User.objects.filter(team=self.kwargs['pk']),
             many=True
         )
         return Response(serializer.data)
@@ -140,10 +149,4 @@ class AccountsAdminViewSet(viewsets.ModelViewSet):
         if owner_pk is not None:
             qs = qs.filter(profile__user=owner_pk)
         return qs
-
-class TeamUserListView(ListAPIView):
-    serializer_class = UserAdminSerializer
-    permission_classes = [IsAdmin]
-
-    def get_queryset(self):
-        return User.objects.filter(team=self.kwargs['pk'])
+    
