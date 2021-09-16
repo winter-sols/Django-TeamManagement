@@ -2,41 +2,7 @@ from django.urls import  include, path
 from rest_framework import routers
 from .user.views import TeamView, TeamUserListView
 from api.common.user.views import ProfilesAdminViewSet, AccountsAdminViewSet
-from api.common.finance.views import ClientViewSet, PartnerViewSet, ProjectViewSet, FinancialRequestViewSet, TransactionViewSet
-from .finance.views import CancelFinanicalRequestView
-from .logging.views import (
-    DailyLogsForTodayView,
-    DailyLogsForCertainDateView,
-    DailyLogDetailView,
-    MonthlyLogsForThisMonthView,
-    MonthlyLogsForCertainMonthView,
-    MonthlyLogDetailView
-)
-from .logging.views import  WeeklyLogsForThisWeekView, WeeklyLogsforCertainWeekView, WeeklyLogDetailView
-from api.common.dashboard.views import (
-    WeeklyIncomeView,
-    OngoingProjectsView,
-    PendingRequestsView,
-    StatsView,
-    ApprovedRequestView
-)
-from .report.views import (
-    TeamMonthlyReportView,
-    TeamQuarterlyReportView,
-    TeamWeeklyReportView,
-    TeamCustomReportView
-)
-from api.common.notification.views import NotificationListView, NotificationUpdateView, NotificationUpdateListView
-from api.common.logging.views import (
-    MyLogCreateView,
-    MyDailyLogView,
-    MyWeeklyLogView,
-    MyMonthlyLogView,
-    MyDailyLogForCertainDateView,
-    MyWeeklyLogForCertainWeekView,
-    MyMonthlyLogForCertainMonthView,
-    RetrieveUpdateDestroyLogView
-)
+from api.common.finance.views import ClientViewSet, PartnerViewSet, ProjectViewSet, TransactionViewSet
 
 router = routers.DefaultRouter()
 # router.register('users/', UserTeamViewSet)
@@ -46,42 +12,17 @@ router = routers.DefaultRouter()
 router.register('clients', ClientViewSet)
 router.register('partners', PartnerViewSet)
 router.register('projects', ProjectViewSet)
-router.register('financial-requests', FinancialRequestViewSet)
 router.register('transactions', TransactionViewSet)
 router.register('profiles', ProfilesAdminViewSet)
 router.register('accounts', AccountsAdminViewSet)
 
 urlpatterns = [
     path('team/', TeamView.as_view(), name='team'),
-    path('users/', TeamUserListView.as_view(), name='users'),
-    path('financial-requests/<int:pk>/cancel/', CancelFinanicalRequestView.as_view(), name='cancel_financial_request'),
-    path('dashboard/weekly-income/', WeeklyIncomeView.as_view(), name='dashboard_weekly_incoming'),
-    path('dashboard/ongoing-projects/', OngoingProjectsView.as_view(), name='dashboard_ongoing_projects'),
-    path('dashboard/pending-requests/', PendingRequestsView.as_view(), name='dashboard_pending_requests'),
-    path('dashboard/stats/', StatsView.as_view(), name='dashboard_stats'),
-    path('dashboard/approved-requests/', ApprovedRequestView.as_view(), name='dashboard_approved_requests'),
-    path('reports/this-month/', TeamMonthlyReportView.as_view(), name='reports_team_this-month'),
-    path('reports/custom/', TeamCustomReportView.as_view(), name='reports_team_custom'),
-    path('reports/this-quarter/', TeamQuarterlyReportView.as_view(), name='report_team_quarterly'),
-    path('reports/this-week/', TeamWeeklyReportView.as_view(), name='report_team_weekly'),
-    path('logging/daily-logs/', DailyLogsForTodayView.as_view(), name='logging_dev_for_manager_today'),
-    path('logging/daily-logs/<int:year>-<int:month>-<int:day>/', DailyLogsForCertainDateView.as_view()),
-    path('logging/daily-logs/<int:pk>/', DailyLogDetailView.as_view()),
-    path('logging/monthly-logs/', MonthlyLogsForThisMonthView.as_view(), name="logging_for_this_month"),
-    path('logging/monthly-logs/<int:year>-<int:month>/', MonthlyLogsForCertainMonthView.as_view(), name="logging_for_some_month"),
-    path('logging/monthly-logs/<int:pk>/', MonthlyLogDetailView.as_view(), name="monthly_logging_for_team"),
-    path('logging/weekly-logs/', WeeklyLogsForThisWeekView.as_view(), name='logging_for_this_week'),
-    path('logging/weekly-logs/<int:year>-<int:week>/', WeeklyLogsforCertainWeekView.as_view(), name='logging_for_certain_week'),
-    path('logging/weekly-logs/<int:pk>/', WeeklyLogDetailView.as_view(), name='detail_logging_until_thisweek'),
-    path('notifications/', NotificationListView.as_view(), name='unread_notification_lists'),
-    path('notifications/<int:pk>/read/', NotificationUpdateView.as_view(), name='update_unread_notification'),
-    path('notifications/read-all/', NotificationUpdateListView.as_view(), name='update_all_unread_notification'),
-    path('my-logs/', MyLogCreateView.as_view(), name='my_log_create'),
-    path('my-logs/<int:pk>/', RetrieveUpdateDestroyLogView.as_view(), name='retrieve_update_destroy_log'),
-    path('my-logs/daily/',MyDailyLogView.as_view(), name='my_daily_log_today'),
-    path('my-logs/weekly/',MyWeeklyLogView.as_view(), name='my_weekly_log_thisweek'),
-    path('my-logs/monthly/',MyMonthlyLogView.as_view(), name='my_monthly_log_thismonth'),
-    path('my-logs/daily/<int:year>-<int:month>-<int:day>/',MyDailyLogForCertainDateView.as_view(), name='my_daily_log_certain_date'),
-    path('my-logs/weekly/<int:year>-<int:week>/',MyWeeklyLogForCertainWeekView.as_view(), name='my_weekly_log_certain_week'),
-    path('my-logs/monthly/<int:year>-<int:month>/',MyMonthlyLogForCertainMonthView.as_view(), name='my_monthly_log_certain_month'),     
+    path('users/', include('api.team_manager.user.urls')),
+    path('financial-requests/', include('api.team_manager.finance.urls')),
+    path('dashboard/', include('api.common.dashboard.urls')),
+    path('reports/', include('api.team_manager.report.urls')),
+    path('logging/', include('api.team_manager.logging.urls')),
+    path('notifications/', include('api.common.notification.urls')),
+    path('my-logs/', include('api.common.logging.urls')),
 ] + router.urls
