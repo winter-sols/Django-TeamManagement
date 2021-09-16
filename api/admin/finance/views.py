@@ -12,6 +12,7 @@ from finance.constants import (
     FINANCIAL_TYPE_RCV_PAYMENT
 )
 
+
 class ApproveFinanicalRequestView(UpdateAPIView):
     serializer_class = FinancialRequestDetailSerializer
     queryset = FinancialRequest.objects.all()
@@ -20,11 +21,9 @@ class ApproveFinanicalRequestView(UpdateAPIView):
         financial_request = FinancialRequest.objects.get(id=pk)
         if financial_request.type != FINANCIAL_TYPE_SND_INVOICE:
             transaction_data = request.data
-            print(transaction_data)
             transaction_data['financial_request'] = pk
             transaction_ser = TransactionCreateSerializer(data=transaction_data)
             transaction_ser.is_valid(raise_exception=True)
-            print(transaction_ser)
             transaction_ser.save()
         instance = self.get_object()
         instance.status = FINANCIAL_STATUS_APPROVED

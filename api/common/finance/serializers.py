@@ -1,8 +1,11 @@
 from rest_framework import serializers
 from django.contrib.contenttypes.models import ContentType
 from finance.models import Client, Partner, Project, FinancialRequest, Transaction
+from django.db.models.functions import Abs
+
 from user.serializer import UserSerializer
 from finance import constants as cs
+
 
 class ClientDetailSerializer(serializers.ModelSerializer):
     owner = UserSerializer()
@@ -122,6 +125,22 @@ class TransactionDetailSerializer(serializers.ModelSerializer):
 
 
 class TransactionCreateSerializer(serializers.ModelSerializer):
+    def validate_gross_amount(self, gross_amount):
+        fr_pk = self.initial_data.get('financial_request', None)
+        if fr_pk is not None:
+            fr = FinancialRequest.objects.get(pk=fr_pk)
+            if fr.type in [cs.FINANCIAL_TYPE_SND_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT]:
+                return -Abs(gross_amount)
+        return gross_amount
+
+    def validate_net_amount(self, net_amount):
+        fr_pk = self.initial_data.get('financial_request', None)
+        if fr_pk is not None:
+            fr = FinancialRequest.objects.get(pk=fr_pk)
+            if fr.type in [cs.FINANCIAL_TYPE_SND_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT]:
+                return -Abs(net_amount)
+        return net_amount
+
     class Meta:
         model = Transaction
         fields = ('id', 'gross_amount', 'net_amount', 'payment_platform', 'description', 'created_at', 'financial_request')
