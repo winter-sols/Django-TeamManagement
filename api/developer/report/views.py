@@ -5,9 +5,6 @@ from rest_framework.generics import ListAPIView
 from django_filters.rest_framework import DjangoFilterBackend
 from api.permission import IsDeveloper
 from api.utils.provider import (
-    get_this_month_earning,
-    get_this_quarter_earning,
-    get_this_week_earning,
     get_custom_earning,
     get_custom_project_earning
 )
@@ -73,7 +70,7 @@ class DeveloperCustomReportView(APIView):
             response[idx] = {
                 'id': user.id,
                 'full_name': user.first_name + ' ' + user.last_name,
-                'earning': get_custom_earning(user, start_date, end_date),
+                'earning': get_custom_earning(user, user.role, start_date, end_date),
                 'project_earnings': get_custom_project_earning(user, start_date, end_date)
             }
         return Response(response)
