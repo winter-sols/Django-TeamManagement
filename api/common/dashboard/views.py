@@ -67,7 +67,6 @@ class StatsView(APIView):
         this_month_earning = get_this_month_earning(self.request.user)
         this_quarter_expectation = get_this_quarter_expectation(self.request.user)
         this_quarter_earning = get_this_quarter_earning(self.request.user)
-        approved_requests = get_this_week_approved_requests(self.request.user)
 
         return Response({
             "this_month_expectation": this_month_expectation,
