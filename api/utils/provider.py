@@ -83,7 +83,7 @@ def get_this_month_earning(user):
     #this_month = (date.today() + pd.tseries.offsets.BMonthEnd(0)).date()
     end_date = this_month = (date.today() + pd.tseries.offsets.BMonthEnd(0)).date()
     # end_date = get_last_wednesday_of_month(this_month) - timedelta(days=10)
-    sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date, financial_request__requester=user, financial_request__project__project_starter=user, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT]).aggregate(Sum('net_amount'))
+    sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date, financial_request__requester=user, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT, cs.FINANCIAL_TYPE_SND_PAYMENT]).aggregate(Sum('net_amount'))
     return sum['net_amount__sum'] or 0
 
 def get_this_quarter_expectation(user):
@@ -110,7 +110,7 @@ def get_this_quarter_earning(user):
     end_date = (date.today() + pd.tseries.offsets.BQuarterEnd(0)).date()
     # end_date = get_last_wednesday_of_month(this_quarter_end) - timedelta(days=10)
 
-    sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date, financial_request__requester=user, financial_request__project__project_starter=user, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT]).aggregate(Sum('net_amount'))
+    sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date, financial_request__requester=user, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT, cs.FINANCIAL_TYPE_SND_PAYMENT]).aggregate(Sum('net_amount'))
     return sum['net_amount__sum'] or 0
 
 def get_this_week_approved_requests(user):
@@ -138,7 +138,7 @@ def get_this_week_earning(user):
     week_of_today = today.weekday()
     w_start_date = today - timedelta(days=week_of_today)
     w_end_date = today + timedelta(days=6-week_of_today)
-    sum = Transaction.objects.filter(created_at__gte=w_start_date, created_at__lte=w_end_date, financial_request__requester=user, financial_request__project__project_starter=user, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT]).aggregate(Sum('net_amount'))
+    sum = Transaction.objects.filter(created_at__gte=w_start_date, created_at__lte=w_end_date, financial_request__requester=user, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT, cs.FINANCIAL_TYPE_SND_PAYMENT]).aggregate(Sum('net_amount'))
     return sum['net_amount__sum'] or 0
 
 def get_this_month_project_earning(user):
@@ -306,7 +306,7 @@ def get_custom_earning(user, start_date, end_date):
     """
     returns developer's earning by given period
     """
-    sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date, financial_request__requester=user, financial_request__project__project_starter=user, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT]).aggregate(Sum('net_amount'))
+    sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date, financial_request__requester=user, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT, cs.FINANCIAL_TYPE_SND_PAYMENT]).aggregate(Sum('net_amount'))
     return sum['net_amount__sum'] or 0
 
 def get_custom_project_earning(user, start_date, end_date):
