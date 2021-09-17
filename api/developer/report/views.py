@@ -67,7 +67,7 @@ class DeveloperCustomReportView(GenericAPIView):
             user = queryset[idx]
             response[idx] = {
                 'id': user.id,
-                'earning': get_custom_earning(user, start_date, end_date),
+                'earning': get_custom_earning(user, user.role, start_date, end_date),
                 'project_earnings': get_custom_project_earning(user, start_date, end_date)
             }
 
