@@ -138,8 +138,8 @@ def get_this_week_approved_requests(user):
 def get_this_week_earning(user, user_role):
     today = date.today()
     week_of_today = today.weekday()
-    w_start_date = today - timedelta(days=week_of_today)
-    w_end_date = today + timedelta(days=6-week_of_today)
+    start_date = today - timedelta(days=week_of_today)
+    end_date = today + timedelta(days=6-week_of_today)
     if user_role == ROLE_DEVELOPER:
         sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date, financial_request__requester=user, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT, cs.FINANCIAL_TYPE_SND_PAYMENT]).aggregate(Sum('net_amount'))
     elif user_role == ROLE_TEAM_MANAGER:
