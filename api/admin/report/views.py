@@ -1,8 +1,7 @@
 import numpy as np
 import pandas as pd
 from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework.generics import ListAPIView, RetrieveAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView, GenericAPIView
 from django_filters.rest_framework import DjangoFilterBackend
 from api.permission import IsAdmin
 from api.utils.provider import (
@@ -76,12 +75,11 @@ class TeamWeeklyReportView(ListAPIView):
     pagination_class = None
 
 
-class DeveloperCustomReportView(APIView):
+class DeveloperCustomReportView(GenericAPIView):
     permission_classes = [IsAdmin]
-    # filter_backends = (DjangoFilterBackend,)
-    # filterset_class = DeveloperReportFilter
-    # serializer_class = DeveloperCustomReportSerializer
-    # queryset = User.objects.all()
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = DeveloperReportFilter
+    queryset = User.objects.all()
 
     def get(self, request):
         start_date = self.request.query_params.get('from')
@@ -89,15 +87,20 @@ class DeveloperCustomReportView(APIView):
         queryset = User.objects.all()
         user_cnt = queryset.count()
         response = list(range(user_cnt))
+        page = self.paginate_queryset(queryset)
 
         for idx in range(user_cnt):
             user = queryset[idx]
             response[idx] = {
                 'id': user.id,
-                'full_name': user.first_name + ' ' + user.last_name,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
                 'earning': get_custom_earning(user, start_date, end_date),
                 'project_earnings': get_custom_project_earning(user, start_date, end_date)
             }
+
+        if page is not None:
+            return self.get_paginated_response(response)
         return Response(response)
 
 
