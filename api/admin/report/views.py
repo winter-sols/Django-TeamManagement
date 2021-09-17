@@ -13,6 +13,7 @@ from api.utils.provider import (
     get_custom_project_earning
 )
 from user.models import User, Team
+from user.constants import ROLE_DEVELOPER, ROLE_TEAM_MANAGER
 from api.common.report.serializers import (
     DeveloperMonthlyReportSerializer,
     DeveloperQuarterlyReportSerializer,
@@ -96,7 +97,7 @@ class DeveloperCustomReportView(GenericAPIView):
                 'id': user.id,
                 'first_name': user.first_name,
                 'last_name': user.last_name,
-                'earning': get_custom_earning(user, start_date, end_date),
+                'earning': get_custom_earning(user, ROLE_DEVELOPER, start_date, end_date),
                 'project_earnings': get_custom_project_earning(user, start_date, end_date)
             }
 
@@ -123,7 +124,7 @@ class TeamCustomReportView(APIView):
             total = 0
             for usr_idx in range(user_cnt):
                 user = userset[usr_idx]
-                earning = get_custom_earning(user, start_date, end_date)
+                earning = get_custom_earning(user, ROLE_TEAM_MANAGER, start_date, end_date)
                 total += earning
                 sub_res[usr_idx] = {
                     'id': user.id,
@@ -155,7 +156,7 @@ class DeveloperThisMonthReportDownloadView(RetrieveAPIView):
         for idx in range(count):
             user = queryset[idx]
             full_name[idx] = user.first_name + ' ' + user.last_name
-            earning[idx] = get_this_month_earning(user)
+            earning[idx] = get_this_month_earning(user, ROLE_DEVELOPER)
         
         df = pd.DataFrame({
             'full name': full_name,
@@ -180,7 +181,7 @@ class DeveloperThisQuarterReportDownloadView(RetrieveAPIView):
         for idx in range(count):
             user = queryset[idx]
             full_name[idx] = user.first_name + ' ' + user.last_name
-            earning[idx] = get_this_quarter_earning(user)
+            earning[idx] = get_this_quarter_earning(user, ROLE_DEVELOPER)
         
         df = pd.DataFrame({
             'full name': full_name,
@@ -205,7 +206,7 @@ class DeveloperThisWeekReportDownloadView(RetrieveAPIView):
         for idx in range(count):
             user = queryset[idx]
             full_name[idx] = user.first_name + ' ' + user.last_name
-            earning[idx] = get_this_week_earning(user)
+            earning[idx] = get_this_week_earning(user, ROLE_DEVELOPER)
         
         df = pd.DataFrame({
             'full name': full_name,
@@ -230,7 +231,7 @@ class DeveloperCustomReportDownloadView(RetrieveAPIView):
         for idx in range(count):
             user = queryset[idx]
             full_name[idx] = user.first_name + ' ' + user.last_name
-            earning[idx] = get_custom_earning(user, start_date, end_date)
+            earning[idx] = get_custom_earning(user, ROLE_DEVELOPER, start_date, end_date)
 
         df = pd.DataFrame({
             'full name': full_name,

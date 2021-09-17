@@ -5,9 +5,6 @@ from rest_framework.generics import ListAPIView
 from django_filters.rest_framework import DjangoFilterBackend
 from api.permission import IsTeamManager
 from api.utils.provider import (
-    get_this_month_earning,
-    get_this_quarter_earning,
-    get_this_week_earning,
     get_custom_earning,
     get_custom_project_earning
 )
@@ -68,7 +65,7 @@ class TeamCustomReportView(APIView):
             total = 0
             for usr_idx in range(user_cnt):
                 user = userset[usr_idx]
-                earning = get_custom_earning(user, start_date, end_date)
+                earning = get_custom_earning(user, user.role, start_date, end_date)
                 total += earning
                 sub_res[usr_idx] = {
                     'id': user.id,
