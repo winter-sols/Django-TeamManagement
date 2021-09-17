@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView, RetrieveAPIView, GenericAPIView
 from django_filters.rest_framework import DjangoFilterBackend
 from api.permission import IsAdmin
