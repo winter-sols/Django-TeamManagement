@@ -57,6 +57,21 @@ class DeveloperWeeklyReportSerializer(serializers.ModelSerializer):
         fields = ('id', 'first_name', 'last_name', 'earning', 'project_earnings')
 
 
+class DeveloperCustomReportSerializer(serializers.ModelSerializer):
+    full_name = serializers.SerializerMethodField()
+    earning = serializers.SerializerMethodField()
+
+    def get_earning(self, obj , date_from, date_to):
+        return get_custom_earning(obj, date_from, date_to)
+
+    def get_project_earnings(self, obj, date_from, date_to):
+        return get_custom_project_earning(obj, date_from, date_to)
+
+    class Meta:
+        model = User
+        fields = ('id', 'first_name', 'last_name', 'earning', 'project_earnings')
+      
+      
 class TeamMonthlyReportSerializer(serializers.ModelSerializer):
     team_earnings = serializers.SerializerMethodField()
     total = serializers.SerializerMethodField()
@@ -149,23 +164,3 @@ class TeamWeeklyReportSerializer(serializers.ModelSerializer):
         model = Team
         fields = ('id', 'name', 'team_earnings', 'total')
 
-
-class DeveloperCustomReportSerializer(serializers.ModelSerializer):
-    full_name = serializers.SerializerMethodField()
-    earning = serializers.SerializerMethodField()
-    # project_earnings = serializers.SerializerMethodField()
-
-    def get_full_name(self, obj):
-        return obj.first_name + ' ' + obj.last_name
-    
-    def get_earning(self, obj):
-        print(obj["from"])
-        print(obj["to"])
-        return get_this_month_earning(obj, ROLE_DEVELOPER)
-
-    # def get_project_earnings(self, obj):
-    #     return get_this_month_project_earning(obj)
-
-    class Meta:
-        model = User
-        fields = ('id', 'full_name', 'earning')
