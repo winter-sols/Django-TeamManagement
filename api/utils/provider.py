@@ -10,28 +10,28 @@ from api.common.finance.serializers import (
 from user.models import User, Team
 
 
-def get_ongoing_projects(viewer, team_id, to_be_viewed_id):
+def get_ongoing_projects(viewer, team, user):
     if viewer.is_admin:
-        if team_id is not None and to_be_viewed_id is not None:
-            queryset = User.objects.get(id=to_be_viewed_id, team=team_id).projects.ongoing_projects()
-        elif team_id is not None and to_be_viewed_id is None:
-            queryset = Project.objects.ongoing_projects().filter(participants__in=Team.objects.get(id=team_id).user_set.all())
+        if user is not None:
+            queryset = user.projects.ongoing_projects()
+        elif team is not None:
+            queryset = Project.objects.ongoing_projects().filter(participants__in=team.user_set.all())
         else:
             queryset = Project.objects.ongoing_projects()
     elif viewer.is_team_manager:
-        if to_be_viewed_id is not None:
-            queryset = User.objects.get(id=to_be_viewed_id).projects.ongoing_projects()
+        if user is not None:
+            queryset = user.projects.ongoing_projects()
         else:
             queryset = Project.objects.ongoing_projects().filter(participants__in=viewer.team_members)
-    elif viewer.is_developer:
+    else:
         queryset = viewer.projects.ongoing_projects()
     return queryset
 
-def get_incomes_of_period(viewer, team_id, to_be_viewed_id, start, end ):
+def get_incomes_of_period(viewer, team, user, start, end ):
     """
     calculate incomes of given period according to start and end date
     """
-    queryset = get_ongoing_projects(viewer, team_id, to_be_viewed_id)
+    queryset = get_ongoing_projects(viewer, team, user)
     period_index = pd.date_range(start, end)
     income_series = pd.Series(0, index=period_index)
     for item in queryset:
@@ -52,12 +52,12 @@ def get_incomes_of_period(viewer, team_id, to_be_viewed_id, start, end ):
         income_series = income_series.add(working_hours_series * working_rate_series, fill_value=0)
     return income_series
 
-def get_weekly_income(viewer, team_id, to_be_viewed_id):
+def get_weekly_income(viewer, team, user):
     today = date.today()
     week_of_today = today.weekday()
     w_start_date = today - timedelta(days=week_of_today)
     w_end_date = today + timedelta(days=6-week_of_today)
-    return get_incomes_of_period(viewer, team_id, to_be_viewed_id, w_start_date, w_end_date)
+    return get_incomes_of_period(viewer, team, user, w_start_date, w_end_date)
 
 def get_pending_financial_requests(user):
     if user.is_admin:
@@ -71,7 +71,7 @@ def get_last_wednesday_of_month(month):
     week_of_month = month.weekday()
     return month - timedelta(days=week_of_month) + timedelta(days=2)
 
-def get_this_month_expectation(user):
+def get_this_month_expectation(viewer, team, user):
     """
     calculate incomes of this month expectation
     """
@@ -79,24 +79,32 @@ def get_this_month_expectation(user):
     start_date = get_last_wednesday_of_month(last_month) - timedelta(days=9)
     this_month = (date.today() + pd.tseries.offsets.BMonthEnd(0)).date()
     end_date = get_last_wednesday_of_month(this_month) - timedelta(days=10)
-    return get_incomes_of_period(user, start_date, end_date).sum()
+    return get_incomes_of_period(viewer, team, user, start_date, end_date).sum()
 
-def get_this_month_earning(user, user_role):
+def get_this_month_earning(viewer, team=None, user=None):
     """
     calculate current earning of month as a developer or team-manger or developer
     """
     start_date = (date.today() - pd.tseries.offsets.MonthEnd(1)).date() + timedelta(days=1)
     end_date = this_month = (date.today() + pd.tseries.offsets.BMonthEnd(0)).date()
 
-    if user_role == ROLE_DEVELOPER:
-        sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date, financial_request__requester=user, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT, cs.FINANCIAL_TYPE_SND_PAYMENT]).aggregate(Sum('net_amount'))
-    elif user_role == ROLE_TEAM_MANAGER:
-        sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date, financial_request__requester__team=user.team, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT, cs.FINANCIAL_TYPE_SND_PAYMENT]).aggregate(Sum('net_amount'))
-    elif user_role == ROLE_ADMIN:
-        sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT, cs.FINANCIAL_TYPE_SND_PAYMENT]).aggregate(Sum('net_amount'))
+    if viewer.is_admin:
+        if user is not None:
+            sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date,financial_request__requester=user, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT, cs.FINANCIAL_TYPE_SND_PAYMENT]).aggregate(Sum('net_amount'))
+        elif team is not None:
+            sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date, financial_request__requester__team=team, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT, cs.FINANCIAL_TYPE_SND_PAYMENT]).aggregate(Sum('net_amount'))
+        else:
+            sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT, cs.FINANCIAL_TYPE_SND_PAYMENT]).aggregate(Sum('net_amount'))
+    elif viewer.is_team_manager:
+        if user is not None:
+            sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date,financial_request__requester=user, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT, cs.FINANCIAL_TYPE_SND_PAYMENT]).aggregate(Sum('net_amount'))
+        else:
+            sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date, financial_request__requester__team=viewer.team, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT, cs.FINANCIAL_TYPE_SND_PAYMENT]).aggregate(Sum('net_amount'))
+    else:
+        sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date, financial_request__requester=viewer, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT, cs.FINANCIAL_TYPE_SND_PAYMENT]).aggregate(Sum('net_amount'))
     return sum['net_amount__sum'] or 0
 
-def get_this_quarter_expectation(user):
+def get_this_quarter_expectation(viewer, team, user):
     """
     expect this quater incomes
     """
@@ -106,21 +114,30 @@ def get_this_quarter_expectation(user):
     this_quarter_end = (date.today() + pd.tseries.offsets.BQuarterEnd(0)).date()
     end_date = get_last_wednesday_of_month(this_quarter_end) - timedelta(days=10)
 
-    return get_incomes_of_period(user, start_date, end_date).sum()
+    return get_incomes_of_period(viewer, team, user, start_date, end_date).sum()
 
-def get_this_quarter_earning(user, user_role):
+def get_this_quarter_earning(viewer, team=None, user=None):
     """
     calculate current earning of this quarter
     """
     prev_quarter_end = (date.today() - pd.tseries.offsets.BQuarterEnd(1)).date()
     start_date = prev_quarter_end + timedelta(days=1)
     end_date = (date.today() + pd.tseries.offsets.BQuarterEnd(0)).date()
-    if user_role == ROLE_DEVELOPER:
-        sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date, financial_request__requester=user, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT, cs.FINANCIAL_TYPE_SND_PAYMENT]).aggregate(Sum('net_amount'))
-    elif user_role == ROLE_TEAM_MANAGER:
-        sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date, financial_request__requester__team=user.team, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT, cs.FINANCIAL_TYPE_SND_PAYMENT]).aggregate(Sum('net_amount'))
-    elif user_role == ROLE_ADMIN:
-        sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT, cs.FINANCIAL_TYPE_SND_PAYMENT]).aggregate(Sum('net_amount'))
+
+    if viewer.is_admin:
+        if user is not None:
+            sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date,financial_request__requester=user, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT, cs.FINANCIAL_TYPE_SND_PAYMENT]).aggregate(Sum('net_amount'))
+        elif team is not None:
+            sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date, financial_request__requester__team=team, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT, cs.FINANCIAL_TYPE_SND_PAYMENT]).aggregate(Sum('net_amount'))
+        else:
+            sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT, cs.FINANCIAL_TYPE_SND_PAYMENT]).aggregate(Sum('net_amount'))
+    elif viewer.is_team_manager:
+        if user is not None:
+            sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date,financial_request__requester=user, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT, cs.FINANCIAL_TYPE_SND_PAYMENT]).aggregate(Sum('net_amount'))
+        else:
+            sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date, financial_request__requester__team=viewer.team, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT, cs.FINANCIAL_TYPE_SND_PAYMENT]).aggregate(Sum('net_amount'))
+    else:
+        sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date, financial_request__requester=viewer, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT, cs.FINANCIAL_TYPE_SND_PAYMENT]).aggregate(Sum('net_amount'))
     return sum['net_amount__sum'] or 0
 
 def get_this_week_approved_requests(user):
