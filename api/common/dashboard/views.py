@@ -85,7 +85,14 @@ class ApprovedRequestView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        approved_requests = get_approved_financial_requests(self.request.user)
+        viewer = self.request.user
+        team_id = self.request.query_params.get('team')
+        user_id = self.request.query_params.get('user')
+        queryset = get_approved_financial_requests(viewer, team_id, user_id)
+        requests_count = queryset.count()
+        approved_requests = list(range(requests_count))
+        for index in range(requests_count):
+            approved_requests[index] = FinancialRequestDetailSerializer(queryset[index]).data
         return Response(approved_requests)
 
 
