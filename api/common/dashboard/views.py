@@ -23,7 +23,10 @@ class WeeklyIncomeView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        income_series = get_weekly_income(self.request.user)
+        team_id = self.request.query_params.get('team')
+        to_be_viewed_id = self.request.query_params.get('user')
+        viewer = self.request.user
+        income_series = get_weekly_income(viewer, team_id, to_be_viewed_id)
         return Response(income_series.to_list())
 
 

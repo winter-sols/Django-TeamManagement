@@ -7,49 +7,56 @@ from user.constants import ROLE_ADMIN, ROLE_TEAM_MANAGER, ROLE_DEVELOPER
 from api.common.finance.serializers import (
     FinancialRequestDetailSerializer
 )
+from user.models import User, Team
 
-def get_ongoing_projects(user):
-    if user.is_admin:
-        queryset = Project.objects.ongoing_projects()
-    elif user.is_team_manager:
-        queryset = Project.objects.ongoing_projects().filter(participants__in=user.team_members)
-    elif user.is_developer:
-        queryset = user.projects.ongoing_projects()
+def get_ongoing_projects(viewer, team_id, to_be_viewed_id):
+    if viewer.is_admin:
+        if team_id is not None and to_be_viewed_id is not None:
+            queryset = User.objects.get(id=to_be_viewed_id).projects.ongoing_projects()
+        elif team_id is not None:
+            queryset = Project.objects.ongoing_projects().filter(participants__in=Team.objects.get(id=team_id).user_set.all())
+        else:
+            queryset = Project.objects.ongoing_projects()
+    elif viewer.is_team_manager:
+        if to_be_viewed_id is not None:
+            queryset = User.objects.get(id=to_be_viewed_id).projects.ongoing_projects()
+        else:
+            queryset = Project.objects.ongoing_projects().filter(participants__in=viewer.team_members)
+    elif viewer.is_developer:
+        queryset = viewer.projects.ongoing_projects()
     return queryset
 
-def get_incomes_of_period(user, start, end):
+def get_incomes_of_period(viewer, team_id, to_be_viewed_id, start, end ):
     """
     calculate incomes of given period according to start and end date
     """
-    queryset = get_ongoing_projects(user)
+    queryset = get_ongoing_projects(viewer, team_id, to_be_viewed_id)
     period_index = pd.date_range(start, end)
     income_series = pd.Series(0, index=period_index)
     for item in queryset:
         start_date = max(start, item.started_at)
+        end_date = min(end, item.ended_at) if item.ended_at is not None else end
         if item.type == cs.PROJECT_TYPE_BUDGET:
             if item.ended_at <= end and item.ended_at >= start:
                 start_date = item.ended_at
             else:
                 continue
-        end_date = min(end, item.ended_at) if item.ended_at is not None else end
-        if item.type == cs.PROJECT_TYPE_BUDGET:
             proj_date_index = pd.date_range(start_date, end_date)
+            working_hours_series = pd.Series(1, index=proj_date_index)     
         else:
             proj_date_index = pd.bdate_range(start_date, end_date, freq='B')
-        if item.type != cs.PROJECT_TYPE_BUDGET:
             working_hours_series = pd.Series((item.weekly_limit or 0) / 5, index=proj_date_index) 
-        else:
-            working_hours_series = pd.Series(1, index=proj_date_index)     
+            
         working_rate_series = pd.Series(item.price, index=proj_date_index)
         income_series = income_series.add(working_hours_series * working_rate_series, fill_value=0)
     return income_series
 
-def get_weekly_income(user):
+def get_weekly_income(viewer, team_id, to_be_viewed_id):
     today = date.today()
     week_of_today = today.weekday()
     w_start_date = today - timedelta(days=week_of_today)
     w_end_date = today + timedelta(days=6-week_of_today)
-    return get_incomes_of_period(user, w_start_date, w_end_date)
+    return get_incomes_of_period(viewer, team_id, to_be_viewed_id, w_start_date, w_end_date)
 
 def get_pending_financial_requests(user):
     if user.is_admin:
