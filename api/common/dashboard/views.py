@@ -64,13 +64,16 @@ class OngoingProjectsView(BaseDashboardView):
         for index in range(project_count):
             ongoing_projects[index] = ProjectListSerializer(queryset[index]).data
         return Response(ongoing_projects)
-
+from user.models import User, Team
 
 class PendingRequestsView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        queryset = get_pending_financial_requests(self.request.user)
+        viewer = self.request.user
+        team_id = self.request.query_params.get('team')
+        to_be_viewed_id = self.request.query_params.get('user')
+        queryset = get_pending_financial_requests(viewer, team_id, to_be_viewed_id)
         requests_count = queryset.count()
         pending_requests = list(range(requests_count))
         for index in range(requests_count):

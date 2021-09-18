@@ -4,6 +4,7 @@ from django.db.models import Sum
 from finance.models import Project, FinancialRequest, Transaction
 from finance import constants as cs
 from user.constants import ROLE_ADMIN, ROLE_TEAM_MANAGER, ROLE_DEVELOPER
+from user.models import User, Team
 from api.common.finance.serializers import (
     FinancialRequestDetailSerializer
 )
@@ -59,13 +60,26 @@ def get_weekly_income(viewer, team, user):
     w_end_date = today + timedelta(days=6-week_of_today)
     return get_incomes_of_period(viewer, team, user, w_start_date, w_end_date)
 
-def get_pending_financial_requests(user):
-    if user.is_admin:
-        return FinancialRequest.objects.pending_requests()
-    elif user.is_team_manager:
-        return FinancialRequest.objects.pending_requests().filter(requester__in=user.team_members)
-    elif user.is_developer:
-        return user.financialrequest_set.pending_requests()
+
+def get_pending_financial_requests(viewer, team_id, to_be_viewed_id):
+    if viewer.is_admin:
+        if team_id is not None and to_be_viewed_id is not None:
+            queryset = User.objects.get(id=to_be_viewed_id).financialrequest_set.pending_requests()
+        elif team_id is not None and to_be_viewed_id is None:
+            team_members_ids = Team.objects.get(id=team_id).user_set.all()
+            queryset = FinancialRequest.objects.pending_requests().filter(requester__in=team_members_ids)
+        else:
+            queryset = FinancialRequest.objects.pending_requests()
+    elif viewer.is_team_manager:
+        if to_be_viewed_id is not None:
+            queryset = FinancialRequest.objects.pending_requests().filter(requester=to_be_viewed_id)
+        else:
+            queryset = FinancialRequest.objects.pending_requests().filter(requester__in=viewer.team_members)
+    elif viewer.is_developer:
+        queryset = viewer.financialrequest_set.pending_requests()
+    return queryset
+
+
 
 def get_last_wednesday_of_month(month):
     week_of_month = month.weekday()
