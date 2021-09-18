@@ -34,7 +34,10 @@ class OngoingProjectsView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        queryset = get_ongoing_projects(self.request.user)
+        team_id = self.request.query_params.get('team')
+        to_be_viewed_id = self.request.query_params.get('user')
+        viewer = self.request.user
+        queryset = get_ongoing_projects(viewer, team_id, to_be_viewed_id)
         project_count = queryset.count()
         ongoing_projects = list(range(project_count))
         for index in range(project_count):

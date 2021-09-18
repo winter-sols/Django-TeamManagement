@@ -9,11 +9,12 @@ from api.common.finance.serializers import (
 )
 from user.models import User, Team
 
+
 def get_ongoing_projects(viewer, team_id, to_be_viewed_id):
     if viewer.is_admin:
         if team_id is not None and to_be_viewed_id is not None:
-            queryset = User.objects.get(id=to_be_viewed_id).projects.ongoing_projects()
-        elif team_id is not None:
+            queryset = User.objects.get(id=to_be_viewed_id, team=team_id).projects.ongoing_projects()
+        elif team_id is not None and to_be_viewed_id is None:
             queryset = Project.objects.ongoing_projects().filter(participants__in=Team.objects.get(id=team_id).user_set.all())
         else:
             queryset = Project.objects.ongoing_projects()
