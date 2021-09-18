@@ -61,18 +61,18 @@ def get_weekly_income(viewer, team, user):
     return get_incomes_of_period(viewer, team, user, w_start_date, w_end_date)
 
 
-def get_pending_financial_requests(viewer, team_id, to_be_viewed_id):
+def get_pending_financial_requests(viewer, team_id, user_id):
     if viewer.is_admin:
-        if team_id is not None and to_be_viewed_id is not None:
-            queryset = User.objects.get(id=to_be_viewed_id).financialrequest_set.pending_requests()
-        elif team_id is not None and to_be_viewed_id is None:
+        if team_id is not None and user_id is not None:
+            queryset = User.objects.get(id=user_id).financialrequest_set.pending_requests()
+        elif team_id is not None and user_id is None:
             team_members_ids = Team.objects.get(id=team_id).user_set.all()
             queryset = FinancialRequest.objects.pending_requests().filter(requester__in=team_members_ids)
         else:
             queryset = FinancialRequest.objects.pending_requests()
     elif viewer.is_team_manager:
-        if to_be_viewed_id is not None:
-            queryset = FinancialRequest.objects.pending_requests().filter(requester=to_be_viewed_id)
+        if user_id is not None:
+            queryset = FinancialRequest.objects.pending_requests().filter(requester=user_id)
         else:
             queryset = FinancialRequest.objects.pending_requests().filter(requester__in=viewer.team_members)
     elif viewer.is_developer:
