@@ -154,7 +154,7 @@ def get_this_quarter_earning(viewer, team=None, user=None):
         sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date, financial_request__requester=viewer, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT, cs.FINANCIAL_TYPE_SND_PAYMENT]).aggregate(Sum('net_amount'))
     return sum['net_amount__sum'] or 0
 
-def get_this_week_approved_requests(user):
+def get_approved_financial_requests(user):
     """
     report approved financial requests of this week
     """

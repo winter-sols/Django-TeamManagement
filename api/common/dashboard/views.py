@@ -14,7 +14,7 @@ from api.utils.provider import (
     get_this_month_earning,
     get_this_quarter_expectation,
     get_this_quarter_earning,
-    get_this_week_approved_requests
+    get_approved_financial_requests
 )
 from api.common.finance.serializers import (
     ProjectListSerializer,
@@ -85,7 +85,7 @@ class ApprovedRequestView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        approved_requests = get_this_week_approved_requests(self.request.user)
+        approved_requests = get_approved_financial_requests(self.request.user)
         return Response(approved_requests)
 
 
