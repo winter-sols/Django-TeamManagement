@@ -7,7 +7,6 @@ from user.constants import ROLE_ADMIN, ROLE_TEAM_MANAGER, ROLE_DEVELOPER
 from api.common.finance.serializers import (
     FinancialRequestDetailSerializer
 )
-from user.models import User, Team
 
 
 def get_ongoing_projects(viewer, team, user):
@@ -59,13 +58,24 @@ def get_weekly_income(viewer, team, user):
     w_end_date = today + timedelta(days=6-week_of_today)
     return get_incomes_of_period(viewer, team, user, w_start_date, w_end_date)
 
-def get_pending_financial_requests(user):
-    if user.is_admin:
-        return FinancialRequest.objects.pending_requests()
-    elif user.is_team_manager:
-        return FinancialRequest.objects.pending_requests().filter(requester__in=user.team_members)
-    elif user.is_developer:
-        return user.financialrequest_set.pending_requests()
+
+def get_pending_financial_requests(viewer, team, user):
+    if viewer.is_admin:
+        if user is not None:
+            queryset = user.financialrequest_set.pending_requests()
+        elif team is not None:
+            queryset = FinancialRequest.objects.pending_requests().filter(requester__in=team.user_set.all())
+        else:
+            queryset = FinancialRequest.objects.pending_requests()
+    elif viewer.is_team_manager:
+        if user is not None:
+            queryset = user.financialrequest_set.pending_requests()
+        else:
+            queryset = FinancialRequest.objects.pending_requests().filter(requester__in=viewer.team_members)
+    else:
+        queryset = viewer.financialrequest_set.pending_requests()
+    return queryset
+
 
 def get_last_wednesday_of_month(month):
     week_of_month = month.weekday()
@@ -104,6 +114,7 @@ def get_this_month_earning(viewer, team=None, user=None):
         sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date, financial_request__requester=viewer, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT, cs.FINANCIAL_TYPE_SND_PAYMENT]).aggregate(Sum('net_amount'))
     return sum['net_amount__sum'] or 0
 
+
 def get_this_quarter_expectation(viewer, team, user):
     """
     expect this quater incomes
@@ -115,6 +126,7 @@ def get_this_quarter_expectation(viewer, team, user):
     end_date = get_last_wednesday_of_month(this_quarter_end) - timedelta(days=10)
 
     return get_incomes_of_period(viewer, team, user, start_date, end_date).sum()
+
 
 def get_this_quarter_earning(viewer, team=None, user=None):
     """
@@ -140,25 +152,27 @@ def get_this_quarter_earning(viewer, team=None, user=None):
         sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date, financial_request__requester=viewer, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT, cs.FINANCIAL_TYPE_SND_PAYMENT]).aggregate(Sum('net_amount'))
     return sum['net_amount__sum'] or 0
 
-def get_this_week_approved_requests(user):
+
+def get_approved_financial_requests(viewer, team, user):
     """
-    report approved financial requests of this week
+    report approved financial requests
     """
-    queryset = FinancialRequest.objects.approved_requests()
-    
-    if user.is_admin:
-        approved = FinancialRequest.objects.approved_requests()
-    elif user.is_team_manager:
-        approved = FinancialRequest.objects.approved_requests().filter(requester__in=user.team_members)
-    elif user.is_developer:
-        approved = user.financialrequest_set.approved_requests()
-    
-    count = approved.count()
-    request_list = list(range(count))
-    for index in range(count):
-        request_list[index] = FinancialRequestDetailSerializer(approved[index]).data
-    
-    return request_list
+    if viewer.is_admin:
+        if user is not None:
+            queryset = user.financialrequest_set.approved_requests()
+        elif team is not None:
+            queryset = FinancialRequest.objects.approved_requests().filter(requester__in=team.user_set.all())
+        else:
+            queryset = FinancialRequest.objects.approved_requests()
+    elif viewer.is_team_manager:
+        if user is not None:
+            queryset = user.financialrequest_set.approved_requests()
+        else:
+            queryset = FinancialRequest.objects.approved_requests().filter(requester__in=viewer.team_members)
+    else:
+        queryset = viewer.financialrequest_set.approved_requests()
+    return queryset
+
 
 def get_this_week_earning(user, user_role):
     today = date.today()

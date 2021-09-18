@@ -14,7 +14,7 @@ from api.utils.provider import (
     get_this_month_earning,
     get_this_quarter_expectation,
     get_this_quarter_earning,
-    get_this_week_approved_requests
+    get_approved_financial_requests
 )
 from api.common.finance.serializers import (
     ProjectListSerializer,
@@ -66,11 +66,12 @@ class OngoingProjectsView(BaseDashboardView):
         return Response(ongoing_projects)
 
 
-class PendingRequestsView(APIView):
-    permission_classes = [IsAuthenticated]
+class PendingRequestsView(BaseDashboardView):
 
     def get(self, request):
-        queryset = get_pending_financial_requests(self.request.user)
+        self.validate_query_params()
+        viewer = self.request.user
+        queryset = get_pending_financial_requests(viewer, self.team, self.user)
         requests_count = queryset.count()
         pending_requests = list(range(requests_count))
         for index in range(requests_count):
@@ -78,11 +79,16 @@ class PendingRequestsView(APIView):
         return Response(pending_requests)
 
 
-class ApprovedRequestView(APIView):
-    permission_classes = [IsAuthenticated]
+class ApprovedRequestView(BaseDashboardView):
 
     def get(self, request):
-        approved_requests = get_this_week_approved_requests(self.request.user)
+        self.validate_query_params()
+        viewer = self.request.user
+        queryset = get_approved_financial_requests(viewer, self.team, self.user)
+        requests_count = queryset.count()
+        approved_requests = list(range(requests_count))
+        for index in range(requests_count):
+            approved_requests[index] = FinancialRequestDetailSerializer(queryset[index]).data
         return Response(approved_requests)
 
 
