@@ -64,16 +64,14 @@ class OngoingProjectsView(BaseDashboardView):
         for index in range(project_count):
             ongoing_projects[index] = ProjectListSerializer(queryset[index]).data
         return Response(ongoing_projects)
-from user.models import User, Team
 
-class PendingRequestsView(APIView):
-    permission_classes = [IsAuthenticated]
+
+class PendingRequestsView(BaseDashboardView):
 
     def get(self, request):
+        self.validate_query_params()
         viewer = self.request.user
-        team_id = self.request.query_params.get('team')
-        user_id = self.request.query_params.get('user')
-        queryset = get_pending_financial_requests(viewer, team_id, user_id)
+        queryset = get_pending_financial_requests(viewer, self.team, self.user)
         requests_count = queryset.count()
         pending_requests = list(range(requests_count))
         for index in range(requests_count):
@@ -81,14 +79,12 @@ class PendingRequestsView(APIView):
         return Response(pending_requests)
 
 
-class ApprovedRequestView(APIView):
-    permission_classes = [IsAuthenticated]
+class ApprovedRequestView(BaseDashboardView):
 
     def get(self, request):
+        self.validate_query_params()
         viewer = self.request.user
-        team_id = self.request.query_params.get('team')
-        user_id = self.request.query_params.get('user')
-        queryset = get_approved_financial_requests(viewer, team_id, user_id)
+        queryset = get_approved_financial_requests(viewer, self.team, self.user)
         requests_count = queryset.count()
         approved_requests = list(range(requests_count))
         for index in range(requests_count):

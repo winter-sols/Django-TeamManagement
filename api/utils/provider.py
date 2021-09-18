@@ -4,11 +4,9 @@ from django.db.models import Sum
 from finance.models import Project, FinancialRequest, Transaction
 from finance import constants as cs
 from user.constants import ROLE_ADMIN, ROLE_TEAM_MANAGER, ROLE_DEVELOPER
-from user.models import User, Team
 from api.common.finance.serializers import (
     FinancialRequestDetailSerializer
 )
-from user.models import User, Team
 
 
 def get_ongoing_projects(viewer, team, user):
@@ -61,24 +59,22 @@ def get_weekly_income(viewer, team, user):
     return get_incomes_of_period(viewer, team, user, w_start_date, w_end_date)
 
 
-def get_pending_financial_requests(viewer, team_id, user_id):
+def get_pending_financial_requests(viewer, team, user):
     if viewer.is_admin:
-        if team_id is not None and user_id is not None:
-            queryset = User.objects.get(id=user_id).financialrequest_set.pending_requests()
-        elif team_id is not None and user_id is None:
-            team_members = Team.objects.get(id=team_id).user_set.all()
-            queryset = FinancialRequest.objects.pending_requests().filter(requester__in=team_members)
+        if user is not None:
+            queryset = user.financialrequest_set.pending_requests()
+        elif team is not None:
+            queryset = FinancialRequest.objects.pending_requests().filter(requester__in=team.user_set.all())
         else:
             queryset = FinancialRequest.objects.pending_requests()
     elif viewer.is_team_manager:
-        if user_id is not None:
-            queryset = FinancialRequest.objects.pending_requests().filter(requester=user_id)
+        if user is not None:
+            queryset = user.financialrequest_set.pending_requests()
         else:
             queryset = FinancialRequest.objects.pending_requests().filter(requester__in=viewer.team_members)
-    elif viewer.is_developer:
+    else:
         queryset = viewer.financialrequest_set.pending_requests()
     return queryset
-
 
 
 def get_last_wednesday_of_month(month):
@@ -118,6 +114,7 @@ def get_this_month_earning(viewer, team=None, user=None):
         sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date, financial_request__requester=viewer, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT, cs.FINANCIAL_TYPE_SND_PAYMENT]).aggregate(Sum('net_amount'))
     return sum['net_amount__sum'] or 0
 
+
 def get_this_quarter_expectation(viewer, team, user):
     """
     expect this quater incomes
@@ -129,6 +126,7 @@ def get_this_quarter_expectation(viewer, team, user):
     end_date = get_last_wednesday_of_month(this_quarter_end) - timedelta(days=10)
 
     return get_incomes_of_period(viewer, team, user, start_date, end_date).sum()
+
 
 def get_this_quarter_earning(viewer, team=None, user=None):
     """
@@ -154,25 +152,24 @@ def get_this_quarter_earning(viewer, team=None, user=None):
         sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date, financial_request__requester=viewer, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT, cs.FINANCIAL_TYPE_SND_PAYMENT]).aggregate(Sum('net_amount'))
     return sum['net_amount__sum'] or 0
 
-def get_approved_financial_requests(viewer, team_id, user_id):
+
+def get_approved_financial_requests(viewer, team, user):
     """
     report approved financial requests
     """
     if viewer.is_admin:
-        print("xxxxxxx")
-        if team_id is not None and user_id is not None:
-            queryset = User.objects.get(id=user_id).financialrequest_set.approved_requests()
-        elif team_id is not None and user_id is None:
-            team_members = Team.objects.get(id=team_id).user_set.all()
-            queryset = FinancialRequest.objects.approved_requests().filter(requester__in=team_members)
+        if user is not None:
+            queryset = user.financialrequest_set.approved_requests()
+        elif team is not None:
+            queryset = FinancialRequest.objects.approved_requests().filter(requester__in=team.user_set.all())
         else:
             queryset = FinancialRequest.objects.approved_requests()
     elif viewer.is_team_manager:
-        if user_id is not None:
-            queryset = FinancialRequest.objects.approved_requests().filter(requester=user_id)
+        if user is not None:
+            queryset = user.financialrequest_set.approved_requests()
         else:
             queryset = FinancialRequest.objects.approved_requests().filter(requester__in=viewer.team_members)
-    elif viewer.is_developer:
+    else:
         queryset = viewer.financialrequest_set.approved_requests()
     return queryset
 
