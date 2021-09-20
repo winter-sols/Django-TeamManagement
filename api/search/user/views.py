@@ -26,7 +26,6 @@ class SearchUserView(ListAPIView):
     """
     search User by username, first_name, last_name field start with given keyword
     """
-    queryset = User.objects.all()
     filterset_class = UserFilter
     serializer_class = SearchUserSerializer
     filter_backends = [SearchFilter, DjangoFilterBackend, filters.OrderingFilter]
@@ -34,6 +33,14 @@ class SearchUserView(ListAPIView):
     ordering_fields = ['first_name', 'last_name', 'username']
     pagination_class = None
 
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_anonymous:
+            return User.objects.none()
+        elif user.is_admin:
+            return User.objects.all()
+        elif user.is_team_manager:
+            return user.team_members
 
 class SearchProfileView(ListAPIView):
     """
