@@ -1,5 +1,7 @@
 from rest_framework.filters import SearchFilter
 from rest_framework.generics import ListAPIView
+from rest_framework import filters
+from django_filters.rest_framework import DjangoFilterBackend
 from .serializers import (
     SearchUserSerializer,
     SearchProfileSerializer,
@@ -17,15 +19,20 @@ from finance.models import (
     Project
 )
 
+from .filters import UserFilter
+
 
 class SearchUserView(ListAPIView):
     """
     search User by username, first_name, last_name field start with given keyword
     """
     queryset = User.objects.all()
+    filterset_class = UserFilter
     serializer_class = SearchUserSerializer
-    filter_backends = [SearchFilter]
+    filter_backends = [SearchFilter, DjangoFilterBackend, filters.OrderingFilter]
     search_fields = ['username', 'first_name', 'last_name']
+    ordering_fields = ['first_name', 'last_name', 'username']
+    pagination_class = None
 
 
 class SearchProfileView(ListAPIView):
