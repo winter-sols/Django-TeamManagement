@@ -76,10 +76,10 @@ class ProfileListAdminView(ListAPIView):
     serializer_class = ProfileSerializer
     permission_classes = [IsAdmin]
     filter_backends = [DjangoFilterBackend]
-    filterset_class = [ProfileFilter]
+    filterset_class = ProfileFilter
     
     def get_queryset(self):
-        return Profile.objects.filter(user_id=self.kwargs['pk'])
+        return Profile.objects.filter(user_id=self.kwargs.get('pk'))
 
 
 class ProfilesAdminViewSet(viewsets.ModelViewSet):
@@ -98,7 +98,9 @@ class ProfilesAdminViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        if user.is_admin:
+        if user.is_anonymous:
+            return Profile.objects.none()
+        elif user.is_admin:
             return Profile.objects.all()
         elif user.is_developer:
             return Profile.objects.filter(user=user)
@@ -111,7 +113,7 @@ class AccountListByProfileIdView(ListAPIView):
     permission_classes = [IsAdmin]
 
     def get_queryset(self):
-        return Account.objects.filter(profile_id=self.kwargs['pk'])
+        return Account.objects.filter(profile_id=self.kwargs.get('pk'))
 
 
 class AccountsAdminViewSet(viewsets.ModelViewSet):
@@ -140,7 +142,9 @@ class AccountsAdminViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         qs = Account.objects.all()
-        if user.is_developer:
+        if user.is_anonymous:
+            return qs.none()
+        elif user.is_developer:
             return Account.objects.filter(profile__user=user)
         elif user.is_team_manager:
             return Account.objects.filter(profile__user__in=user.team_members)

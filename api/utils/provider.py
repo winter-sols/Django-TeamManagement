@@ -10,7 +10,9 @@ from api.common.finance.serializers import (
 
 
 def get_ongoing_projects(viewer, team, user):
-    if viewer.is_admin:
+    if viewer.is_anonymous:
+        queryset = user.projects.none()
+    elif viewer.is_admin:
         if user is not None:
             queryset = user.projects.ongoing_projects()
         elif team is not None:
@@ -60,7 +62,9 @@ def get_weekly_income(viewer, team, user):
 
 
 def get_pending_financial_requests(viewer, team, user):
-    if viewer.is_admin:
+    if viewer.is_anonymous:
+        queryset = FinancialRequest.objects.none()
+    elif viewer.is_admin:
         if user is not None:
             queryset = user.financialrequest_set.pending_requests()
         elif team is not None:
@@ -98,7 +102,9 @@ def get_this_month_earning(viewer, team=None, user=None):
     start_date = (date.today() - pd.tseries.offsets.MonthEnd(1)).date() + timedelta(days=1)
     end_date = this_month = (date.today() + pd.tseries.offsets.BMonthEnd(0)).date()
 
-    if viewer.is_admin:
+    if viewer.is_anonymous:
+        sum = 0
+    elif viewer.is_admin:
         if user is not None:
             sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date,financial_request__requester=user, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT, cs.FINANCIAL_TYPE_SND_PAYMENT]).aggregate(Sum('net_amount'))
         elif team is not None:
@@ -136,7 +142,9 @@ def get_this_quarter_earning(viewer, team=None, user=None):
     start_date = prev_quarter_end + timedelta(days=1)
     end_date = (date.today() + pd.tseries.offsets.BQuarterEnd(0)).date()
 
-    if viewer.is_admin:
+    if viewer.is_anonymous:
+        sum = 0
+    elif viewer.is_admin:
         if user is not None:
             sum = Transaction.objects.filter(created_at__gte=start_date, created_at__lte=end_date,financial_request__requester=user, financial_request__type__in=[cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT, cs.FINANCIAL_TYPE_SND_PAYMENT]).aggregate(Sum('net_amount'))
         elif team is not None:
@@ -157,7 +165,9 @@ def get_approved_financial_requests(viewer, team, user):
     """
     report approved financial requests
     """
-    if viewer.is_admin:
+    if viewer.is_anonymous:
+        queryset = FinancialRequest.objects.none()
+    elif viewer.is_admin:
         if user is not None:
             queryset = user.financialrequest_set.approved_requests()
         elif team is not None:

@@ -8,7 +8,7 @@ from api.utils.provider import (
     get_this_week_earning,
     get_this_month_project_earning,
     get_this_quarter_project_earning,
-    get_this_week_project_earning
+    get_this_week_project_earning,
 )
 
 
@@ -57,19 +57,20 @@ class DeveloperWeeklyReportSerializer(serializers.ModelSerializer):
         fields = ('id', 'first_name', 'last_name', 'earning', 'project_earnings')
 
 
-class DeveloperCustomReportSerializer(serializers.ModelSerializer):
-    full_name = serializers.SerializerMethodField()
-    earning = serializers.SerializerMethodField()
+# class DeveloperCustomReportSerializer(serializers.ModelSerializer):
+#     earning = serializers.SerializerMethodField()
+#     project_earnings = serializers.SerializerMethodField()
 
-    def get_earning(self, obj , date_from, date_to):
-        return get_custom_earning(obj, date_from, date_to)
+#     def get_earning(self, obj , date_from, date_to):
+#         print("Here print")
+#         return get_custom_earning(obj, date_from, date_to)
 
-    def get_project_earnings(self, obj, date_from, date_to):
-        return get_custom_project_earning(obj, date_from, date_to)
+#     def get_project_earnings(self, obj, date_from, date_to):
+#         return get_custom_project_earning(obj, date_from, date_to)
 
-    class Meta:
-        model = User
-        fields = ('id', 'first_name', 'last_name', 'earning', 'project_earnings')
+#     class Meta:
+#         model = User
+#         fields = ('id', 'first_name', 'last_name', 'earning', 'project_earnings')
       
       
 class TeamMonthlyReportSerializer(serializers.ModelSerializer):
