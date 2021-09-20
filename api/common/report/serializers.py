@@ -17,7 +17,7 @@ class DeveloperMonthlyReportSerializer(serializers.ModelSerializer):
     project_earnings = serializers.SerializerMethodField()
 
     def get_earning(self, obj):
-        return get_this_month_earning(obj, ROLE_DEVELOPER)
+        return get_this_month_earning(obj, None, obj)
 
     def get_project_earnings(self, obj):
         return get_this_month_project_earning(obj)
@@ -32,7 +32,7 @@ class DeveloperQuarterlyReportSerializer(serializers.ModelSerializer):
     project_earnings = serializers.SerializerMethodField()
 
     def get_earning(self, obj):
-        return get_this_quarter_earning(obj, ROLE_DEVELOPER)
+        return get_this_quarter_earning(obj, None, obj)
 
     def get_project_earnings(self, obj):
         return get_this_quarter_project_earning(obj)
@@ -86,7 +86,7 @@ class TeamMonthlyReportSerializer(serializers.ModelSerializer):
             team_earnings[member_index] = {
                 "id": member.id,
                 "full_name": member.first_name + " " + member.last_name,
-                "earning": get_this_month_earning(member_set[member_index], ROLE_DEVELOPER)
+                "earning": get_this_month_earning(member_set[member_index], None, member_set[member_index])
             }
         return team_earnings
 
@@ -96,7 +96,7 @@ class TeamMonthlyReportSerializer(serializers.ModelSerializer):
         team_earnings = list(range(member_cnt))
         for member_index in range(member_cnt):
             member = member_set[member_index]
-            team_earnings[member_index] = get_this_month_earning(member_set[member_index], ROLE_DEVELOPER)
+            team_earnings[member_index] = get_this_month_earning(member_set[member_index], None, member_set[member_index])
         return np.sum(team_earnings)
 
     class Meta:
@@ -117,7 +117,7 @@ class TeamQuarterlyReportSerializer(serializers.ModelSerializer):
             team_earnings[member_index] = {
                 "id": member.id,
                 "full_name": member.first_name + " " + member.last_name,
-                "earning": get_this_quarter_earning(member_set[member_index], ROLE_DEVELOPER)
+                "earning": get_this_quarter_earning(member_set[member_index], None, member_set[member_index])
             }
         return team_earnings
 
@@ -127,7 +127,7 @@ class TeamQuarterlyReportSerializer(serializers.ModelSerializer):
         team_earnings = list(range(member_cnt))
         for member_index in range(member_cnt):
             member = member_set[member_index]
-            team_earnings[member_index] = get_this_quarter_earning(member_set[member_index], ROLE_DEVELOPER)
+            team_earnings[member_index] = get_this_quarter_earning(member_set[member_index], None, member_set[member_index])
         return np.sum(team_earnings)
 
     class Meta:
