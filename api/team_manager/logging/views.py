@@ -46,7 +46,10 @@ class DailyLogDetailView(RetrieveAPIView):
     permission_classes = [IsTeamManager]
 
     def get_queryset(self):
-        return Log.objects.daily_logs_for_team(self.request.user)
+        if self.request.user.is_anonymous:
+            return Log.objects.none()
+        else:
+            return Log.objects.daily_logs_for_team(self.request.user)
 
 
 class MonthlyLogsForThisMonthView(ListAPIView):
@@ -72,7 +75,10 @@ class MonthlyLogDetailView(RetrieveAPIView):
     permission_classes = [IsTeamManager]
 
     def get_queryset(self):
-        return Log.objects.monthly_logs_for_team(self.request.user)
+        if self.request.user.is_anonymous:
+            return Log.objects.none()
+        else:
+            return Log.objects.monthly_logs_for_team(self.request.user)
 
 
 class WeeklyLogDetailView(RetrieveAPIView):

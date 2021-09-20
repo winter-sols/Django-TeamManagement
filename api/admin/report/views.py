@@ -21,7 +21,7 @@ from api.common.report.serializers import (
     TeamMonthlyReportSerializer,
     TeamQuarterlyReportSerializer,
     TeamWeeklyReportSerializer,
-    DeveloperCustomReportSerializer
+    # DeveloperCustomReportSerializer
 )
 from api.common.report.filters import DeveloperReportFilter, TeamReportFilter
 from api.utils.download import get_download_response
@@ -79,6 +79,7 @@ class TeamWeeklyReportView(ListAPIView):
 
 class DeveloperCustomReportView(GenericAPIView):
     permission_classes = [IsAdmin]
+    # serializer_class = DeveloperCustomReportSerializer
     filter_backends = (DjangoFilterBackend,)
     filterset_class = DeveloperReportFilter
     queryset = User.objects.all()

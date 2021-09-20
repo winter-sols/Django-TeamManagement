@@ -4,6 +4,7 @@ from rest_framework import mixins
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import filters
+from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from ...permission import IsDeveloper, IsTeamManager
 from api.common.finance.serializers import (
@@ -31,10 +32,13 @@ from .filters import (
 )
 
 class ClientViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = Client.objects.all()
 
     def get_queryset(self):
-        if self.request.user.is_admin:
+        if self.request.user.is_anonymous:
+            return Client.objects.none()
+        elif self.request.user.is_admin:
             return Client.objects.all()
         elif self.request.user.is_developer:
             return Client.objects.filter(owner=self.request.user)
@@ -42,17 +46,18 @@ class ClientViewSet(viewsets.ModelViewSet):
             return Client.objects.filter(owner__in=self.request.user.team_members)
 
     def get_serializer_class(self):
-        if self.request.method == 'GET':
-            return ClientDetailSerializer
-        elif self.request.method in ['PUT', 'POST']:
+        if self.request.method in ['PUT', 'POST', 'PATCH']:
             return ClientUpdateSerializer
+        return ClientDetailSerializer
 
 
 class PartnerViewSet(viewsets.ModelViewSet):
     queryset = Partner.objects.all()
     
     def get_queryset(self):
-        if self.request.user.is_admin:
+        if self.request.user.is_anonymous:
+            return Partner.objects.none()
+        elif self.request.user.is_admin:
             return Partner.objects.all()
         elif self.request.user.is_developer:
             return Partner.objects.filter(owner=self.request.user)
@@ -60,10 +65,9 @@ class PartnerViewSet(viewsets.ModelViewSet):
             return Partner.objects.filter(owner__in=self.request.user.team_members)
 
     def get_serializer_class(self):
-        if self.request.method == 'GET':
-            return PartnerDetailSerializer
-        elif self.request.method in ['PUT', 'POST']:
+        if self.request.method in ['PUT', 'POST', 'PATCH']:
             return PartnerSerializer
+        return PartnerDetailSerializer
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
@@ -80,7 +84,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
     
     def get_queryset(self):
         user = self.request.user
-        if user.is_admin:
+        if user.is_anonymous:
+            return Project.objects.none()
+        elif user.is_admin:
             return Project.objects.all()
         elif user.is_developer:
             return Project.objects.filter(project_starter=user)
@@ -98,7 +104,9 @@ class FinancialRequestViewSet(  mixins.CreateModelMixin,
     ordering_fields = ['requested_at']
 
     def get_queryset(self):
-        if self.request.user.is_admin:
+        if self.request.user.is_anonymous:
+            return FinancialRequest.objects.none()
+        elif self.request.user.is_admin:
             return FinancialRequest.objects.order_by('-requested_at')
         elif self.request.user.is_developer:
             return FinancialRequest.objects.filter(requester=self.request.user).order_by('-requested_at')
@@ -143,7 +151,9 @@ class TransactionViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, views
 
     def get_queryset(self):
         user = self.request.user
-        if user.is_admin:
+        if user.is_anonymous:
+            return Transaction.objects.none()
+        elif user.is_admin:
             return Transaction.objects.order_by('-created_at')
         elif user.is_developer:
             return Transaction.objects.filter(financial_request__requester=user).order_by('-created_at')

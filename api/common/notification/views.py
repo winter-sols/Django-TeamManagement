@@ -20,6 +20,8 @@ class NotificationUpdateView(UpdateAPIView):
     serializer_class = NotificationUpdateSerializer
     permission_classes = [IsAuthenticated]
     def get_queryset(self):
+        if self.request.user.is_anonymous:
+            return Notification.objects.none()
         return Notification.objects.unread_items(self.request.user)
     def perform_update(self, serializer):
         serializer.instance.mark_as_read()

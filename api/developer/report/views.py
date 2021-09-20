@@ -13,7 +13,7 @@ from api.common.report.serializers import (
     DeveloperMonthlyReportSerializer,
     DeveloperQuarterlyReportSerializer,
     DeveloperWeeklyReportSerializer, 
-    DeveloperCustomReportSerializer
+    # DeveloperCustomReportSerializer
 )
 from api.common.report.filters import DeveloperReportFilter
 
@@ -50,6 +50,7 @@ class DeveloperWeeklyReportView(ListAPIView):
 
 class DeveloperCustomReportView(GenericAPIView):
     permission_classes = [IsDeveloper]
+    # serializer_class = DeveloperCustomReportSerializer
 
     def get_queryset(self):
         return User.objects.filter(id=self.request.user.id)
