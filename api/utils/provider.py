@@ -349,7 +349,7 @@ def get_this_week_team_project_earning(team_instance):
 
     return reports
 
-def get_custom_earning(user,user_role, start_date, end_date):
+def get_custom_earning(user, user_role, start_date, end_date):
     """
     returns earning by given period as a developer or team-manager or admin
     """

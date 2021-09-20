@@ -125,7 +125,7 @@ class TeamCustomReportView(APIView):
             total = 0
             for usr_idx in range(user_cnt):
                 user = userset[usr_idx]
-                earning = get_custom_earning(user, ROLE_TEAM_MANAGER, start_date, end_date)
+                earning = get_custom_earning(user, ROLE_DEVELOPER, start_date, end_date)
                 total += earning
                 sub_res[usr_idx] = {
                     'id': user.id,
@@ -157,7 +157,7 @@ class DeveloperThisMonthReportDownloadView(RetrieveAPIView):
         for idx in range(count):
             user = queryset[idx]
             full_name[idx] = user.first_name + ' ' + user.last_name
-            earning[idx] = get_this_month_earning(user, ROLE_DEVELOPER)
+            earning[idx] = get_this_month_earning(user, None, user)
         
         df = pd.DataFrame({
             'full name': full_name,
@@ -182,7 +182,7 @@ class DeveloperThisQuarterReportDownloadView(RetrieveAPIView):
         for idx in range(count):
             user = queryset[idx]
             full_name[idx] = user.first_name + ' ' + user.last_name
-            earning[idx] = get_this_quarter_earning(user, ROLE_DEVELOPER)
+            earning[idx] = get_this_quarter_earning(user, None, user)
         
         df = pd.DataFrame({
             'full name': full_name,
