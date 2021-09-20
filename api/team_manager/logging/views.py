@@ -1,44 +1,32 @@
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from api.common.logging.serializers import LogDetailSerializer
+from django_filters.rest_framework import DjangoFilterBackend
 import datetime
 from reporting.models import Log
 from ...permission import IsTeamManager
 
 
-class DailyLogsForTodayView(ListAPIView):
+class DailyLogsView(ListAPIView):
     serializer_class = LogDetailSerializer
     permission_classes = [IsTeamManager]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['owner']
 
     def get_queryset(self):
-        return Log.objects.daily_logs_for_today_for_team(self.request.user)
-
-
-class WeeklyLogsForThisWeekView(ListAPIView):
-    serializer_class = LogDetailSerializer
-    permission_classes = [IsTeamManager]
-    queryset = Log.objects.weekly_logs_for_thisweek()
+        return Log.objects.daily_logs_for_team(self.request.user)
 
 
 class DailyLogsForCertainDateView(ListAPIView):
     serializer_class = LogDetailSerializer
     permission_classes = [IsTeamManager]
-
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['owner']
     def get_queryset(self):
         year = self.kwargs['year']
         month = self.kwargs['month']
         day = self.kwargs['day']
         dt = datetime.date(year, month, day)
         return Log.objects.daily_logs_for_date_for_team(dt, self.request.user)
-
-
-class WeeklyLogsforCertainWeekView(ListAPIView):
-    serializer_class = LogDetailSerializer
-    permission_classes =[IsTeamManager]
-
-    def get_queryset(self):
-        year = self.kwargs['year']
-        week = self.kwargs['week']
-        return Log.objects.weekly_logs_for_week(year, week)
 
 
 class DailyLogDetailView(RetrieveAPIView):
@@ -52,18 +40,47 @@ class DailyLogDetailView(RetrieveAPIView):
             return Log.objects.daily_logs_for_team(self.request.user)
 
 
-class MonthlyLogsForThisMonthView(ListAPIView):
+class WeeklyLogsView(ListAPIView):
     serializer_class = LogDetailSerializer
     permission_classes = [IsTeamManager]
-
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['owner']
     def get_queryset(self):
-        return Log.objects.monthly_logs_for_this_month_for_team(self.request.user)
+        return Log.objects.weekly_logs_for_team(self.request.user)
+
+
+class WeeklyLogsforCertainWeekView(ListAPIView):
+    serializer_class = LogDetailSerializer
+    permission_classes =[IsTeamManager]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['owner']
+    def get_queryset(self):
+        year = self.kwargs['year']
+        week = self.kwargs['week']
+        return Log.objects.weekly_logs_for_week_for_team(year, week, self.request.user)
+
+
+class WeeklyLogDetailView(RetrieveAPIView):
+    serializer_class = LogDetailSerializer
+    permission_classes = [IsTeamManager]
+    def get_queryset(self):
+        return Log.objects.weekly_logs_for_team(self.request.user)
+
+
+class MonthlyLogsView(ListAPIView):
+    serializer_class = LogDetailSerializer
+    permission_classes = [IsTeamManager]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['owner']
+    def get_queryset(self):
+        return Log.objects.monthly_logs_for_team(self.request.user)
 
 
 class MonthlyLogsForCertainMonthView(ListAPIView):
     serializer_class = LogDetailSerializer
     permission_classes = [IsTeamManager]
-
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['owner']
     def get_queryset(self):
         year = self.kwargs['year']
         month = self.kwargs['month']
@@ -80,8 +97,3 @@ class MonthlyLogDetailView(RetrieveAPIView):
         else:
             return Log.objects.monthly_logs_for_team(self.request.user)
 
-
-class WeeklyLogDetailView(RetrieveAPIView):
-    serializer_class = LogDetailSerializer
-    permission_classes = [IsTeamManager]
-    queryset = Log.objects.weekly_logs_for_thisweek()
