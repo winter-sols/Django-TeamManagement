@@ -5,8 +5,8 @@ from rest_framework.generics import ListAPIView, GenericAPIView
 from django_filters.rest_framework import DjangoFilterBackend
 from api.permission import IsTeamManager
 from api.utils.provider import (
-    get_custom_earning,
-    get_custom_project_earning
+    get_earnings,
+    get_project_earnings
 )
 from user.models import User, Team
 from api.common.report.serializers import (
@@ -66,8 +66,8 @@ class TeamCustomReportView(GenericAPIView):
                 'id': user.id,
                 'first_name': user.first_name,
                 'last_name': user.last_name,
-                'earning': get_custom_earning(user, start_date, end_date),
-                'project_earnings': get_custom_project_earning(user, start_date, end_date)
+                'earning': get_earnings(user, start_date=start_date, end_date=end_date),
+                'project_earnings': get_project_earnings(user, start_date=start_date, end_date=end_date)
             }
 
         if page is not None:
