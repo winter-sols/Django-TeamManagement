@@ -8,12 +8,10 @@ from ...permission import IsDeveloper, IsTeamManager
 from finance.models import Project
 from api.utils.provider import (
     get_weekly_income,
+    get_earnings,
     get_ongoing_projects,
     get_pending_financial_requests,
-    get_this_month_expectation,
-    get_this_month_earning,
-    get_this_quarter_expectation,
-    get_this_quarter_earning,
+    get_expectations,
     get_approved_financial_requests
 )
 from api.common.finance.serializers import (
@@ -48,7 +46,7 @@ class WeeklyIncomeView(BaseDashboardView):
         self.validate_query_params()
         
         viewer = self.request.user
-        income_series = get_weekly_income(viewer, self.team, self.user)
+        income_series = get_weekly_income(viewer, self.team, self.user, 'this-week')
         return Response(income_series.to_list())
 
 
@@ -96,10 +94,10 @@ class StatsView(BaseDashboardView):
     def get(self, request):
         self.validate_query_params()
         viewer = self.request.user
-        this_month_expectation = get_this_month_expectation(viewer, self.team, self.user)
-        this_month_earning = get_this_month_earning(viewer, self.team, self.user)
-        this_quarter_expectation = get_this_quarter_expectation(viewer, self.team, self.user)
-        this_quarter_earning = get_this_quarter_earning(viewer, self.team, self.user)
+        this_month_expectation = get_expectations(viewer, self.team, self.user, 'this-month')
+        this_month_earning = get_earnings(viewer, 'this-month', self.team, self.user)
+        this_quarter_expectation = get_expectations(viewer, self.team, self.user, 'this-quarter')
+        this_quarter_earning = get_earnings(viewer, 'this-quarter', self.team, self.user)
 
         return Response({
             "this_month_expectation": this_month_expectation,

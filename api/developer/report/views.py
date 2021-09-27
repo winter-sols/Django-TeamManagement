@@ -5,8 +5,8 @@ from rest_framework.generics import ListAPIView, GenericAPIView
 from django_filters.rest_framework import DjangoFilterBackend
 from api.permission import IsDeveloper
 from api.utils.provider import (
-    get_custom_earning,
-    get_custom_project_earning
+    get_earnings,
+    get_project_earnings
 )
 from user.models import User, Team
 from api.common.report.serializers import (
@@ -61,15 +61,15 @@ class DeveloperCustomReportView(GenericAPIView):
         queryset = User.objects.filter(id=self.request.user.id)
         user_cnt = queryset.count()
         response = list(range(user_cnt))
-        pagination_queryset = get_custom_project_earning(queryset[0], start_date, end_date)
+        pagination_queryset = get_project_earnings(queryset[0], start_date=start_date, end_date=end_date)
         page = self.paginate_queryset(pagination_queryset)
 
         for idx in range(user_cnt):
             user = queryset[idx]
             response[idx] = {
                 'id': user.id,
-                'earning': get_custom_earning(user, user.role, start_date, end_date),
-                'project_earnings': get_custom_project_earning(user, start_date, end_date)
+                'earning': get_earnings(user, start_date=start_date, end_date=end_date),
+                'project_earnings': get_project_earnings(user, start_date=start_date, end_date=end_date)
             }
 
         if page is not None:
