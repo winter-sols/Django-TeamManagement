@@ -22,7 +22,6 @@ urlpatterns = router.urls + [
     path('profiles/<int:pk>/accounts/', AccountListByProfileIdView.as_view(), name='profile_accounts'),
     path('financial-requests/', include('api.admin.finance.urls')),
     path('dashboard/', include('api.common.dashboard.urls')),
-    path('reports/', include('api.admin.report.urls')),
     path('logging/', include('api.admin.logging.urls')),
     path('notifications/', include('api.common.notification.urls')),
     path('my-logs/', include('api.common.logging.urls')),
