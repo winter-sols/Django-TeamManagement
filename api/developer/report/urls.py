@@ -4,11 +4,13 @@ from .views import (
     DeveloperMonthlyReportView,
     DeveloperQuarterlyReportView,
     DeveloperWeeklyReportView,
-    DeveloperCustomReportView
+    DeveloperCustomReportView,
+    DeveloperReportView
 )
 
 
 urlpatterns = [
+    path('', DeveloperReportView.as_view(), name='reports_developer'),
     path('this-month/', DeveloperMonthlyReportView.as_view(), name='reports_developer_this-month'),
     path('this-quarter/', DeveloperQuarterlyReportView.as_view(), name='report_developer_quarterly'),
     path('this-week/', DeveloperWeeklyReportView.as_view(), name='report_developer_weekly'),

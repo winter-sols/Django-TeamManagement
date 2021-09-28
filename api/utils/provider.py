@@ -8,7 +8,7 @@ from user.constants import ROLE_ADMIN, ROLE_TEAM_MANAGER, ROLE_DEVELOPER
 from api.common.finance.serializers import (
     FinancialRequestDetailSerializer
 )
-
+from api.common.report.constants import CUSTOM
 
 def get_dates_from_period(period):
     if period == 'this-month':
@@ -120,7 +120,7 @@ def get_earnings(viewer, period=None, team=None, user=None, start_date=None, end
     """
     calculate current earning of month as a developer or team-manger or developer
     """
-    if period is not None:
+    if period is not None and period!= CUSTOM:
         dates = get_dates_from_period(period)
         start_date = dates.get('start_date')
         end_date = dates.get('end_date')
@@ -236,7 +236,7 @@ def get_approved_financial_requests(viewer, team, user):
     return queryset
 
 
-def get_project_earnings(user, period=None, start_date=None, end_date=None):
+def get_user_project_earnings(user, period=None, start_date=None, end_date=None):
     """
     calculate current earning of developer by projects
     """
@@ -270,3 +270,14 @@ def get_project_earnings(user, period=None, start_date=None, end_date=None):
         }
 
     return project_earning
+
+def get_total_earnings(users, period, start_date, end_date):
+    total = 0
+    for user in users:
+        project_earnings =  get_user_project_earnings( user, period, start_date, end_date)
+        individual_total = 0
+        for project_earning in project_earnings:
+            earning = project_earning.get('earning')
+            individual_total += earning
+        total += individual_total
+    return total

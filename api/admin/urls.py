@@ -26,4 +26,5 @@ urlpatterns = router.urls + [
     path('logging/', include('api.admin.logging.urls')),
     path('notifications/', include('api.common.notification.urls')),
     path('my-logs/', include('api.common.logging.urls')),
+    path('report/earnings/', include('api.admin.report.urls')),
 ]
