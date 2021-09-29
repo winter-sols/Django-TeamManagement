@@ -6,232 +6,224 @@ from rest_framework.generics import ListAPIView, RetrieveAPIView, GenericAPIView
 from django_filters.rest_framework import DjangoFilterBackend
 from api.permission import IsAdmin
 from api.utils.provider import (
-    get_earnings,
-    get_project_earnings
+    get_earnings
 )
 from user.models import User, Team
 from user.constants import ROLE_DEVELOPER, ROLE_TEAM_MANAGER
 from api.common.report.serializers import (
-    DeveloperMonthlyReportSerializer,
-    DeveloperQuarterlyReportSerializer,
-    DeveloperWeeklyReportSerializer, 
-    TeamMonthlyReportSerializer,
-    TeamQuarterlyReportSerializer,
-    TeamWeeklyReportSerializer,
-    # DeveloperCustomReportSerializer
+    ReportProjectEarningsSerializer,
+    ReportDeveloperSerializer,
+    ReportTeamSerializer,
 )
 from api.common.report.filters import DeveloperReportFilter, TeamReportFilter
 from api.utils.download import get_download_response
+from api.common.report import constants
 
-class DeveloperMonthlyReportView(ListAPIView):
+
+class ReportTotalView(GenericAPIView):
     permission_classes = [IsAdmin]
     filter_backends = (DjangoFilterBackend,)
     filterset_class = DeveloperReportFilter
-    serializer_class = DeveloperMonthlyReportSerializer
-    queryset = User.objects.all()
+
+    def get(self, obj):
+        query_params = self.request.query_params
+        viewer = self.request.user
+        period = query_params.get('period')
+        start_date = query_params.get('from')
+        end_date = query_params.get('to')
+        res =  {'total_earnings': get_earnings(viewer, period, None, None, start_date, end_date)}
+        return Response(res)
 
 
-class DeveloperQuarterlyReportView(ListAPIView):
+class ReportDeveloperListView(ListAPIView):
     permission_classes = [IsAdmin]
     filter_backends = (DjangoFilterBackend,)
     filterset_class = DeveloperReportFilter
-    serializer_class = DeveloperQuarterlyReportSerializer
     queryset = User.objects.all()
 
+    def get_serializer_class(self):
+        return ReportDeveloperSerializer
+    
+    def get_serializer_context(self):
+        serializer_context = super().get_serializer_context()
+        query_params = self.request.query_params
+        serializer_context['period'] = query_params.get('period')
+        serializer_context['start_date'] = query_params.get('from')
+        serializer_context['end_date'] = query_params.get('to')
+        return serializer_context
 
-class DeveloperWeeklyReportView(ListAPIView):
+
+class ReportDeveloperDetailView(RetrieveAPIView):
     permission_classes = [IsAdmin]
-    filter_backends = (DjangoFilterBackend,)
-    filterset_class = DeveloperReportFilter
-    serializer_class = DeveloperWeeklyReportSerializer
-    queryset = User.objects.all()
+
+    def get_queryset(self):
+        return User.objects.filter(id=self.kwargs.get('pk'))
+    
+    def get_serializer_class(self):
+        return ReportDeveloperSerializer
+    
+    def get_serializer_context(self):
+        serializer_context = super().get_serializer_context()
+        query_params = self.request.query_params
+        serializer_context['period'] = query_params.get('period')
+        serializer_context['start_date'] = query_params.get('from')
+        serializer_context['end_date'] = query_params.get('to')
+        return serializer_context
 
 
-class TeamMonthlyReportView(ListAPIView):
+class ReportProjectEarningsListView(RetrieveAPIView):
     permission_classes = [IsAdmin]
-    serializer_class = TeamMonthlyReportSerializer
+    
+    def get_queryset(self):
+        return User.objects.filter(id=self.kwargs.get('pk'))
+    
+    def get_serializer_class(self):
+        return ReportProjectEarningsSerializer
+    
+    def get_serializer_context(self):
+        serializer_context = super().get_serializer_context()
+        query_params = self.request.query_params
+        serializer_context['period'] = query_params.get('period')
+        serializer_context['start_date'] = query_params.get('from')
+        serializer_context['end_date'] = query_params.get('to')
+        return serializer_context
+
+
+class ReportTeamListView(ListAPIView):
+    permission_classes = [IsAdmin]
     queryset = Team.objects.all()
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TeamReportFilter
     pagination_class = None
 
+    def get_serializer_class(self):
+        return ReportTeamSerializer
+    
+    def get_serializer_context(self):
+        serializer_context = super().get_serializer_context()
+        query_params = self.request.query_params
+        serializer_context['period'] = query_params.get('period')
+        serializer_context['start_date'] = query_params.get('from')
+        serializer_context['end_date'] = query_params.get('to')
+        serializer_context['viewer'] = self.request.user
+        return serializer_context
 
-class TeamQuarterlyReportView(ListAPIView):
+
+class ReportTeamDetailView(ListAPIView):
     permission_classes = [IsAdmin]
-    serializer_class = TeamQuarterlyReportSerializer
-    queryset = Team.objects.all()
-    filter_backends = (DjangoFilterBackend,)
-    filterset_class = TeamReportFilter
     pagination_class = None
 
+    def get_queryset(self):
+        return Team.objects.filter(id=self.kwargs.get('pk'))
 
-class TeamWeeklyReportView(ListAPIView):
-    permission_classes = [IsAdmin]
-    serializer_class = TeamWeeklyReportSerializer
-    queryset = Team.objects.all()
-    filter_backends = (DjangoFilterBackend,)
-    filterset_class = TeamReportFilter
-    pagination_class = None
-
-
-class DeveloperCustomReportView(GenericAPIView):
-    permission_classes = [IsAdmin]
-    # serializer_class = DeveloperCustomReportSerializer
-    filter_backends = (DjangoFilterBackend,)
-    filterset_class = DeveloperReportFilter
-    queryset = User.objects.all()
-
-    def get(self, request):
-        start_date = self.request.query_params.get('from')
-        end_date = self.request.query_params.get('to')
-        team_id = self.request.query_params.get('team')
-        if team_id:
-            queryset = User.objects.filter(team = team_id)
-        else:
-            queryset = User.objects.all()
-        page = self.paginate_queryset(queryset)
-        response = []
-
-        for user in queryset:
-            response.append({
-                'id': user.id,
-                'first_name': user.first_name,
-                'last_name': user.last_name,
-                'earning': get_earnings(user, start_date=start_date, end_date=end_date),
-                'project_earnings': get_project_earnings(user, start_date=start_date, end_date=end_date)
-            })
-
-        if page is not None:
-            return self.get_paginated_response(response)
-        return Response(response)
+    def get_serializer_class(self):
+        return ReportTeamSerializer
+    
+    def get_serializer_context(self):
+        serializer_context = super().get_serializer_context()
+        query_params = self.request.query_params
+        serializer_context['period'] = query_params.get('period')
+        serializer_context['start_date'] = query_params.get('from')
+        serializer_context['end_date'] = query_params.get('to')
+        serializer_context['viewer'] = self.request.user
+        return serializer_context
 
 
-class TeamCustomReportView(APIView):
-    permission_classes = [IsAdmin]
+# class DeveloperThisMonthReportDownloadView(RetrieveAPIView):
+#     permission_classes = [IsAdmin]
+#     serializer_class = DeveloperMonthlyReportSerializer
+#     queryset = User.objects.all()
 
-    def get(self, request):
-        start_date = self.request.query_params.get('from')
-        end_date = self.request.query_params.get('to')
-        queryset = Team.objects.all()
-        response = []
+#     def get(self, request):
+#         queryset = User.objects.all()
+#         count = queryset.count()
 
-        for team in queryset:
-            userset = team.user_set.all()
-            sub_res = []
-            total = 0
-            for user in userset:
-                earning = get_earnings(user, start_date=start_date, end_date=end_date)
-                total += earning
-                sub_res.append({
-                    'id': user.id,
-                    'full_name': user.first_name + ' ' + user.last_name,
-                    'earning': earning
-                })
-            
-            response.append({
-                'earning': sub_res,
-                'total': total,
-                'id': team.id,
-                'name': team.name,
-            })
-        return Response(response)
-
-
-class DeveloperThisMonthReportDownloadView(RetrieveAPIView):
-    permission_classes = [IsAdmin]
-    serializer_class = DeveloperMonthlyReportSerializer
-    queryset = User.objects.all()
-
-    def get(self, request):
-        queryset = User.objects.all()
-        count = queryset.count()
-
-        full_name = list(range(count))
-        earning = list(range(count))
+#         full_name = list(range(count))
+#         earning = list(range(count))
         
-        for idx in range(count):
-            user = queryset[idx]
-            full_name[idx] = user.first_name + ' ' + user.last_name
-            earning[idx] = get_earnings(user, 'this-month', None, user)
+#         for idx in range(count):
+#             user = queryset[idx]
+#             full_name[idx] = user.first_name + ' ' + user.last_name
+#             earning[idx] = get_earnings(user, 'this-month', None, user)
         
-        df = pd.DataFrame({
-            'full name': full_name,
-            'earning': earning
-        }, index=range(1, count + 1))
+#         df = pd.DataFrame({
+#             'full name': full_name,
+#             'earning': earning
+#         }, index=range(1, count + 1))
 
-        return get_download_response(df, "developer.csv")
+#         return get_download_response(df, "developer.csv")
 
 
-class DeveloperThisQuarterReportDownloadView(RetrieveAPIView):
-    permission_classes = [IsAdmin]
-    serializer_class = DeveloperQuarterlyReportSerializer
-    queryset = User.objects.all()
+# class DeveloperThisQuarterReportDownloadView(RetrieveAPIView):
+#     permission_classes = [IsAdmin]
+#     serializer_class = DeveloperQuarterlyReportSerializer
+#     queryset = User.objects.all()
 
-    def get(self, request):
-        queryset = User.objects.all()
-        count = queryset.count()
+#     def get(self, request):
+#         queryset = User.objects.all()
+#         count = queryset.count()
 
-        full_name = list(range(count))
-        earning = list(range(count))
+#         full_name = list(range(count))
+#         earning = list(range(count))
         
-        for idx in range(count):
-            user = queryset[idx]
-            full_name[idx] = user.first_name + ' ' + user.last_name
-            earning[idx] = get_earnings(user, 'this-quarter', None, user)
+#         for idx in range(count):
+#             user = queryset[idx]
+#             full_name[idx] = user.first_name + ' ' + user.last_name
+#             earning[idx] = get_earnings(user, 'this-quarter', None, user)
         
-        df = pd.DataFrame({
-            'full name': full_name,
-            'earning': earning
-        }, index=range(1, count + 1))
+#         df = pd.DataFrame({
+#             'full name': full_name,
+#             'earning': earning
+#         }, index=range(1, count + 1))
 
-        return get_download_response(df, "developer.csv")
+#         return get_download_response(df, "developer.csv")
 
 
-class DeveloperThisWeekReportDownloadView(RetrieveAPIView):
-    permission_classes = [IsAdmin]
-    serializer_class = DeveloperWeeklyReportSerializer
-    queryset = User.objects.all()
+# class DeveloperThisWeekReportDownloadView(RetrieveAPIView):
+#     permission_classes = [IsAdmin]
+#     serializer_class = DeveloperWeeklyReportSerializer
+#     queryset = User.objects.all()
 
-    def get(self, request):
-        queryset = User.objects.all()
-        count = queryset.count()
+#     def get(self, request):
+#         queryset = User.objects.all()
+#         count = queryset.count()
 
-        full_name = list(range(count))
-        earning = list(range(count))
+#         full_name = list(range(count))
+#         earning = list(range(count))
         
-        for idx in range(count):
-            user = queryset[idx]
-            full_name[idx] = user.first_name + ' ' + user.last_name
-            earning[idx] = get_earnings(user, 'this-week')
+#         for idx in range(count):
+#             user = queryset[idx]
+#             full_name[idx] = user.first_name + ' ' + user.last_name
+#             earning[idx] = get_earnings(user, 'this-week')
         
-        df = pd.DataFrame({
-            'full name': full_name,
-            'earning': earning
-        }, index=range(1, count + 1))
+#         df = pd.DataFrame({
+#             'full name': full_name,
+#             'earning': earning
+#         }, index=range(1, count + 1))
 
-        return get_download_response(df, "developer.csv")
+#         return get_download_response(df, "developer.csv")
 
 
-class DeveloperCustomReportDownloadView(RetrieveAPIView):
-    permission_classes = [IsAdmin]
-    serializer_class = DeveloperWeeklyReportSerializer
-    queryset = User.objects.all()
+# class DeveloperCustomReportDownloadView(RetrieveAPIView):
+#     permission_classes = [IsAdmin]
+#     serializer_class = DeveloperWeeklyReportSerializer
+#     queryset = User.objects.all()
 
-    def get(self, request):
-        start_date = self.request.query_params.get('from')
-        end_date = self.request.query_params.get('to')
-        queryset = User.objects.all()
-        count = queryset.count()
-        full_name = list(range(count))
-        earning = list(range(count))
-        for idx in range(count):
-            user = queryset[idx]
-            full_name[idx] = user.first_name + ' ' + user.last_name
-            earning[idx] = get_earnings(user, ROLE_DEVELOPER, start_date, end_date)
+#     def get(self, request):
+#         start_date = self.request.query_params.get('from')
+#         end_date = self.request.query_params.get('to')
+#         queryset = User.objects.all()
+#         count = queryset.count()
+#         full_name = list(range(count))
+#         earning = list(range(count))
+#         for idx in range(count):
+#             user = queryset[idx]
+#             full_name[idx] = user.first_name + ' ' + user.last_name
+#             earning[idx] = get_earnings(user, ROLE_DEVELOPER, start_date, end_date)
 
-        df = pd.DataFrame({
-            'full name': full_name,
-            'earning': earning
-        }, index=range(1, count + 1))
+#         df = pd.DataFrame({
+#             'full name': full_name,
+#             'earning': earning
+#         }, index=range(1, count + 1))
 
-        return get_download_response(df, "developer.csv")
+#         return get_download_response(df, "developer.csv")

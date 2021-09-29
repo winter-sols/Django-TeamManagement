@@ -15,7 +15,7 @@ router.register('accounts', AccountsAdminViewSet)
 urlpatterns = router.urls + [
     path('financial-requests/', include('api.developer.finance.urls')),
     path('dashboard/', include('api.common.dashboard.urls')),
-    path('reports/', include('api.developer.report.urls')),
     path('notifications/', include('api.common.notification.urls')),
-    path('my-logs/', include('api.common.logging.urls'))
+    path('my-logs/', include('api.common.logging.urls')),
+    path('report/earnings/', include('api.developer.report.urls')),
 ]
