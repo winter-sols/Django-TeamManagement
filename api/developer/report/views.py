@@ -6,14 +6,14 @@ from django_filters.rest_framework import DjangoFilterBackend
 from api.permission import IsDeveloper
 from user.models import User, Team
 from api.common.report.serializers import (
-    DeveloperProjectSerializerForDeveloper
+    ReportDeveloperProjectSerializer
     # DeveloperCustomReportSerializer
 )
 from api.common.report.filters import DeveloperReportFilter
 from api.common.report import constants
 
 
-class DeveloperReportView(ListAPIView):
+class ReportDeveloperView(ListAPIView):
     permission_classes = [IsDeveloper]
     pagination_class = None
 
@@ -21,12 +21,12 @@ class DeveloperReportView(ListAPIView):
         return User.objects.filter(id=self.request.user.id)
 
     def get_serializer_class(self):
-        return DeveloperProjectSerializerForDeveloper
+        return ReportDeveloperProjectSerializer
     
-    def get_serializer(self, *args, **kwargs):
-        serializer_class = self.get_serializer_class()
-        period = self.request.query_params.get('period')
-        start_date = self.request.query_params.get('from')
-        end_date = self.request.query_params.get('to')
-        kwargs['context'] = {'period': period, 'start_date': start_date, 'end_date': end_date}
-        return serializer_class(*args, **kwargs)
+    def get_serializer_context(self):
+        serializer_context = super().get_serializer_context()
+        query_params = self.request.query_params
+        serializer_context['period'] = query_params.get('period')
+        serializer_context['start_date'] = query_params.get('from')
+        serializer_context['end_date'] = query_params.get('to')
+        return serializer_context

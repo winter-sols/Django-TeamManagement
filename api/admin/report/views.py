@@ -6,96 +6,90 @@ from rest_framework.generics import ListAPIView, RetrieveAPIView, GenericAPIView
 from django_filters.rest_framework import DjangoFilterBackend
 from api.permission import IsAdmin
 from api.utils.provider import (
-    get_total_earnings
+    get_earnings
 )
 from user.models import User, Team
 from user.constants import ROLE_DEVELOPER, ROLE_TEAM_MANAGER
 from api.common.report.serializers import (
-    IndividualDeveloperProjectSerializer,
-    DeveloperReportSerializer,
-    TeamReportSerializer,
+    ReportProjectEarningsSerializer,
+    ReportDeveloperSerializer,
+    ReportTeamSerializer,
 )
 from api.common.report.filters import DeveloperReportFilter, TeamReportFilter
 from api.utils.download import get_download_response
 from api.common.report import constants
 
 
-class ReportTotalView(ListAPIView):
+class ReportTotalView(GenericAPIView):
     permission_classes = [IsAdmin]
     filter_backends = (DjangoFilterBackend,)
     filterset_class = DeveloperReportFilter
-    pagination_class = None
-
-    def get_queryset(self):
-        team = self.request.query_params.get('team')
-        if team is not None:
-            return User.objects.filter(team=team)
-        else: return User.objects.all()
 
     def get(self, obj):
-        users = self.get_queryset()
-        period = self.request.query_params.get('period')
-        start_date = self.request.query_params.get('from')
-        end_date = self.request.query_params.get('to')
-        res =  {'total_earnings': get_total_earnings(users, period, start_date, end_date)}
+        query_params = self.request.query_params
+        viewer = self.request.user
+        period = query_params.get('period')
+        start_date = query_params.get('from')
+        end_date = query_params.get('to')
+        res =  {'total_earnings': get_earnings(viewer, period, None, None, start_date, end_date)}
         return Response(res)
 
 
-class DevelopersReportView(ListAPIView):
+class ReportDeveloperListView(ListAPIView):
     permission_classes = [IsAdmin]
     filter_backends = (DjangoFilterBackend,)
     filterset_class = DeveloperReportFilter
     queryset = User.objects.all()
 
     def get_serializer_class(self):
-        return DeveloperReportSerializer
+        return ReportDeveloperSerializer
     
-    def get_serializer(self, *args, **kwargs):
-        serializer_class = self.get_serializer_class()
-        period = self.request.query_params.get('period')
-        start_date = self.request.query_params.get('from')
-        end_date = self.request.query_params.get('to')
-        kwargs['context'] = {'period': period, 'start_date': start_date, 'end_date': end_date}
-        return serializer_class(*args, **kwargs)
+    def get_serializer_context(self):
+        serializer_context = super().get_serializer_context()
+        query_params = self.request.query_params
+        serializer_context['period'] = query_params.get('period')
+        serializer_context['start_date'] = query_params.get('from')
+        serializer_context['end_date'] = query_params.get('to')
+        return serializer_context
 
 
-class IndividualDeveloperReportView(RetrieveAPIView):
+class ReportDeveloperDetailView(RetrieveAPIView):
     permission_classes = [IsAdmin]
 
     def get_queryset(self):
         return User.objects.filter(id=self.kwargs.get('pk'))
     
     def get_serializer_class(self):
-        return DeveloperReportSerializer
+        return ReportDeveloperSerializer
     
-    def get_serializer(self, *args, **kwargs):
-        serializer_class = self.get_serializer_class()
-        period = self.request.query_params.get('period')
-        start_date = self.request.query_params.get('from')
-        end_date = self.request.query_params.get('to')
-        kwargs['context'] = {'period': period, 'start_date': start_date, 'end_date': end_date}
-        return serializer_class(*args, **kwargs)
+    def get_serializer_context(self):
+        serializer_context = super().get_serializer_context()
+        query_params = self.request.query_params
+        serializer_context['period'] = query_params.get('period')
+        serializer_context['start_date'] = query_params.get('from')
+        serializer_context['end_date'] = query_params.get('to')
+        return serializer_context
 
 
-class IndividualDeveloperProjectReportView(RetrieveAPIView):
+class ReportProjectEarningsListView(RetrieveAPIView):
     permission_classes = [IsAdmin]
     
     def get_queryset(self):
         return User.objects.filter(id=self.kwargs.get('pk'))
     
     def get_serializer_class(self):
-        return IndividualDeveloperProjectSerializer
+        return ReportProjectEarningsSerializer
     
-    def get_serializer(self, *args, **kwargs):
-        serializer_class = self.get_serializer_class()
-        period = self.request.query_params.get('period')
-        start_date = self.request.query_params.get('from')
-        end_date = self.request.query_params.get('to')
-        kwargs['context'] = {'period': period, 'start_date': start_date, 'end_date': end_date}
-        return serializer_class(*args, **kwargs)
+    def get_serializer_context(self):
+        serializer_context = super().get_serializer_context()
+        query_params = self.request.query_params
+        serializer_context['period'] = query_params.get('period')
+        serializer_context['start_date'] = query_params.get('from')
+        serializer_context['end_date'] = query_params.get('to')
+        return serializer_context
 
 
-class TeamsReportView(ListAPIView):
+class ReportTeamListView(ListAPIView):
     permission_classes = [IsAdmin]
     queryset = Team.objects.all()
     filter_backends = (DjangoFilterBackend,)
@@ -103,18 +97,19 @@ class TeamsReportView(ListAPIView):
     pagination_class = None
 
     def get_serializer_class(self):
-        return TeamReportSerializer
+        return ReportTeamSerializer
     
-    def get_serializer(self, *args, **kwargs):
-        serializer_class = self.get_serializer_class()
-        period = self.request.query_params.get('period')
-        start_date = self.request.query_params.get('from')
-        end_date = self.request.query_params.get('to')
-        kwargs['context'] = {'period': period, 'start_date': start_date, 'end_date': end_date}
-        return serializer_class(*args, **kwargs)
+    def get_serializer_context(self):
+        serializer_context = super().get_serializer_context()
+        query_params = self.request.query_params
+        serializer_context['period'] = query_params.get('period')
+        serializer_context['start_date'] = query_params.get('from')
+        serializer_context['end_date'] = query_params.get('to')
+        serializer_context['viewer'] = self.request.user
+        return serializer_context
 
 
-class IndividualTeamReportView(ListAPIView):
+class ReportTeamDetailView(ListAPIView):
     permission_classes = [IsAdmin]
     pagination_class = None
 
@@ -122,15 +117,16 @@ class IndividualTeamReportView(ListAPIView):
         return Team.objects.filter(id=self.kwargs.get('pk'))
 
     def get_serializer_class(self):
-        return TeamReportSerializer
+        return ReportTeamSerializer
     
-    def get_serializer(self, *args, **kwargs):
-        serializer_class = self.get_serializer_class()
-        period = self.request.query_params.get('period')
-        start_date = self.request.query_params.get('from')
-        end_date = self.request.query_params.get('to')
-        kwargs['context'] = {'period': period, 'start_date': start_date, 'end_date': end_date}
-        return serializer_class(*args, **kwargs)
+    def get_serializer_context(self):
+        serializer_context = super().get_serializer_context()
+        query_params = self.request.query_params
+        serializer_context['period'] = query_params.get('period')
+        serializer_context['start_date'] = query_params.get('from')
+        serializer_context['end_date'] = query_params.get('to')
+        serializer_context['viewer'] = self.request.user
+        return serializer_context
 
 
 # class DeveloperThisMonthReportDownloadView(RetrieveAPIView):

@@ -1,10 +1,10 @@
 from django.urls import path
 
 from .views import (
-    DeveloperReportView
+    ReportDeveloperView
 )
 
 
 urlpatterns = [
-    path('', DeveloperReportView.as_view(), name='reports_developer'),
+    path('', ReportDeveloperView.as_view(), name='reports_developer'),
 ]
