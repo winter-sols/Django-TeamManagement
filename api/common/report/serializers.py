@@ -52,7 +52,9 @@ class ReportDeveloperProjectSerializer(serializers.ModelSerializer):
     def get_project_earnings(self, obj):
         context = self.context
         period = context.get('period')
-        return get_user_project_earnings( obj, period)
+        start_date = context.get('start_date')
+        end_date = context.get('end_date')
+        return get_user_project_earnings( obj, period, start_date, end_date)
 
     class Meta:
         model = User
