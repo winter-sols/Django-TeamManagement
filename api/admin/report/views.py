@@ -7,7 +7,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from api.permission import IsAdmin
 from api.utils.provider import (
     get_earnings,
-    get_queryset_with_earnings
+    get_queryset_with_developer_earnings
 )
 from finance import constants as cs
 from user.models import User, Team
@@ -42,23 +42,22 @@ class ReportDeveloperListView(ListAPIView):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = DeveloperReportFilter
     serializer_class = ReportDeveloperSerializer
-    
-    def get_queryset(self):
-        return get_queryset_with_earnings(
+    queryset = User.objects.all()
+
+    def filter_queryset(self, queryset):
+        return get_queryset_with_developer_earnings(
             self.request.user,
-            User.objects.all(),
+            super().filter_queryset(queryset),
             self.request.query_params
         )
 
 
 class ReportDeveloperDetailView(RetrieveAPIView):
     permission_classes = [IsAdmin]
-    filter_backends = (DjangoFilterBackend,)
-    filterset_class = DeveloperReportFilter
     serializer_class = ReportDeveloperSerializer
 
     def get_queryset(self):
-        return get_queryset_with_earnings(
+        return get_queryset_with_developer_earnings(
             self.request.user,
             User.objects.filter(id=self.kwargs.get('pk')),
             self.request.query_params
