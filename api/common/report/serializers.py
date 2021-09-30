@@ -27,11 +27,7 @@ class ReportDeveloperSerializer(serializers.ModelSerializer):
     earning = serializers.SerializerMethodField()
 
     def get_earning(self, obj):
-        context = self.context
-        period = context.get('period')
-        start_date = context.get('start_date')
-        end_date = context.get('end_date')
-        return get_earnings(obj, period,  None, obj, start_date, end_date)
+        return obj.total
 
     class Meta:
         model = User

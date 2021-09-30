@@ -1,6 +1,6 @@
 import pandas as pd
 from datetime import date, timedelta
-from django.db.models import Sum
+from django.db.models import Sum, Q
 
 from finance.models import Project, FinancialRequest, Transaction
 from finance import constants as cs
@@ -115,6 +115,102 @@ def get_expectations(viewer,team, user, period):
     end_date = dates.get('end_date')
     return get_incomes_of_period(viewer, team, user, start_date, end_date).sum()
 
+
+def get_queryset_with_earnings(viewer, queryset, query_params):
+    period = query_params.get('period')
+    user = query_params.get('user')
+    team = query_params.get('team')
+
+    if period is not None and period != PERIOD_CUSTOM:
+        dates = get_dates_from_period(period)
+        start_date = dates.get('start_date')
+        end_date = dates.get('end_date')
+    else:
+        start_date = query_params.get('from')
+        end_date = query_params.get('to')
+
+    if viewer.is_anonymous:
+        sum = 0
+    elif viewer.is_admin:
+        if user is not None:
+            qs = queryset.annotate(
+                total=Sum('financialrequest__transaction__net_amount',
+                filter=Q(
+                    financialrequest__transaction__created_at__gte=start_date,
+                    financialrequest__transaction__created_at__lte=end_date,
+                    financialrequest__requester=user,
+                    financialrequest__type__in=[
+                        cs.FINANCIAL_TYPE_RCV_PAYMENT,
+                        cs.FINANCIAL_TYPE_REFUND_PAYMENT,
+                        cs.FINANCIAL_TYPE_SND_PAYMENT
+                    ]
+                )))
+        elif team is not None:
+            qs = queryset.annotate(
+                total=Sum('financialrequest__transaction__net_amount',
+                filter=Q(
+                    financialrequest__transaction__created_at__gte=start_date,
+                    financialrequest__transaction__created_at__lte=end_date,
+                    financialrequest__requester__team=team,
+                    financialrequest__type__in=[
+                        cs.FINANCIAL_TYPE_RCV_PAYMENT,
+                        cs.FINANCIAL_TYPE_REFUND_PAYMENT,
+                        cs.FINANCIAL_TYPE_SND_PAYMENT
+                    ]
+                )))
+        else:
+            qs = queryset.annotate(
+                total=Sum('financialrequest__transaction__net_amount',
+                filter=Q(
+                    financialrequest__transaction__created_at__gte=start_date,
+                    financialrequest__transaction__created_at__lte=end_date,
+                    financialrequest__type__in=[
+                        cs.FINANCIAL_TYPE_RCV_PAYMENT,
+                        cs.FINANCIAL_TYPE_REFUND_PAYMENT,
+                        cs.FINANCIAL_TYPE_SND_PAYMENT
+                    ]
+                )))
+    elif viewer.is_team_manager:
+        if user is not None:
+            qs = queryset.annotate(
+                total=Sum('financialrequest__transaction__net_amount',
+                filter=Q(
+                    financialrequest__transaction__created_at__gte=start_date,
+                    financialrequest__transaction__created_at__lte=end_date,
+                    financialrequest__requester=user,
+                    financialrequest__type__in=[
+                        cs.FINANCIAL_TYPE_RCV_PAYMENT,
+                        cs.FINANCIAL_TYPE_REFUND_PAYMENT,
+                        cs.FINANCIAL_TYPE_SND_PAYMENT
+                    ]
+                )))
+        else:
+            qs = queryset.annotate(
+                total=Sum('financialrequest__transaction__net_amount',
+                filter=Q(
+                    financialrequest__transaction__created_at__gte=start_date,
+                    financialrequest__transaction__created_at__lte=end_date,
+                    financialrequest__type__in=[
+                        cs.FINANCIAL_TYPE_RCV_PAYMENT,
+                        cs.FINANCIAL_TYPE_REFUND_PAYMENT,
+                        cs.FINANCIAL_TYPE_SND_PAYMENT
+                    ]
+                )))
+    else:
+        qs = queryset.annotate(
+            total=Sum('financialrequest__transaction__net_amount',
+            filter=Q(
+                financialrequest__transaction__created_at__gte=start_date,
+                financialrequest__transaction__created_at__lte=end_date,
+                financialrequest__requester=viewer,
+                financialrequest__type__in=[
+                    cs.FINANCIAL_TYPE_RCV_PAYMENT,
+                    cs.FINANCIAL_TYPE_REFUND_PAYMENT,
+                    cs.FINANCIAL_TYPE_SND_PAYMENT
+                ]
+            )))
+    return qs
+    
 
 def get_earnings(viewer, period=None, team=None, user=None, start_date=None, end_date=None):
     """
