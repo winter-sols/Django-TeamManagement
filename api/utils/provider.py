@@ -318,3 +318,24 @@ def get_user_project_earnings(user, period=None, start_date=None, end_date=None)
         }
 
     return project_earning
+
+def get_queryset_with_project_earnings(viewer, queryset, query_params):
+    period = query_params.get('period')
+
+    if period is not None and period != PERIOD_CUSTOM:
+        dates = get_dates_from_period(period)
+        start_date = dates.get('start_date')
+        end_date = dates.get('end_date')
+    else:
+        start_date = query_params.get('from')
+        end_date = query_params.get('to')
+    return queryset.annotate(
+        earning=Sum('financialrequest__transaction__net_amount',
+        filter=Q(
+            financialrequest__transaction__created_at__gte=start_date,
+            financialrequest__transaction__created_at__lte=end_date,
+            financialrequest__type__in=[
+                cs.FINANCIAL_TYPE_RCV_PAYMENT,
+                cs.FINANCIAL_TYPE_REFUND_PAYMENT
+            ]
+        )))

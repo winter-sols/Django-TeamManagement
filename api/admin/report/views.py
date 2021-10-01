@@ -8,10 +8,12 @@ from api.permission import IsAdmin
 from api.utils.provider import (
     get_earnings,
     get_queryset_with_developer_earnings,
-    get_queryset_with_team_earnings
+    get_queryset_with_team_earnings,
+    get_queryset_with_project_earnings
 )
 from finance import constants as cs
 from user.models import User, Team
+from finance.models import Project
 from user.constants import ROLE_DEVELOPER, ROLE_TEAM_MANAGER
 from api.common.report.serializers import (
     ReportProjectEarningsSerializer,
@@ -63,22 +65,18 @@ class ReportDeveloperDetailView(RetrieveAPIView):
         )
 
 
-class ReportProjectEarningsListView(RetrieveAPIView):
+class ReportProjectEarningsListView(ListAPIView):
     permission_classes = [IsAdmin]
+    serializer_class = ReportProjectEarningsSerializer
+    pagination_class = None
     
     def get_queryset(self):
-        return User.objects.filter(id=self.kwargs.get('pk'))
+        return get_queryset_with_project_earnings(
+            self.request.user,
+            Project.objects.filter(financialrequest__requester=self.kwargs.get('pk')),
+            self.request.query_params
+        )
     
-    def get_serializer_class(self):
-        return ReportProjectEarningsSerializer
-    
-    def get_serializer_context(self):
-        serializer_context = super().get_serializer_context()
-        query_params = self.request.query_params
-        serializer_context['period'] = query_params.get('period')
-        serializer_context['start_date'] = query_params.get('from')
-        serializer_context['end_date'] = query_params.get('to')
-        return serializer_context
 
 
 class ReportTeamListView(ListAPIView):
