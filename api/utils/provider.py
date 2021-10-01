@@ -178,7 +178,7 @@ def get_queryset_with_team_earnings(queryset, query_params):
         )))
     
 
-def get_earnings(viewer, period=None, team=None, user=None, start_date=None, end_date=None):
+def get_earnings(viewer, period=None, start_date=None, end_date=None):
     """
     calculate current earning of month as a developer or team-manger or developer
     """
@@ -188,86 +188,23 @@ def get_earnings(viewer, period=None, team=None, user=None, start_date=None, end
         end_date = dates.get('end_date')
         
     if viewer.is_anonymous:
-        sum = 0
+        return 0
     elif viewer.is_admin:
-        if user is not None:
-            sum = Transaction.objects \
-                .filter(
-                    created_at__gte=start_date,
-                    created_at__lte=end_date,
-                    financial_request__requester=user,
-                    financial_request__type__in=[
-                        cs.FINANCIAL_TYPE_RCV_PAYMENT,
-                        cs.FINANCIAL_TYPE_REFUND_PAYMENT,
-                        cs.FINANCIAL_TYPE_SND_PAYMENT
-                    ]
-                ) \
-                .aggregate(Sum('net_amount'))
-        elif team is not None:
-            sum = Transaction.objects \
-                .filter(
-                    created_at__gte=start_date,
-                    created_at__lte=end_date,
-                    financial_request__requester__team=team,
-                    financial_request__type__in=[
-                        cs.FINANCIAL_TYPE_RCV_PAYMENT,
-                        cs.FINANCIAL_TYPE_REFUND_PAYMENT,
-                        cs.FINANCIAL_TYPE_SND_PAYMENT
-                    ]
-                ) \
-                .aggregate(Sum('net_amount'))
-        else:
-            sum = Transaction.objects \
-                .filter(
-                    created_at__gte=start_date,
-                    created_at__lte=end_date,
-                    financial_request__type__in=[
-                        cs.FINANCIAL_TYPE_RCV_PAYMENT,
-                        cs.FINANCIAL_TYPE_REFUND_PAYMENT,
-                        cs.FINANCIAL_TYPE_SND_PAYMENT
-                    ]
-                ) \
-                .aggregate(Sum('net_amount'))
+        qs = Transaction.objects.all()
     elif viewer.is_team_manager:
-        if user is not None:
-            sum = Transaction.objects \
-                .filter(
-                    created_at__gte=start_date,
-                    created_at__lte=end_date,
-                    financial_request__requester=user,
-                    financial_request__type__in=[
-                        cs.FINANCIAL_TYPE_RCV_PAYMENT,
-                        cs.FINANCIAL_TYPE_REFUND_PAYMENT,
-                        cs.FINANCIAL_TYPE_SND_PAYMENT
-                    ]
-                ) \
-                .aggregate(Sum('net_amount'))
-        else:
-            sum = Transaction.objects \
-                .filter(
-                    created_at__gte=start_date,
-                    created_at__lte=end_date,
-                    financial_request__requester__team=viewer.team,
-                    financial_request__type__in=[
-                        cs.FINANCIAL_TYPE_RCV_PAYMENT,
-                        cs.FINANCIAL_TYPE_REFUND_PAYMENT,
-                        cs.FINANCIAL_TYPE_SND_PAYMENT
-                    ]
-                ) \
-                .aggregate(Sum('net_amount'))
+        qs = Transaction.objects.filter(financial_request__requester__team=viewer.team)
     else:
-        sum = Transaction.objects \
-            .filter(
-                created_at__gte=start_date,
-                created_at__lte=end_date,
-                financial_request__requester=viewer,
-                financial_request__type__in=[
-                    cs.FINANCIAL_TYPE_RCV_PAYMENT,
-                    cs.FINANCIAL_TYPE_REFUND_PAYMENT,
-                    cs.FINANCIAL_TYPE_SND_PAYMENT
-                ]
-            ) \
-            .aggregate(Sum('net_amount'))
+        qs = Transaction.objects.filter(financial_request__requester=viewer)
+    sum = qs.filter(
+        created_at__gte=start_date,
+        created_at__lte=end_date,
+        financial_request__type__in=[
+            cs.FINANCIAL_TYPE_RCV_PAYMENT,
+            cs.FINANCIAL_TYPE_REFUND_PAYMENT,
+            cs.FINANCIAL_TYPE_SND_PAYMENT
+        ]
+    ) \
+    .aggregate(Sum('net_amount'))
     return sum['net_amount__sum'] or 0
 
 

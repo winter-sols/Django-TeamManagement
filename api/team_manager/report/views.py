@@ -29,7 +29,7 @@ class ReportTotalView(GenericAPIView):
         start_date = self.request.query_params.get('from')
         end_date = self.request.query_params.get('to')
         viewer = self.request.user
-        res =  {'total_earnings': get_earnings(viewer, period, None, None, start_date, end_date)}
+        res =  {'total_earnings': get_earnings(viewer, period, start_date, end_date)}
         return Response(res)
 
 
