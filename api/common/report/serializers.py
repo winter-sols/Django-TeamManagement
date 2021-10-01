@@ -61,13 +61,7 @@ class ReportTeamSerializer(serializers.ModelSerializer):
     earnings = serializers.SerializerMethodField()
 
     def get_earnings(self, obj):
-        context = self.context
-        period = context.get('period')
-        start_date = context.get('start_date')
-        end_date = context.get('end_date')
-        viewer = context.get('viewer')
-        earnings = get_earnings(viewer, period, obj, None, start_date, end_date)
-        return earnings
+        return obj.total
 
     class Meta:
         model = Team
