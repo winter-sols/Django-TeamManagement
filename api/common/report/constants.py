@@ -1,3 +1,4 @@
+REVIEW_WEEKDAY = 2
 
 PERIOD_THIS_WEEK = 'this-week'
 PERIOD_RETHIS_MONTH = 'this-month'
