@@ -39,7 +39,6 @@ class ReportDeveloperListView(ListAPIView):
 
     def get_queryset(self):
         return get_queryset_with_developer_earnings(
-            self.request.user,
             User.objects.filter(team=self.request.user.team),
             self.request.query_params
         )
