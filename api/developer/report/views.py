@@ -1,32 +1,44 @@
 import numpy as np
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.generics import ListAPIView, GenericAPIView
+from rest_framework.generics import ListAPIView
 from django_filters.rest_framework import DjangoFilterBackend
 from api.permission import IsDeveloper
 from user.models import User, Team
+from finance.models import Project
 from api.common.report.serializers import (
-    ReportDeveloperProjectSerializer
-    # DeveloperCustomReportSerializer
+    ReportProjectEarningsSerializer,
+    ReportDeveloperEarningSerializer
 )
 from api.common.report.filters import DeveloperReportFilter
 from api.common.report import constants
+from api.utils.provider import (
+    get_queryset_with_developer_earnings,
+    get_queryset_with_project_earnings
+)
 
 
 class ReportDeveloperView(ListAPIView):
     permission_classes = [IsDeveloper]
+    serializer_class = ReportDeveloperEarningSerializer
     pagination_class = None
 
     def get_queryset(self):
-        return User.objects.filter(id=self.request.user.id)
+        return get_queryset_with_developer_earnings(
+            self.request.user,
+            User.objects.filter(id=self.request.user.id),
+            self.request.query_params
+        )
 
-    def get_serializer_class(self):
-        return ReportDeveloperProjectSerializer
+
+class ReportProjectEarningsListView(ListAPIView):
+    permission_classes = [IsDeveloper]
+    serializer_class = ReportProjectEarningsSerializer
+    pagination_class = None
     
-    def get_serializer_context(self):
-        serializer_context = super().get_serializer_context()
-        query_params = self.request.query_params
-        serializer_context['period'] = query_params.get('period')
-        serializer_context['start_date'] = query_params.get('from')
-        serializer_context['end_date'] = query_params.get('to')
-        return serializer_context
+    def get_queryset(self):
+        return get_queryset_with_project_earnings(
+            self.request.user,
+            Project.objects.filter(financialrequest__requester=self.request.user),
+            self.request.query_params
+        )
