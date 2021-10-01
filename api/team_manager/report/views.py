@@ -6,7 +6,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from api.permission import IsTeamManager
 from api.utils.provider import (
     get_earnings,
-    get_queryset_with_earnings
+    get_queryset_with_developer_earnings
 )
 from user.models import User, Team
 from api.common.report.serializers import (
@@ -33,26 +33,22 @@ class ReportTotalView(GenericAPIView):
 
 class ReportDeveloperListView(ListAPIView):
     permission_classes = [IsTeamManager]
-    filter_backends = (DjangoFilterBackend,)
-    filterset_class = DeveloperReportFilter
     serializer_class = ReportDeveloperSerializer
 
     def get_queryset(self):
-        return get_queryset_with_earnings(
+        return get_queryset_with_developer_earnings(
             self.request.user,
-            User.objects.filter(team=self.request.user.team.id),
+            User.objects.filter(team=self.request.user.team),
             self.request.query_params
         )
 
 
 class ReportDeveloperDetailView(RetrieveAPIView):
     permission_classes = [IsTeamManager]
-    filter_backends = (DjangoFilterBackend,)
-    filterset_class = DeveloperReportFilter
     serializer_class = ReportDeveloperSerializer
 
     def get_queryset(self):
-        return get_queryset_with_earnings(
+        return get_queryset_with_developer_earnings(
             self.request.user,
             User.objects.filter(id=self.kwargs.get('pk')),
             self.request.query_params
