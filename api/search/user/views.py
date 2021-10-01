@@ -19,7 +19,7 @@ from finance.models import (
     Project
 )
 
-from .filters import UserFilter
+from .filters import UserFilter, ProjectFilter
 
 
 class SearchUserView(ListAPIView):
@@ -76,7 +76,20 @@ class SearchProjectView(ListAPIView):
     """
     search Project by title field start with given keyword
     """
-    queryset = Project.objects.all()
+    filterset_class = ProjectFilter
     serializer_class = SearchProjectSerializer
-    filter_backends = [SearchFilter]
+    filter_backends = [SearchFilter, DjangoFilterBackend, filters.OrderingFilter]
     search_fields = ['title']
+    ordering_fields = ['title']
+    pagination_class = None
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_anonymous:
+            return Project.objects.none()
+        elif user.is_admin:
+            return Project.objects.all()
+        elif user.is_team_manager:
+            return Project.objects.filter(project_starter__in=user.team_members)
+        elif user.is_developer:
+            return Project.objects.filter(project_starter=user)
