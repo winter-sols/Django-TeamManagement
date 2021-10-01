@@ -116,7 +116,7 @@ def get_expectations(viewer,team, user, period):
     return get_incomes_of_period(viewer, team, user, start_date, end_date).sum()
 
 
-def get_queryset_with_developer_earnings(viewer, queryset, query_params):
+def get_queryset_with_developer_earnings(queryset, query_params):
     period = query_params.get('period')
 
     if period is not None and period != PERIOD_CUSTOM:
@@ -133,6 +133,30 @@ def get_queryset_with_developer_earnings(viewer, queryset, query_params):
             financialrequest__transaction__created_at__gte=start_date,
             financialrequest__transaction__created_at__lte=end_date,
             financialrequest__type__in=[
+                cs.FINANCIAL_TYPE_RCV_PAYMENT,
+                cs.FINANCIAL_TYPE_REFUND_PAYMENT,
+                cs.FINANCIAL_TYPE_SND_PAYMENT
+            ]
+        )))
+
+
+def get_queryset_with_team_earnings(queryset, query_params):
+    period = query_params.get('period')
+
+    if period is not None and period != PERIOD_CUSTOM:
+        dates = get_dates_from_period(period)
+        start_date = dates.get('start_date')
+        end_date = dates.get('end_date')
+    else:
+        start_date = query_params.get('from')
+        end_date = query_params.get('to')
+
+    return queryset.annotate(
+        total=Sum('user__financialrequest__transaction__net_amount',
+        filter=Q(
+            user__financialrequest__transaction__created_at__gte=start_date,
+            user__financialrequest__transaction__created_at__lte=end_date,
+            user__financialrequest__type__in=[
                 cs.FINANCIAL_TYPE_RCV_PAYMENT,
                 cs.FINANCIAL_TYPE_REFUND_PAYMENT,
                 cs.FINANCIAL_TYPE_SND_PAYMENT
