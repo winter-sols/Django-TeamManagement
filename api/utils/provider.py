@@ -8,23 +8,23 @@ from user.constants import ROLE_ADMIN, ROLE_TEAM_MANAGER, ROLE_DEVELOPER
 from api.common.finance.serializers import (
     FinancialRequestDetailSerializer
 )
-from api.common.report.constants import PERIOD_CUSTOM, REVIEW_WEEK_DAY
+from api.common.report.constants import PERIOD_CUSTOM, REVIEW_WEEKDAY
 
 
 def get_review_end_date_of_month(month_last_dt):
     last_dt_weekday = month_last_dt.weekday()
-    if last_dt_weekday >= REVIEW_WEEK_DAY:
-        return month_last_dt - timedelta(days=last_dt_weekday) + timedelta(days=REVIEW_WEEK_DAY)
+    if last_dt_weekday >= REVIEW_WEEKDAY:
+        return month_last_dt - timedelta(days=last_dt_weekday) + timedelta(days=REVIEW_WEEKDAY)
     else:
-        return month_last_dt - timedelta(days=last_dt_weekday + (7 - REVIEW_WEEK_DAY))
+        return month_last_dt - timedelta(days=last_dt_weekday + (7 - REVIEW_WEEKDAY))
 
 
 def get_review_start_date_of_month(month_first_dt):
     first_dt_weekday = month_first_dt.weekday()
-    if first_dt_weekday >= REVIEW_WEEK_DAY + 1:
-        return month_first_dt - timedelta(days=first_dt_weekday) + timedelta(days=REVIEW_WEEK_DAY+1)
+    if first_dt_weekday >= REVIEW_WEEKDAY + 1:
+        return month_first_dt - timedelta(days=first_dt_weekday) + timedelta(days=REVIEW_WEEKDAY+1)
     else:
-        return month_first_dt - timedelta(days=first_dt_weekday + (6 - REVIEW_WEEK_DAY))
+        return month_first_dt - timedelta(days=first_dt_weekday + (6 - REVIEW_WEEKDAY))
 
 
 def get_dates_from_period(period):
