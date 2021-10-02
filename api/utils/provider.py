@@ -8,17 +8,36 @@ from user.constants import ROLE_ADMIN, ROLE_TEAM_MANAGER, ROLE_DEVELOPER
 from api.common.finance.serializers import (
     FinancialRequestDetailSerializer
 )
-from api.common.report.constants import PERIOD_CUSTOM
+from api.common.report.constants import PERIOD_CUSTOM, REVIEW_WEEK_DAY
+
+
+def get_review_end_date_of_month(month_last_dt):
+    last_dt_weekday = month_last_dt.weekday()
+    if last_dt_weekday >= REVIEW_WEEK_DAY:
+        return month_last_dt - timedelta(days=last_dt_weekday) + timedelta(days=REVIEW_WEEK_DAY)
+    else:
+        return month_last_dt - timedelta(days=last_dt_weekday + (7 - REVIEW_WEEK_DAY))
+
+
+def get_review_start_date_of_month(month_first_dt):
+    first_dt_weekday = month_first_dt.weekday()
+    if first_dt_weekday >= REVIEW_WEEK_DAY + 1:
+        return month_first_dt - timedelta(days=first_dt_weekday) + timedelta(days=REVIEW_WEEK_DAY+1)
+    else:
+        return month_first_dt - timedelta(days=first_dt_weekday + (6 - REVIEW_WEEK_DAY))
+
 
 def get_dates_from_period(period):
     if period == 'this-month':
-        start_date = (date.today() - pd.tseries.offsets.MonthEnd(1)).date() + timedelta(days=1)
-        end_date = this_month = (date.today() + pd.tseries.offsets.BMonthEnd(0)).date()
+        first_day_of_this_month = (date.today() - pd.tseries.offsets.MonthEnd(1)).date() + timedelta(days=1)
+        last_day_of_this_month = (date.today() + pd.tseries.offsets.MonthEnd(0)).date()
+        start_date = get_review_start_date_of_month(first_day_of_this_month)
+        end_date = get_review_end_date_of_month(last_day_of_this_month)
     elif period == 'this-quarter':
-        prev_quarter_end = (date.today() - pd.tseries.offsets.BQuarterEnd(1)).date()
-        start_date = get_last_wednesday_of_month(prev_quarter_end) - timedelta(days=9)
-        this_quarter_end = (date.today() + pd.tseries.offsets.BQuarterEnd(0)).date()
-        end_date = get_last_wednesday_of_month(this_quarter_end) - timedelta(days=10)
+        first_day_of_this_quarter = (date.today() - pd.tseries.offsets.QuarterEnd(1)).date() + timedelta(days=1)
+        last_day_of_this_quarter = (date.today() + pd.tseries.offsets.QuarterEnd(0)).date()
+        start_date = get_review_start_date_of_month(first_day_of_this_quarter)
+        end_date = get_review_end_date_of_month(last_day_of_this_quarter)
     elif period == 'this-week':
         today = date.today()
         week_of_today = today.weekday()
@@ -99,11 +118,6 @@ def get_weekly_income(viewer, team, user, period):
     start_date = dates.get('start_date')
     end_date = dates.get('end_date')
     return get_incomes_of_period(viewer, team, user, start_date, end_date)
-
-
-def get_last_wednesday_of_month(month):
-    week_of_month = month.weekday()
-    return month - timedelta(days=week_of_month) + timedelta(days=2)
 
 
 def get_expectations(viewer,team, user, period):
