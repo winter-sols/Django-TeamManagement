@@ -95,9 +95,9 @@ class StatsView(BaseDashboardView):
         self.validate_query_params()
         viewer = self.request.user
         this_month_expectation = get_expectations(viewer, self.team, self.user, 'this-month')
-        this_month_earning = get_earnings(viewer, 'this-month', self.team, self.user)
+        this_month_earning = get_earnings(viewer, 'this-month')
         this_quarter_expectation = get_expectations(viewer, self.team, self.user, 'this-quarter')
-        this_quarter_earning = get_earnings(viewer, 'this-quarter', self.team, self.user)
+        this_quarter_earning = get_earnings(viewer, 'this-quarter')
 
         return Response({
             "this_month_expectation": this_month_expectation,
