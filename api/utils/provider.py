@@ -270,7 +270,7 @@ def get_user_project_earnings(user, period=None, start_date=None, end_date=None)
 
     return project_earning
 
-def get_queryset_with_project_earnings(viewer, queryset, query_params):
+def get_queryset_with_project_earnings( queryset, query_params):
     period = query_params.get('period')
 
     if period is not None and period != PERIOD_CUSTOM:
@@ -290,3 +290,27 @@ def get_queryset_with_project_earnings(viewer, queryset, query_params):
                 cs.FINANCIAL_TYPE_REFUND_PAYMENT
             ]
         )))
+
+
+def get_report_developer_data_frame(user_earningset):
+    df = pd.DataFrame({
+        'Name': [user.full_name for user in user_earningset],
+        'Earning': [user.total or 0 for user in user_earningset]
+    })
+    return df
+
+
+def get_report_project_data_frame(project_earningset):
+    df = pd.DataFrame({
+        'Project Title': [project.title for project in project_earningset],
+        'Earning': [project.earning or 0 for project in project_earningset]
+    })
+    return df
+
+
+def get_report_team_data_frame(team_earningset):
+    df = pd.DataFrame({
+        'Name': [team.name for team in team_earningset],
+        'Earning': [team.total or 0 for team in team_earningset]
+    })
+    return df

@@ -50,7 +50,6 @@ class ReportDeveloperDetailView(RetrieveAPIView):
 
     def get_queryset(self):
         return get_queryset_with_developer_earnings(
-            self.request.user,
             User.objects.filter(id=self.kwargs.get('pk')),
             self.request.query_params
         )
@@ -64,7 +63,6 @@ class ReportProjectEarningsListView(ListAPIView):
     
     def get_queryset(self):
         return get_queryset_with_project_earnings(
-            self.request.user,
             Project.objects.filter(financialrequest__requester=self.kwargs.get('pk')),
             self.request.query_params
         )

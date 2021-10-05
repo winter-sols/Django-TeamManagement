@@ -13,6 +13,11 @@ class User(AbstractUser):
 
     objects = UserManager()
 
+
+    @cached_property
+    def full_name(self):
+        return '{} {}'.format(self.first_name, self.last_name)
+
     @cached_property
     def is_developer(self):
         return self.role == constants.ROLE_DEVELOPER

@@ -25,4 +25,5 @@ urlpatterns = [
     path('notifications/', include('api.common.notification.urls')),
     path('my-logs/', include('api.common.logging.urls')),
     path('report/earnings/', include('api.team_manager.report.urls')),
+    path('downloads/report/', include('api.team_manager.download.urls'))
 ] + router.urls
