@@ -37,7 +37,6 @@ class ReportProjectEarningsListView(ListAPIView):
     
     def get_queryset(self):
         return get_queryset_with_project_earnings(
-            self.request.user,
             Project.objects.filter(financialrequest__requester=self.request.user),
             self.request.query_params
         )
