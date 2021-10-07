@@ -148,8 +148,7 @@ def get_queryset_with_developer_earnings(queryset, query_params):
             financialrequest__transaction__created_at__lte=end_date,
             financialrequest__type__in=[
                 cs.FINANCIAL_TYPE_RCV_PAYMENT,
-                cs.FINANCIAL_TYPE_REFUND_PAYMENT,
-                cs.FINANCIAL_TYPE_SND_PAYMENT
+                cs.FINANCIAL_TYPE_REFUND_PAYMENT
             ]
         )))
 
@@ -172,8 +171,7 @@ def get_queryset_with_team_earnings(queryset, query_params):
             user__financialrequest__transaction__created_at__lte=end_date,
             user__financialrequest__type__in=[
                 cs.FINANCIAL_TYPE_RCV_PAYMENT,
-                cs.FINANCIAL_TYPE_REFUND_PAYMENT,
-                cs.FINANCIAL_TYPE_SND_PAYMENT
+                cs.FINANCIAL_TYPE_REFUND_PAYMENT
             ]
         )))
     
@@ -200,8 +198,7 @@ def get_earnings(viewer, period=None, start_date=None, end_date=None):
         created_at__lte=end_date,
         financial_request__type__in=[
             cs.FINANCIAL_TYPE_RCV_PAYMENT,
-            cs.FINANCIAL_TYPE_REFUND_PAYMENT,
-            cs.FINANCIAL_TYPE_SND_PAYMENT
+            cs.FINANCIAL_TYPE_REFUND_PAYMENT
         ]
     ) \
     .aggregate(Sum('net_amount'))
@@ -269,6 +266,7 @@ def get_user_project_earnings(user, period=None, start_date=None, end_date=None)
         }
 
     return project_earning
+
 
 def get_queryset_with_project_earnings( queryset, query_params):
     period = query_params.get('period')
