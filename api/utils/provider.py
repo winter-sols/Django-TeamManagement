@@ -1,5 +1,4 @@
 import pandas as pd
-from datetime import date, timedelta
 from django.db.models import Sum, Q
 
 from finance.models import Project, FinancialRequest, Transaction
@@ -9,42 +8,7 @@ from api.common.finance.serializers import (
     FinancialRequestDetailSerializer
 )
 from api.common.report.constants import PERIOD_CUSTOM, REVIEW_WEEKDAY
-
-
-def get_review_end_date_of_month(month_last_dt):
-    last_dt_weekday = month_last_dt.weekday()
-    if last_dt_weekday >= REVIEW_WEEKDAY:
-        return month_last_dt - timedelta(days=last_dt_weekday) + timedelta(days=REVIEW_WEEKDAY)
-    else:
-        return month_last_dt - timedelta(days=last_dt_weekday + (7 - REVIEW_WEEKDAY))
-
-
-def get_review_start_date_of_month(month_first_dt):
-    first_dt_weekday = month_first_dt.weekday()
-    if first_dt_weekday >= REVIEW_WEEKDAY + 1:
-        return month_first_dt - timedelta(days=first_dt_weekday) + timedelta(days=REVIEW_WEEKDAY+1)
-    else:
-        return month_first_dt - timedelta(days=first_dt_weekday + (6 - REVIEW_WEEKDAY))
-
-
-def get_dates_from_period(period):
-    if period == 'this-month':
-        first_day_of_this_month = (date.today() - pd.tseries.offsets.MonthEnd(1)).date() + timedelta(days=1)
-        last_day_of_this_month = (date.today() + pd.tseries.offsets.MonthEnd(0)).date()
-        start_date = get_review_start_date_of_month(first_day_of_this_month)
-        end_date = get_review_end_date_of_month(last_day_of_this_month)
-    elif period == 'this-quarter':
-        first_day_of_this_quarter = (date.today() - pd.tseries.offsets.QuarterEnd(1)).date() + timedelta(days=1)
-        last_day_of_this_quarter = (date.today() + pd.tseries.offsets.QuarterEnd(0)).date()
-        start_date = get_review_start_date_of_month(first_day_of_this_quarter)
-        end_date = get_review_end_date_of_month(last_day_of_this_quarter)
-    elif period == 'this-week':
-        today = date.today()
-        week_of_today = today.weekday()
-        start_date = today - timedelta(days=week_of_today)
-        end_date = today + timedelta(days=6-week_of_today)
-    else: return None
-    return { 'start_date': start_date, 'end_date': end_date }
+from utils.helpers import get_dates_from_period
 
 
 def get_ongoing_projects(viewer, team, user):
@@ -153,23 +117,6 @@ def get_queryset_with_developer_earnings(queryset, query_params):
             ]
         )))
 
-
-def get_transaction_queryset_by_period(query_params):
-    period = query_params.get('period')
-    dates = get_dates_from_period(period)
-
-    if dates is not None:
-        start_date = dates.get('start_date')
-        end_date = dates.get('end_date')
-    else:
-        default_dates = get_dates_from_period('this-month')
-        start_date = query_params.get('from') or default_dates.get('start_date')
-        end_date = query_params.get('to') or default_dates.get('end_date')
-
-    return Transaction.objects.filter(
-        created_at__gte=start_date,
-        created_at__lte=end_date
-    )
 
 
 def get_queryset_with_team_earnings(queryset, query_params):
