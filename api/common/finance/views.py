@@ -16,19 +16,16 @@ from api.common.finance.serializers import (
     ProjectListSerializer,
     FinancialRequestDetailSerializer,
     FinancialRequestSerializer,
-    TransactionDetailSerializer
 )
 from finance.models import (
     Client, 
     Partner,
     Project,
     FinancialRequest,
-    Transaction
 )
 from .filters import (
     ProjectFilter,
     FinancialRequestFilter,
-    TransactionFilter
 )
 
 class ClientViewSet(viewsets.ModelViewSet):
@@ -141,22 +138,3 @@ class FinancialRequestViewSet(  mixins.CreateModelMixin,
         updated = serializer.update(instance, serializer.validated_data)
         formated = FinancialRequestDetailSerializer(updated)
         return Response(formated.data)
-
-
-class TransactionViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
-    serializer_class = TransactionDetailSerializer
-    queryset = Transaction.objects.all()
-    filter_backends = (DjangoFilterBackend,)
-    filterset_class = TransactionFilter
-
-    def get_queryset(self):
-        user = self.request.user
-        if user.is_anonymous:
-            return Transaction.objects.none()
-        elif user.is_admin:
-            return Transaction.objects.order_by('-created_at')
-        elif user.is_developer:
-            return Transaction.objects.filter(financial_request__requester=user).order_by('-created_at')
-        elif user.is_team_manager:
-            return Transaction.objects.filter(financial_request__requester__in=user.team_members).order_by('-created_at')
-

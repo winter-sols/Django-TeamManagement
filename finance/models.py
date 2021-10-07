@@ -3,12 +3,12 @@ from jsonfield.fields import JSONField
 from django.contrib.contenttypes.fields import GenericRelation, GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from . import constants
-from .manager import ProjectManager, FinancialRequestMangager
+from .manager import ProjectQuerySet, FinancialRequestQuerySet, TransactionQuerySet
 from .signals import fr_post_save
 
 
 class Project(models.Model):
-    objects = ProjectManager.as_manager()
+    objects = ProjectQuerySet.as_manager()
     title = models.CharField(max_length=100)
     type = models.IntegerField(choices=constants.PROJECT_TYPES)
     weekly_limit = models.IntegerField(default=40, null=True, blank=True)
@@ -25,7 +25,7 @@ class Project(models.Model):
 
 
 class FinancialRequest(models.Model):
-    objects = FinancialRequestMangager.as_manager()
+    objects = FinancialRequestQuerySet.as_manager()
     type = models.IntegerField(choices=constants.FINANCIAL_TYPES)
     status = models.IntegerField(choices=constants.FINANCIAL_STATUS, default=constants.FINANCIAL_STATUS_PENDING)
     amount = models.FloatField(null=True)
@@ -54,7 +54,8 @@ class Transaction(models.Model):
     net_amount = models.FloatField()
     payment_platform = models.CharField(choices=constants.PAYMENT_PLATFORMS, max_length=10)
     financial_request = models.ForeignKey('FinancialRequest', on_delete=models.CASCADE)
-    
+    objects = TransactionQuerySet.as_manager()
+
     def __str__(self):
         return '{} {}'.format(self.financial_request.requester, self.financial_request.project)
 

@@ -4,7 +4,6 @@ from django_filters import FilterSet
 from finance.models import (
     Project,
     FinancialRequest,
-    Transaction
 )
 
 class ProjectFilter(FilterSet):
@@ -23,12 +22,3 @@ class FinancialRequestFilter(FilterSet):
     class Meta:
         model = FinancialRequest
         fields = ['type', 'status', 'requested_at']
-
-
-class TransactionFilter(FilterSet):
-    """
-    filter transactions by created_at, payment_platform
-    """
-    class Meta:
-        model = Transaction
-        fields = ['created_at', 'payment_platform']
