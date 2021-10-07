@@ -132,14 +132,15 @@ def get_expectations(viewer,team, user, period):
 
 def get_queryset_with_developer_earnings(queryset, query_params):
     period = query_params.get('period')
-
-    if period is not None and period != PERIOD_CUSTOM:
-        dates = get_dates_from_period(period)
+    dates = get_dates_from_period(period)
+    
+    if dates is not None:
         start_date = dates.get('start_date')
         end_date = dates.get('end_date')
     else:
-        start_date = query_params.get('from')
-        end_date = query_params.get('to')
+        default_dates = get_dates_from_period('this-month')
+        start_date = query_params.get('from') or default_dates.get('start_date')
+        end_date = query_params.get('to') or default_dates.get('end_date')
 
     return queryset.annotate(
         total=Sum('financialrequest__transaction__net_amount',
@@ -151,6 +152,24 @@ def get_queryset_with_developer_earnings(queryset, query_params):
                 cs.FINANCIAL_TYPE_REFUND_PAYMENT
             ]
         )))
+
+
+def get_transaction_queryset_by_period(query_params):
+    period = query_params.get('period')
+    dates = get_dates_from_period(period)
+
+    if dates is not None:
+        start_date = dates.get('start_date')
+        end_date = dates.get('end_date')
+    else:
+        default_dates = get_dates_from_period('this-month')
+        start_date = query_params.get('from') or default_dates.get('start_date')
+        end_date = query_params.get('to') or default_dates.get('end_date')
+
+    return Transaction.objects.filter(
+        created_at__gte=start_date,
+        created_at__lte=end_date
+    )
 
 
 def get_queryset_with_team_earnings(queryset, query_params):

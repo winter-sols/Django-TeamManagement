@@ -1,16 +1,18 @@
 from django.urls import  include, path
 from rest_framework import routers
-from api.common.finance.views import ClientViewSet, PartnerViewSet, ProjectViewSet, TransactionViewSet
+from api.common.finance.views import ClientViewSet, PartnerViewSet, ProjectViewSet
 from api.common.user.views import ProfilesAdminViewSet, AccountsAdminViewSet
+from api.developer.transaction.views import TransactionViewSet
 
 
 router = routers.DefaultRouter()
 router.register('clients', ClientViewSet)
 router.register('partners', PartnerViewSet)
 router.register('projects', ProjectViewSet)
-router.register('transactions', TransactionViewSet)
 router.register('profiles', ProfilesAdminViewSet)
 router.register('accounts', AccountsAdminViewSet)
+router.register('transactions', TransactionViewSet, basename="transactions")
+
 
 urlpatterns = router.urls + [
     path('financial-requests/', include('api.developer.finance.urls')),
@@ -18,5 +20,5 @@ urlpatterns = router.urls + [
     path('notifications/', include('api.common.notification.urls')),
     path('my-logs/', include('api.common.logging.urls')),
     path('report/earnings/', include('api.developer.report.urls')),
-    path('downloads/report/', include('api.developer.download.urls'))
+    path('downloads/report/', include('api.developer.download.urls')),
 ]
