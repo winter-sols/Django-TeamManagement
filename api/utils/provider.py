@@ -9,6 +9,7 @@ from api.common.finance.serializers import (
 )
 from api.common.report.constants import PERIOD_CUSTOM, REVIEW_WEEKDAY
 from utils.helpers import get_dates_from_period
+from finance.constants import FINANCIAL_TYPES_DICT
 
 
 def get_ongoing_projects(viewer, team, user):
@@ -276,5 +277,20 @@ def get_report_team_data_frame(team_earningset):
     df = pd.DataFrame({
         'Name': [team.name for team in team_earningset],
         'Earning': [team.total or 0 for team in team_earningset]
+    })
+    return df
+
+
+def get_transaction_data_frame(transaction_queryset):
+    df = pd.DataFrame({
+        "Date": [transaction.created_at for transaction in transaction_queryset],
+        "Requested By": [transaction.financial_request.requester.username for transaction in transaction_queryset],
+        "Financial Request Type": [FINANCIAL_TYPES_DICT[transaction.financial_request.type] for transaction in transaction_queryset],
+        "Gross Amount": [transaction.gross_amount for transaction in transaction_queryset],
+        "Net Amount": [transaction.net_amount for transaction in transaction_queryset],
+        "Requested Amount": [transaction.financial_request.amount for transaction in transaction_queryset],
+        "Pay to": [transaction.financial_request.address for transaction in transaction_queryset],
+        "Payment Platform": [transaction.payment_platform for transaction in transaction_queryset],
+        "Description": [transaction.financial_request.description for transaction in transaction_queryset],
     })
     return df
