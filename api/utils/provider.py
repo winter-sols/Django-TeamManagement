@@ -284,8 +284,11 @@ def get_report_team_data_frame(team_earningset):
 def get_transaction_data_frame(transaction_queryset):
     df = pd.DataFrame({
         "Date": [transaction.created_at for transaction in transaction_queryset],
-        "Requested By": [transaction.financial_request.requester.username for transaction in transaction_queryset],
-        "Financial Request Type": [FINANCIAL_TYPES_DICT[transaction.financial_request.type] for transaction in transaction_queryset],
+        "Requested By": ['{} {}'.format(
+            transaction.financial_request.requester.first_name,
+            transaction.financial_request.requester.last_name
+        ) for transaction in transaction_queryset],
+        "Transaction Type": [FINANCIAL_TYPES_DICT[transaction.financial_request.type] for transaction in transaction_queryset],
         "Gross Amount": [transaction.gross_amount for transaction in transaction_queryset],
         "Net Amount": [transaction.net_amount for transaction in transaction_queryset],
         "Requested Amount": [transaction.financial_request.amount for transaction in transaction_queryset],
