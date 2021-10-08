@@ -9,6 +9,8 @@ class TransactionFilter(FilterSet):
     filter transactions by created_at, payment_platform
     """
     team = Filter(field_name='financial_request__requester__team')
+    type = Filter(field_name='financial_request__type')
+    
     class Meta:
         model = Transaction
-        fields = ['created_at', 'payment_platform', 'team']
+        fields = ['created_at', 'payment_platform', 'team', 'type']
