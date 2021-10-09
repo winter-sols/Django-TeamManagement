@@ -2,7 +2,9 @@ from rest_framework import viewsets
 from rest_framework.generics import UpdateAPIView
 from rest_framework.response import Response
 from rest_framework import mixins
+from rest_framework.permissions import IsAuthenticated
 from api.common.finance.serializers import FinancialRequestDetailSerializer, FinancialRequestSerializer, TransactionCreateSerializer
+from api.permission import IsAdmin
 from finance.models import FinancialRequest, Transaction
 from finance.constants import (
     FINANCIAL_STATUS_APPROVED,
@@ -15,6 +17,7 @@ from finance.constants import (
 
 class ApproveFinanicalRequestView(UpdateAPIView):
     serializer_class = FinancialRequestDetailSerializer
+    permission_classes = [IsAdmin]
     queryset = FinancialRequest.objects.all()
 
     def update(self, request, pk):
@@ -40,6 +43,7 @@ class ApproveFinanicalRequestView(UpdateAPIView):
 
 class DeclineFinanicalRequestView(UpdateAPIView):
     serializer_class = FinancialRequestDetailSerializer
+    permission_classes = [IsAdmin]
     queryset = FinancialRequest.objects.all()
 
     def update(self, request, pk):
@@ -51,4 +55,5 @@ class DeclineFinanicalRequestView(UpdateAPIView):
 
 
 class TransactionViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    permission_classes = [IsAdmin]
     queryset = Transaction.objects.all()

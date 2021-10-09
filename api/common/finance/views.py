@@ -49,6 +49,7 @@ class ClientViewSet(viewsets.ModelViewSet):
 
 
 class PartnerViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = Partner.objects.all()
     
     def get_queryset(self):
@@ -69,6 +70,7 @@ class PartnerViewSet(viewsets.ModelViewSet):
 
 class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
+    permission_classes = [IsAuthenticated]
     queryset = Project.objects.all()
     filter_backends = (DjangoFilterBackend,)
     filterset_class = ProjectFilter
@@ -95,6 +97,7 @@ class FinancialRequestViewSet(  mixins.CreateModelMixin,
                                 mixins.ListModelMixin,
                                 mixins.RetrieveModelMixin,
                                 viewsets.GenericViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = FinancialRequest.objects.all()
     filterset_class = FinancialRequestFilter
     filter_backends = [filters.OrderingFilter, DjangoFilterBackend]
