@@ -11,7 +11,7 @@ from rest_framework import mixins
 
 class NotificationListView(ListAPIView):
     serializer_class = NotificationListSerializer
-    permission_classes = [IsAuthenticated,]
+    permission_classes = [IsAuthenticated]
     def get_queryset(self):
         return Notification.objects.unread_items(self.request.user)
 

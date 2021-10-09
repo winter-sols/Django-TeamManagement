@@ -1,6 +1,7 @@
 from rest_framework.filters import SearchFilter
 from rest_framework.generics import ListAPIView
 from rest_framework import filters
+from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from .serializers import (
     SearchUserSerializer,
@@ -28,6 +29,7 @@ class SearchUserView(ListAPIView):
     """
     filterset_class = UserFilter
     serializer_class = SearchUserSerializer
+    permission_classes = [IsAuthenticated]
     filter_backends = [SearchFilter, DjangoFilterBackend, filters.OrderingFilter]
     search_fields = ['username', 'first_name', 'last_name']
     ordering_fields = ['first_name', 'last_name', 'username']
