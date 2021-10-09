@@ -16,7 +16,7 @@ fr_attr_list = ['type', 'amount', 'address', 'project', 'description']
 @receiver(post_save, sender=Project)
 def create_notification_for_project_start(created, instance, **kwargs):
     if created:
-        if instance.project_starter.team_manager is not None:
+        if instance.project_starter.team_manager is not None and instance.project_starter.is_developer:
             Notification.objects.create(
                 notify_to = instance.project_starter.team_manager,
                 creator = instance.project_starter,
