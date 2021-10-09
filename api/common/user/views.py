@@ -27,6 +27,8 @@ class UserViewSet(viewsets.ModelViewSet):
     search_fields = ['@username', '^first_name', '@last_name']
 
     def get_queryset(self):
+        if self.request.user.is_anonymous:
+            return User.objects.none()
         if self.request.user.is_admin:
             return User.objects.all()
         else:

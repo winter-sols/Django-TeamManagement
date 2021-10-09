@@ -3,7 +3,7 @@ from django.contrib.contenttypes.models import ContentType
 from finance.models import Client, Partner, Project, FinancialRequest, Transaction
 from django.db.models.functions import Abs
 
-from user.serializer import UserSerializer
+from ..user.serializers import UserSerializer
 from finance import constants as cs
 
 
