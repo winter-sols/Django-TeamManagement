@@ -76,7 +76,6 @@ class ProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(required=False, )
 
     def create(self, validated_data):
-        print(validated_data)
         accounts = validated_data.pop('account_set', None)
         instance = super().create(validated_data)
         if accounts is not None:
@@ -111,9 +110,28 @@ class ProfileSerializer(serializers.ModelSerializer):
         read_only_fields = ('user',)
 
 
+class UserProfileSerializer(serializers.ModelSerializer):
+    accounts = ProfileAccountSerializer(many=True, source='account_set', required=False)
+
+    class Meta:
+        model = Profile
+        fields = (
+            'id',
+            'profile_type',
+            'first_name',
+            'last_name',
+            'address',
+            'country',
+            'dob',
+            'gender',
+            'accounts',
+            'extra_info'
+        )
+    
+
 class UserDetailSerializer(serializers.ModelSerializer):
     team = TeamSerializer(read_only=True)
-    profiles = ProfileSerializer(many=True, source='profile_set', required=False)
+    profiles = UserProfileSerializer(many=True, source='profile_set', required=False)
 
     class Meta:
         model = User

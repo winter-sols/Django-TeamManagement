@@ -14,23 +14,27 @@ from ...common.serializers import (
     AccountSerializer,
     AccountUpdateSerializer
 )
-from ...permission import IsAdmin
+from ...permission import IsAdmin, IsAdminOrManager
 from .filters import ProfileFilter
-from .serializers import UserAdminSerializer, ChangePasswordSerializer
+from .serializers import UserSerializer, ChangePasswordSerializer
 from user.constants import ROLE_TEAM_MANAGER, ROLE_DEVELOPER
 from user.models import User, Team, Profile, Account
 
 
-class UserAdminViewSet(viewsets.ModelViewSet):
-    # serializer_class = UserAdminSerializer
-    permission_classes = [IsAdmin]
-    queryset = User.objects.all()
+class UserViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAdminOrManager]
     filter_backends = [SearchFilter]
     search_fields = ['@username', '^first_name', '@last_name']
+
+    def get_queryset(self):
+        if self.request.user.is_admin:
+            return User.objects.all()
+        else:
+            return User.objects.filter(team=self.request.user.team)
     
     def get_serializer_class(self):
         if self.action == 'list':
-            return UserAdminSerializer
+            return UserSerializer
         elif self.request.method == 'PUT' or self.request.method == 'PATCH' or self.request.method == 'POST':
             return UserDetailUpdateSerializer
         else:
@@ -55,7 +59,7 @@ class TeamViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, permission_classes=[IsAdmin], url_path='unassigned-users')
     def unassigned_users(self, request, *args, **kwargs):
-        SerializerClass = UserAdminSerializer
+        SerializerClass = UserSerializer
         serializer = SerializerClass(
             User.objects.filter(role__in=[ROLE_DEVELOPER, ROLE_TEAM_MANAGER], team__isnull=True), 
             many=True
@@ -64,7 +68,7 @@ class TeamViewSet(viewsets.ModelViewSet):
     
     @action(detail=True, permission_classes=[IsAdmin], url_path='members')
     def members(self, request, *args, **kwargs):
-        SerializerClass = UserAdminSerializer
+        SerializerClass = UserSerializer
         serializer = SerializerClass(
             User.objects.filter(team=self.kwargs['pk']),
             many=True

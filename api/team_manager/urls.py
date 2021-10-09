@@ -20,7 +20,7 @@ router.register('transactions', TransactionViewSet, basename="transactions")
 
 urlpatterns = [
     path('team/', TeamView.as_view(), name='team'),
-    path('users/', include('api.team_manager.user.urls')),
+    path('users/', include('api.common.user.urls')),
     path('financial-requests/', include('api.team_manager.finance.urls')),
     path('dashboard/', include('api.common.dashboard.urls')),
     path('logging/', include('api.team_manager.logging.urls')),
