@@ -52,8 +52,3 @@ class DeclineFinanicalRequestView(UpdateAPIView):
         serializer = self.get_serializer(instance)
         instance.save()
         return Response(serializer.data)
-
-
-class TransactionViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
-    permission_classes = [IsAdmin]
-    queryset = Transaction.objects.all()

@@ -27,7 +27,7 @@ class ReportDeveloperListDownloadView(ListAPIView):
     
     def get_queryset(self):
         return get_queryset_with_developer_earnings(
-            User.objects.all(),
+            self.queryset,
             self.request.query_params)
 
     def get(self, request):
@@ -55,10 +55,11 @@ class ReportDeveloperDetailDownloadView(RetrieveAPIView):
 class ReportDeveloperProjectDownloadView(ListAPIView):
     permission_classes = [IsAdmin]
     pagination_class = None
+    queryset = Project.objects.all()
 
     def get_queryset(self):
         return get_queryset_with_project_earnings(
-            Project.objects.filter(financialrequest__requester=self.kwargs.get('pk')),
+            self.queryset.filter(financialrequest__requester=self.kwargs.get('pk')),
             self.request.query_params
         )
 
@@ -77,7 +78,7 @@ class ReportTeamListDownloadView(ListAPIView):
 
     def get_queryset(self):
         return get_queryset_with_team_earnings(
-            Team.objects.all(),
+            self.queryset,
             self.request.query_params)
 
     def get(self, request):
@@ -89,6 +90,7 @@ class ReportTeamListDownloadView(ListAPIView):
 class ReportTeamDetailDownloadView(RetrieveAPIView):
     permission_classes = [IsAdmin]
     model = Team
+    serializer_class = None
 
     def get_queryset(self):
         return get_queryset_with_team_earnings(
@@ -107,9 +109,10 @@ class TransactionDownloadView(ListAPIView):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TransactionFilter
     pagination_class = None
+    queryset = Transaction.objects.all()
 
     def get_queryset(self):
-        return Transaction.objects \
+        return self.queryset \
         .filter_by_period(self.request.query_params) \
         .order_by('-created_at')
 

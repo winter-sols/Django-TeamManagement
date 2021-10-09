@@ -15,10 +15,11 @@ from api.developer.transaction.filters import TransactionFilter
 class ReportDeveloperProjectDownloadView(ListAPIView):
     permission_classes = [IsDeveloper]
     pagination_class = None
+    queryset = Project.objects.all()
 
     def get_queryset(self):
         return get_queryset_with_project_earnings(
-            Project.objects.filter(financialrequest__requester=self.request.user),
+            self.queryset.filter(financialrequest__requester=self.request.user),
             self.request.query_params
         )
 
@@ -33,10 +34,11 @@ class TransactionDownloadView(ListAPIView):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TransactionFilter
     pagination_class = None
+    queryset = Transaction.objects.all()
 
     def get_queryset(self):
         user = self.request.user
-        return Transaction.objects \
+        return self.queryset \
         .filter_by_period(self.request.query_params) \
         .filter(financial_request__requester=user) \
         .order_by('-created_at')

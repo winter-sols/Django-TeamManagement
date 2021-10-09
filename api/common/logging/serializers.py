@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from reporting.models import Log
-from user.serializer import UserSerializer
+from ..user.serializers import UserSerializer
 
 
 class MyLogSerializer(serializers.ModelSerializer):
