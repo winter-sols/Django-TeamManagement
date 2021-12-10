@@ -1,12 +1,12 @@
 from rest_framework import viewsets
-from rest_framework.generics import UpdateAPIView
+from rest_framework.generics import UpdateAPIView, ListAPIView
 from rest_framework import mixins
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import filters
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
-from ...permission import IsDeveloper, IsTeamManager
+from ...permission import IsDeveloper, IsTeamManager, IsTeamManagerOrDeveloper
 from api.common.finance.serializers import (
     ClientDetailSerializer,
     ClientUpdateSerializer,
@@ -16,12 +16,14 @@ from api.common.finance.serializers import (
     ProjectListSerializer,
     FinancialRequestDetailSerializer,
     FinancialRequestSerializer,
+    PaymentAccountSerializer
 )
 from finance.models import (
     Client, 
     Partner,
     Project,
     FinancialRequest,
+    PaymentAccount
 )
 from .filters import (
     ProjectFilter,
@@ -141,3 +143,15 @@ class FinancialRequestViewSet(  mixins.CreateModelMixin,
         updated = serializer.update(instance, serializer.validated_data)
         formated = FinancialRequestDetailSerializer(updated)
         return Response(formated.data)
+
+
+class PaymentAccountView(ListAPIView):
+    serializer_class = PaymentAccountSerializer
+    permission_classes = [IsTeamManagerOrDeveloper]
+    queryset = PaymentAccount.objects.all()
+
+    def get_queryset(self):
+        if self.request.user.is_anonymous:
+            return PaymentAccount.objects.none()
+        elif self.request.user.is_team_manager or request.user.is_developer:
+            return PaymentAccount.objects.all()

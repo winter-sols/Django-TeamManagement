@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Client, Project, FinancialRequest, Partner, Transaction
+from .models import Client, Project, FinancialRequest, Partner, Transaction, PaymentAccount
 
 class ClientModelAdmin(admin.ModelAdmin):
     list_display = ('id','type', 'full_name', 'company_name', 'started_at', 'owner')
@@ -20,9 +20,12 @@ class TransactionModelAdmin(admin.ModelAdmin):
 class PartnerModelAdmin(admin.ModelAdmin):
     list_display = ('id','full_name', 'email', 'owner')
 
+class PaymentAccountModelAdmin(admin.ModelAdmin):
+    list_display = ('id', 'platform','address', 'display_name')
 
 admin.site.register(Client, ClientModelAdmin)
 admin.site.register(Project, ProjectModelAdmin)
 admin.site.register(FinancialRequest, FinancialRequestModelAdmin)
 admin.site.register(Partner, PartnerModelAdmin)
 admin.site.register(Transaction, TransactionModelAdmin)
+admin.site.register(PaymentAccount, PaymentAccountModelAdmin)

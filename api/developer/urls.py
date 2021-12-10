@@ -1,6 +1,6 @@
 from django.urls import  include, path
 from rest_framework import routers
-from api.common.finance.views import ClientViewSet, PartnerViewSet, ProjectViewSet
+from api.common.finance.views import ClientViewSet, PartnerViewSet, ProjectViewSet, PaymentAccountView
 from api.common.user.views import ProfilesAdminViewSet, AccountsAdminViewSet
 from api.developer.transaction.views import TransactionViewSet
 
@@ -21,4 +21,5 @@ urlpatterns = router.urls + [
     path('my-logs/', include('api.common.logging.urls')),
     path('report/earnings/', include('api.developer.report.urls')),
     path('downloads/report/', include('api.developer.download.urls')),
+    path('payment-accounts/', PaymentAccountView.as_view(), name='payment_accounts')
 ]

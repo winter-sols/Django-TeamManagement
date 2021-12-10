@@ -3,9 +3,14 @@ from rest_framework.generics import UpdateAPIView
 from rest_framework.response import Response
 from rest_framework import mixins
 from rest_framework.permissions import IsAuthenticated
-from api.common.finance.serializers import FinancialRequestDetailSerializer, FinancialRequestSerializer, TransactionCreateSerializer
+from api.common.finance.serializers import (
+    FinancialRequestDetailSerializer,
+    FinancialRequestSerializer,
+    TransactionCreateSerializer,
+    PaymentAccountSerializer
+)
 from api.permission import IsAdmin
-from finance.models import FinancialRequest, Transaction
+from finance.models import FinancialRequest, Transaction, PaymentAccount
 from finance.constants import (
     FINANCIAL_STATUS_APPROVED,
     FINANCIAL_STATUS_DECLINED,
@@ -41,6 +46,7 @@ class ApproveFinanicalRequestView(UpdateAPIView):
 
         return Response(serializer.data)
 
+
 class DeclineFinanicalRequestView(UpdateAPIView):
     serializer_class = FinancialRequestDetailSerializer
     permission_classes = [IsAdmin]
@@ -52,3 +58,15 @@ class DeclineFinanicalRequestView(UpdateAPIView):
         serializer = self.get_serializer(instance)
         instance.save()
         return Response(serializer.data)
+
+
+class PaymentAccountViewSet(viewsets.ModelViewSet):
+    serializer_class = PaymentAccountSerializer
+    permission_classes = [IsAdmin]
+    queryset = PaymentAccount.objects.all()
+
+    def get_queryset(self):
+        if self.request.user.is_anonymous:
+            return PaymentAccount.objects.none()
+        elif self.request.user.is_admin:
+            return PaymentAccount.objects.all()
