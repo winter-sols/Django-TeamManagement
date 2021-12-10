@@ -3,6 +3,7 @@ from rest_framework import routers
 from api.common.user.views import  TeamViewSet, ProfilesAdminViewSet, AccountListByProfileIdView, AccountsAdminViewSet
 from api.common.finance.views import ClientViewSet, PartnerViewSet, ProjectViewSet, FinancialRequestViewSet
 from api.admin.transaction.views import TransactionViewSet
+from api.admin.finance.views import PaymentAccountViewSet
 
 
 router = routers.DefaultRouter()
@@ -16,6 +17,7 @@ router.register('partners', PartnerViewSet)
 router.register('projects', ProjectViewSet)
 router.register('financial-requests', FinancialRequestViewSet)
 router.register('transactions', TransactionViewSet, basename="transactions")
+router.register('payment-accounts', PaymentAccountViewSet)
 
 
 urlpatterns = router.urls + [

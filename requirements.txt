@@ -18,3 +18,5 @@ django-pandas==0.6.0
 django-environ==0.4.5
 psycopg2-binary==2.8.6
 jsonfield==3.1.0
+
+Werk-zeug==2.0.2

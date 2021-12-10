@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.contenttypes.models import ContentType
-from finance.models import Client, Partner, Project, FinancialRequest, Transaction
+from finance.models import Client, Partner, Project, FinancialRequest, Transaction, PaymentAccount
 from django.db.models.functions import Abs
 
 from ..user.serializers import UserSerializer
@@ -144,3 +144,14 @@ class TransactionCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
         fields = ('id', 'gross_amount', 'net_amount', 'payment_platform', 'description', 'created_at', 'financial_request')
+
+
+class PaymentAccountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PaymentAccount
+        fields = (
+            'id', 
+            'platform',
+            'address',
+            'display_name', 
+        )
