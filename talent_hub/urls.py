@@ -18,9 +18,11 @@ from django.contrib import admin
 from django.urls import  include, path
 
 from .swagger import schema_view
+from django.views.generic.base import RedirectView
 
 
 urlpatterns = [
+    path('', RedirectView.as_view(url='login')),
     path('api/', include('api.urls')),
     path('admin/', admin.site.urls),
     path('swagger(<format>\.json|\.yaml)', schema_view.without_ui(), name='schema-json'),
