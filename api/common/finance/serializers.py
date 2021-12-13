@@ -75,6 +75,16 @@ class ProjectListSerializer(serializers.ModelSerializer):
             'status'
         )
 
+class PaymentAccountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PaymentAccount
+        fields = (
+            'id', 
+            'platform',
+            'address',
+            'display_name', 
+        )
+
 
 # class CounterPartyRelatedField(serializers.RelatedField):
 #     def to_representation(self, value):
@@ -91,15 +101,15 @@ class ProjectListSerializer(serializers.ModelSerializer):
 class FinancialRequestDetailSerializer(serializers.ModelSerializer):
     requester = UserSerializer(required=False)
     project = ProjectSerializer(required=False)
+    payment_account = PaymentAccountSerializer(required=False)
     # counter_party = CounterPartyRelatedField(read_only=True)
 
     class Meta:
         model = FinancialRequest
-        fields = ('id', 'type', 'status', 'amount', 'address', 'requested_at', 'requester', 'project', 'description')
+        fields = ('id', 'type', 'status', 'amount', 'address', 'requested_at', 'requester', 'project', 'payment_account', 'description')
 
 
-class FinancialRequestSerializer(serializers.ModelSerializer):
-    
+class FinancialRequestSerializer(serializers.ModelSerializer):    
     def validate(self, data):
         data = super().validate(data)
         # if data['type'] in [cs.FINANCIAL_TYPE_SND_INVOICE, cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT]:
@@ -112,8 +122,8 @@ class FinancialRequestSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FinancialRequest
-        fields = ('id', 'type', 'status', 'amount', 'address', 'requested_at', 'requester', 'project', 'description')
-        read_only_fields = ('status',)
+        fields = ('id', 'type', 'status', 'amount', 'address', 'requested_at', 'payment_account', 'requester', 'project', 'description')
+        read_only_fields = ('status', )
 
 
 class PaymentAccountSerializer(serializers.ModelSerializer):

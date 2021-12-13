@@ -46,6 +46,7 @@ class FinancialRequest(models.Model):
     requester = models.ForeignKey('user.User', on_delete=models.CASCADE)
     project = models.ForeignKey('Project', on_delete=models.CASCADE, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
+    payment_account = models.ForeignKey('PaymentAccount', on_delete=models.CASCADE, null=True, blank=True)
 
     def save(self, **kwargs):
         fr = FinancialRequest.objects.get(id=self.id) if self.id is not None else None

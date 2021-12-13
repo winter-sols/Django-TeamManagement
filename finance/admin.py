@@ -10,7 +10,7 @@ class ProjectModelAdmin(admin.ModelAdmin):
 
 
 class FinancialRequestModelAdmin(admin.ModelAdmin):
-    list_display = ('id','type', 'status', 'amount', 'address', 'requester', 'requested_at')
+    list_display = ('id','type', 'status', 'amount', 'address', 'requester', 'payment_account', 'requested_at')
 
 
 class TransactionModelAdmin(admin.ModelAdmin):
