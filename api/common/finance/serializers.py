@@ -116,12 +116,24 @@ class FinancialRequestSerializer(serializers.ModelSerializer):
         read_only_fields = ('status',)
 
 
+class PaymentAccountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PaymentAccount
+        fields = (
+            'id', 
+            'platform',
+            'address',
+            'display_name', 
+        )
+
+
 class TransactionDetailSerializer(serializers.ModelSerializer):
     financial_request = FinancialRequestDetailSerializer(required=False)
+    payment_account = PaymentAccountSerializer(required=False)
     
     class Meta:
         model = Transaction
-        fields = ('id', 'gross_amount', 'net_amount', 'payment_platform', 'description', 'created_at', 'financial_request')
+        fields = ('id', 'owner', 'project', 'address', 'gross_amount', 'net_amount', 'payment_account', 'description', 'created_at', 'financial_request')
 
 
 class TransactionCreateSerializer(serializers.ModelSerializer):
@@ -143,15 +155,4 @@ class TransactionCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transaction
-        fields = ('id', 'gross_amount', 'net_amount', 'payment_platform', 'description', 'created_at', 'financial_request')
-
-
-class PaymentAccountSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = PaymentAccount
-        fields = (
-            'id', 
-            'platform',
-            'address',
-            'display_name', 
-        )
+        fields = ('id', 'owner', 'project', 'address', 'gross_amount', 'net_amount', 'payment_account', 'description', 'created_at', 'financial_request')

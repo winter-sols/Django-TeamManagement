@@ -6,10 +6,10 @@ from finance.models import Transaction
 
 class TransactionFilter(FilterSet):
     """
-    filter transactions by created_at, payment_platform
+    filter transactions by created_at and type
     """
     type = Filter(field_name='financial_request__type')
     
     class Meta:
         model = Transaction
-        fields = ['created_at', 'payment_platform', 'type']
+        fields = ['created_at', 'type']

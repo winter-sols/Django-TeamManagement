@@ -16,7 +16,7 @@ router.register('clients', ClientViewSet)
 router.register('partners', PartnerViewSet)
 router.register('projects', ProjectViewSet)
 router.register('financial-requests', FinancialRequestViewSet)
-router.register('transactions', TransactionViewSet, basename="transactions")
+router.register('transactions', TransactionViewSet)
 router.register('payment-accounts', PaymentAccountViewSet)
 
 

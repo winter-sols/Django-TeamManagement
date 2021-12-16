@@ -24,6 +24,15 @@ class Project(models.Model):
         return '{}({})'.format(self.title, self.type)
 
 
+class PaymentAccount(models.Model):
+    platform = models.CharField(choices=constants.PAYMENT_PLATFORMS, max_length=10)
+    address = models.CharField(max_length=250)
+    display_name = models.CharField(max_length=30, null=True, blank=True)
+
+    def __str__(self):
+        return '{}({})'.format(self.platform, self.address)
+
+
 class FinancialRequest(models.Model):
     objects = FinancialRequestQuerySet.as_manager()
     type = models.IntegerField(choices=constants.FINANCIAL_TYPES)
@@ -48,16 +57,19 @@ class FinancialRequest(models.Model):
 
 
 class Transaction(models.Model):
+    owner = models.CharField(max_length=255, null=True)
+    address = models.CharField(max_length=1000, null=True)
+    project = models.CharField(max_length=255, null=True)
     description = models.TextField(null=True)
     created_at = models.DateField(null=True)
     gross_amount = models.FloatField()
     net_amount = models.FloatField()
-    payment_platform = models.CharField(choices=constants.PAYMENT_PLATFORMS, max_length=10)
-    financial_request = models.ForeignKey('FinancialRequest', on_delete=models.CASCADE)
+    financial_request = models.ForeignKey('FinancialRequest', on_delete=models.CASCADE, null=True, blank=True)
+    payment_account = models.ForeignKey('PaymentAccount', on_delete=models.CASCADE, null=True)
     objects = TransactionQuerySet.as_manager()
 
     def __str__(self):
-        return '{} {}'.format(self.financial_request.requester, self.financial_request.project)
+        return '{} {}'.format(self.owner, self.address)
 
 
 class Partner(models.Model):
@@ -84,12 +96,3 @@ class Client(models.Model):
 
     def __str__(self):
         return '{}({})'.format(self.full_name, self.type)
-
-
-class PaymentAccount(models.Model):
-    platform = models.CharField(choices=constants.PAYMENT_PLATFORMS, max_length=10)
-    address = models.CharField(max_length=250)
-    display_name = models.CharField(max_length=30)
-
-    def __str__(self):
-        return '{}({})'.format(self.platform, self.address)
