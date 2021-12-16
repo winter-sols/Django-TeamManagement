@@ -293,7 +293,11 @@ def get_transaction_data_frame(transaction_queryset):
         "Net Amount": [transaction.net_amount for transaction in transaction_queryset],
         "Requested Amount": [transaction.financial_request.amount for transaction in transaction_queryset],
         "Pay to": [transaction.financial_request.address for transaction in transaction_queryset],
-        "Payment Platform": [transaction.payment_platform for transaction in transaction_queryset],
         "Description": [transaction.financial_request.description for transaction in transaction_queryset],
+        "Payment Account": ['{} ({}) - {}'.format(
+            Transaction.payment_account.display_name,
+            Transaction.payment_account.address,
+            Transaction.payment_account.platform 
+        ) for Transaction in transaction_queryset],
     })
     return df

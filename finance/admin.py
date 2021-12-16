@@ -14,7 +14,7 @@ class FinancialRequestModelAdmin(admin.ModelAdmin):
 
 
 class TransactionModelAdmin(admin.ModelAdmin):
-    list_display = ('id','created_at', 'gross_amount', 'net_amount', 'payment_platform', 'financial_request')
+    list_display = ('id','created_at', 'gross_amount', 'net_amount', 'payment_account', 'financial_request')
 
 
 class PartnerModelAdmin(admin.ModelAdmin):
