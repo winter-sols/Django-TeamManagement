@@ -153,5 +153,5 @@ class PaymentAccountView(ListAPIView):
     def get_queryset(self):
         if self.request.user.is_anonymous:
             return PaymentAccount.objects.none()
-        elif self.request.user.is_team_manager or request.user.is_developer:
+        elif self.request.user.is_team_manager or self.request.user.is_developer:
             return PaymentAccount.objects.all()
