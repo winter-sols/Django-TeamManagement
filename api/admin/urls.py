@@ -4,12 +4,14 @@ from api.common.user.views import  TeamViewSet, ProfilesAdminViewSet, AccountLis
 from api.common.finance.views import ClientViewSet, PartnerViewSet, ProjectViewSet, FinancialRequestViewSet
 from api.admin.transaction.views import TransactionViewSet
 from api.admin.finance.views import PaymentAccountViewSet
+from user.views import AccountPlatformViewSets
 
 
 router = routers.DefaultRouter()
 router.register('teams', TeamViewSet)
 router.register('profiles', ProfilesAdminViewSet)
 router.register('accounts', AccountsAdminViewSet)
+router.register('platforms', AccountPlatformViewSets)
 #api end-points for finance app
 
 router.register('clients', ClientViewSet)

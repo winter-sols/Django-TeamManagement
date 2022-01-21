@@ -73,7 +73,7 @@ class Account(models.Model):
     url = models.CharField('URL', max_length=200)
 
     class Meta:
-        unique_together = ('profile', 'email')
+        unique_together = ('profile', 'email', 'account_platform')
     
     def __str__(self):
         return '{}'.format(self.email)

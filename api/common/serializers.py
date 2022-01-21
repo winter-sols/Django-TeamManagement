@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from user.models import User, Profile, Account, Team
 from .user.serializers import UserSerializer
+from user.serializer import AccountPlatformSerializer
 
 class TeamSerializer(serializers.ModelSerializer):
     class Meta:
@@ -24,6 +25,7 @@ class ProfileLinkedWithAccountSerializer(serializers.ModelSerializer):
 
 class AccountSerializer(serializers.ModelSerializer):
     profile = ProfileLinkedWithAccountSerializer(required=False, read_only=True)
+    account_platform = AccountPlatformSerializer(required=False, read_only=True)
 
     class Meta:
         model = Account

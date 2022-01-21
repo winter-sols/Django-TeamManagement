@@ -2,18 +2,25 @@
 
 from django.db import migrations
 
-from ..constants import PLATFORM_TYPES_DICT, PLATFORM_TYPES, PLATFORM_TYPES_TUPLE
+from ..constants import PLATFORM_TYPES
+
+
+def search(list, item):
+    for i in range(len(list)):
+        if list[i][0] == item:
+            return list[i][1]
+    return 'Email'
 
 
 def fill_account_platform(apps, schema_editor):
     Account = apps.get_model('user', 'Account')
     AccountPlatform = apps.get_model('user', 'AccountPlatform')
     for account in Account.objects.all():
-        account.account_platform, created = AccountPlatform.objects.get_or_create(name=PLATFORM_TYPES_DICT[account.platform_type])
+        account.account_platform, created = AccountPlatform.objects.get_or_create(name=search(PLATFORM_TYPES, account.platform_type))
         account.save()
 
-    for platform in PLATFORM_TYPES_TUPLE:
-        AccountPlatform.objects.get_or_create(name=platform)
+    for platform in PLATFORM_TYPES:
+        AccountPlatform.objects.get_or_create(name=platform[1])
 
 
 class Migration(migrations.Migration):
