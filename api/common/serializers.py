@@ -29,7 +29,7 @@ class AccountSerializer(serializers.ModelSerializer):
         model = Account
         fields = (
             'id',
-            'platform_type',
+            'account_platform',
             'email',
             'password',
             'location',
@@ -45,7 +45,7 @@ class AccountUpdateSerializer(serializers.ModelSerializer):
         model = Account
         fields = (
             'id',
-            'platform_type',
+            'account_platform',
             'email',
             'password',
             'location',
@@ -61,7 +61,7 @@ class ProfileAccountSerializer(serializers.ModelSerializer):
         model = Account
         fields = (
             'id',
-            'platform_type',
+            'account_platform',
             'email',
             'password',
             'location',

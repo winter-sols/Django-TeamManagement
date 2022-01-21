@@ -34,3 +34,16 @@ PLATFORM_TYPES = [
     ('bitbucket', 'Bitbucket'),
 ]
 
+PLATFORM_TYPES_DICT = {
+    'email': "Email",
+    'skype': "Skype",
+    'slack': "Slack",
+    'ms_team': "MS Team",
+    'github': "Github",
+    'bitbucket': "Bitbucket"
+}
+
+PLATFORM_TYPES_TUPLE = (
+    'Email', 'Skype', 'Slack', 'MS Team', 'Github', 'Bitbucket'
+)
+

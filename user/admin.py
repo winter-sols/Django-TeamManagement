@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
 
-from .models import User, Profile, Account, AccountSecurityQA, Team
+from .models import User, Profile, Account, AccountSecurityQA, Team, AccountPlatform
 
 class MyCustomUserAdmin(UserAdmin):
     list_display = ('username', 'email', 'first_name', 'last_name', 'role', 'team')
@@ -17,9 +17,13 @@ class MyCustomUserAdmin(UserAdmin):
         }),
     )
 
+class AccountPlatformModelAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name')
+
 admin.site.register(User, MyCustomUserAdmin)
 admin.site.register(Profile)
 admin.site.register(Account)
 admin.site.register(AccountSecurityQA)
 admin.site.register(Team)
+admin.site.register(AccountPlatform, AccountPlatformModelAdmin)
 admin.site.unregister(Group)
