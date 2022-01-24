@@ -33,4 +33,3 @@ PLATFORM_TYPES = [
     ('github', 'Github'),
     ('bitbucket', 'Bitbucket'),
 ]
-

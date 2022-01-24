@@ -66,17 +66,17 @@ class Profile(models.Model):
 class Account(models.Model):
     profile = models.ForeignKey('Profile', on_delete=models.CASCADE)
     email = models.EmailField()
-    platform_type = models.CharField(max_length=30, choices=constants.PLATFORM_TYPES)
+    account_platform = models.ForeignKey('AccountPlatform', on_delete=models.CASCADE, null=True)
     password = models.CharField(max_length=50)
     location = models.CharField(max_length=200)
     extra_info = models.CharField(max_length=1024, null=True)
     url = models.CharField('URL', max_length=200)
 
     class Meta:
-        unique_together = ('profile', 'email', 'platform_type')
+        unique_together = ('profile', 'email', 'account_platform')
     
     def __str__(self):
-        return '{}({})'.format(self.email, self.platform_type)
+        return '{}'.format(self.email)
 
 
 class AccountSecurityQA(models.Model):
@@ -86,3 +86,10 @@ class AccountSecurityQA(models.Model):
 
     def __str__(self):
         return '{} {}'.format(self.question, self.account)
+
+
+class AccountPlatform(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return '{}'.format(self.name)

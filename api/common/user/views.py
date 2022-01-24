@@ -14,11 +14,12 @@ from ...common.serializers import (
     AccountSerializer,
     AccountUpdateSerializer
 )
-from ...permission import IsAdmin, IsAdminOrManager
+from ...permission import IsAdmin, IsAdminOrManager, IsTeamManager, IsTeamManagerOrDeveloper
 from .filters import ProfileFilter
 from .serializers import UserSerializer, ChangePasswordSerializer
 from user.constants import ROLE_TEAM_MANAGER, ROLE_DEVELOPER
-from user.models import User, Team, Profile, Account
+from user.models import User, Team, Profile, Account, AccountPlatform
+from user.serializer import AccountPlatformSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -135,7 +136,7 @@ class AccountsAdminViewSet(viewsets.ModelViewSet):
         'email',
         'location',
         'url',
-        'platform_type'
+        'account_platform'
     ]
 
 
@@ -159,4 +160,9 @@ class AccountsAdminViewSet(viewsets.ModelViewSet):
         if owner_pk is not None:
             qs = qs.filter(profile__user=owner_pk)
         return qs
-    
+
+
+class AccountPlatformView(ListAPIView):
+    permission_classes = [IsTeamManagerOrDeveloper]
+    queryset = AccountPlatform.objects.all()
+    serializer_class = AccountPlatformSerializer
