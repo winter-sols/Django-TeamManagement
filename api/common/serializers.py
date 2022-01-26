@@ -43,6 +43,8 @@ class AccountSerializer(serializers.ModelSerializer):
 
 
 class AccountUpdateSerializer(serializers.ModelSerializer):
+    account_platform = AccountPlatformSerializer(required=False, read_only=True)
+
     class Meta:
         model = Account
         fields = (
@@ -59,6 +61,8 @@ class AccountUpdateSerializer(serializers.ModelSerializer):
 
 
 class ProfileAccountSerializer(serializers.ModelSerializer):
+    account_platform = AccountPlatformSerializer(required=False, read_only=True)
+
     class Meta:
         model = Account
         fields = (
