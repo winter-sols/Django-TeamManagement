@@ -43,7 +43,7 @@ class AccountSerializer(serializers.ModelSerializer):
 
 
 class AccountUpdateSerializer(serializers.ModelSerializer):
-    account_platform = AccountPlatformSerializer(required=False, read_only=True)
+    # account_platform = AccountPlatformSerializer(required=False)
 
     class Meta:
         model = Account
