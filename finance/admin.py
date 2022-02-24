@@ -21,7 +21,7 @@ class PartnerModelAdmin(admin.ModelAdmin):
     list_display = ('id','full_name', 'email', 'owner')
 
 class PaymentAccountModelAdmin(admin.ModelAdmin):
-    list_display = ('id', 'platform','address', 'display_name')
+    list_display = ('id', 'platform','address', 'display_name', 'description')
 
 admin.site.register(Client, ClientModelAdmin)
 admin.site.register(Project, ProjectModelAdmin)

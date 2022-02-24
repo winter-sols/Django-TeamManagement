@@ -82,7 +82,8 @@ class PaymentAccountSerializer(serializers.ModelSerializer):
             'id', 
             'platform',
             'address',
-            'display_name', 
+            'display_name',
+            'description'
         )
 
 
@@ -124,17 +125,6 @@ class FinancialRequestSerializer(serializers.ModelSerializer):
         model = FinancialRequest
         fields = ('id', 'type', 'status', 'amount', 'address', 'requested_at', 'payment_account', 'requester', 'project', 'description')
         read_only_fields = ('status', )
-
-
-class PaymentAccountSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = PaymentAccount
-        fields = (
-            'id', 
-            'platform',
-            'address',
-            'display_name', 
-        )
 
 
 class TransactionDetailSerializer(serializers.ModelSerializer):
