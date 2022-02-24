@@ -28,6 +28,7 @@ class PaymentAccount(models.Model):
     platform = models.CharField(choices=constants.PAYMENT_PLATFORMS, max_length=10)
     address = models.CharField(max_length=250)
     display_name = models.CharField(max_length=30, null=True, blank=True)
+    description = models.CharField(max_length=300, null=True, blank=True)
 
     def __str__(self):
         return '{}({})'.format(self.platform, self.address)
