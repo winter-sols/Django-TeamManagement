@@ -30,6 +30,10 @@ class ApproveFinanicalRequestView(UpdateAPIView):
         if financial_request.type != FINANCIAL_TYPE_SND_INVOICE:
             transaction_data = request.data
             transaction_data['financial_request'] = pk
+            transaction_data['owner'] = financial_request.requester.id
+            transaction_data['project'] = financial_request.project.id
+            transaction_data['address'] = financial_request.address
+            transaction_data['description'] = financial_request.description
             transaction_ser = TransactionCreateSerializer(data=transaction_data)
             transaction_ser.is_valid(raise_exception=True)
             transaction_ser.save()
