@@ -61,7 +61,7 @@ class FinancialRequest(models.Model):
 class Transaction(models.Model):
     owner = models.CharField(max_length=255, null=True)
     address = models.CharField(max_length=1000, null=True)
-    project = models.CharField(max_length=255, null=True)
+    project = models.ForeignKey('Project', on_delete=models.CASCADE, null=True)
     description = models.TextField(null=True)
     created_at = models.DateField(null=True)
     gross_amount = models.FloatField()

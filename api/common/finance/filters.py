@@ -12,7 +12,7 @@ class ProjectFilter(FilterSet):
     """
     class Meta:
         model = Project
-        fields = ['type', 'status']
+        fields = ['type', 'status', 'project_starter']
 
 
 class FinancialRequestFilter(FilterSet):

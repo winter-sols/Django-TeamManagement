@@ -18,11 +18,13 @@ class TransactionViewSet(viewsets.ModelViewSet):
         if self.request.user.is_anonymous:
             return Transaction.objects.none()
         elif self.request.user.is_admin:
-            return Transaction.objects.all()
+            return Transaction.objects \
+            .filter_by_period(self.request.query_params) \
+            .order_by('-created_at')
         elif self.request.user.is_team_manager:
-            return Transaction.objects.filter(owner__in=self.request.user.team_members)
+            return Transaction.objects.filter(owner__in=self.request.user.team_members).order_by('-created_at')
         elif self.request.user.is_developer:
-            return Transaction.objects.filter(owner=self.request.user)
+            return Transaction.objects.filter(owner=self.request.user).order_by('-created_at')
         elif self.request.method in ['GET']:
             return Transaction.objects \
             .filter_by_period(self.request.query_params) \
