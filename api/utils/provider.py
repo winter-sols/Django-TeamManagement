@@ -49,12 +49,25 @@ def get_incomes_of_period(viewer, team, user, start, end ):
                 continue
             proj_date_index = pd.date_range(start_date, end_date)
             working_hours_series = pd.Series(1, index=proj_date_index)     
+            working_rate_series = pd.Series(item.price, index=proj_date_index)
+            income_series = income_series.add(working_hours_series * working_rate_series, fill_value=0)
+        elif item.type == cs.PROJECT_TYPE_CONTRACT:
+            monthly_amount = 0
+            proj_month_index = pd.period_range(start_date, end_date, freq='M')
+            working_months_series = pd.Series(1, index=proj_month_index)
+            if item.paymentPeriod == cs.WEEKLY:
+                monthly_amount = item.price * 4
+            elif item.paymentPeriod == cs.BI_WEEKLY:
+                monthly_amount = item.price * 2 * 4
+            else:
+                monthly_amount = item.price
+            working_rate_series = pd.Series(monthly_amount, index=proj_month_index)
+            income_series = income_series.add(working_months_series * working_rate_series, fill_value=0)
         else:
             proj_date_index = pd.bdate_range(start_date, end_date, freq='B')
             working_hours_series = pd.Series((item.weekly_limit or 0) / 5, index=proj_date_index) 
-            
-        working_rate_series = pd.Series(item.price, index=proj_date_index)
-        income_series = income_series.add(working_hours_series * working_rate_series, fill_value=0)
+            working_rate_series = pd.Series(item.price, index=proj_date_index)
+            income_series = income_series.add(working_hours_series * working_rate_series, fill_value=0)
     return income_series
 
 
