@@ -46,7 +46,7 @@ class ProjectSerializer(serializers.ModelSerializer):
             'title',
             'type',
             'weekly_limit',
-            'paymentPeriod', 
+            'payment_period', 
             'price', 
             'client', 
             'participants', 

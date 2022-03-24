@@ -1,4 +1,5 @@
 import pandas as pd
+import datetime
 from django.db.models import Sum, Q
 
 from finance.models import Project, FinancialRequest, Transaction
@@ -52,17 +53,17 @@ def get_incomes_of_period(viewer, team, user, start, end ):
             working_rate_series = pd.Series(item.price, index=proj_date_index)
             income_series = income_series.add(working_hours_series * working_rate_series, fill_value=0)
         elif item.type == cs.PROJECT_TYPE_CONTRACT:
-            monthly_amount = 0
-            proj_month_index = pd.period_range(start_date, end_date, freq='M')
-            working_months_series = pd.Series(1, index=proj_month_index)
-            if item.paymentPeriod == cs.WEEKLY:
-                monthly_amount = item.price * 4
-            elif item.paymentPeriod == cs.BI_WEEKLY:
-                monthly_amount = item.price * 2 * 4
+            weekly_amount = 0
+            proj_week_index = pd.period_range(start_date + datetime.timedelta(days=7), end_date, freq='W-SAT')
+            working_weeks_series = pd.Series(1, index=proj_week_index)
+            if item.payment_period == cs.WEEKLY:
+                weekly_amount = item.price
+            elif item.payment_period == cs.BI_WEEKLY:
+                weekly_amount = item.price / 2
             else:
-                monthly_amount = item.price
-            working_rate_series = pd.Series(monthly_amount, index=proj_month_index)
-            income_series = income_series.add(working_months_series * working_rate_series, fill_value=0)
+                weekly_amount = item.price / 4
+            working_rate_series = pd.Series(weekly_amount, index=proj_week_index)
+            income_series = income_series.add(working_weeks_series * working_rate_series, fill_value=0)
         else:
             proj_date_index = pd.bdate_range(start_date, end_date, freq='B')
             working_hours_series = pd.Series((item.weekly_limit or 0) / 5, index=proj_date_index) 

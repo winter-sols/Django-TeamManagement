@@ -12,7 +12,7 @@ class Project(models.Model):
     title = models.CharField(max_length=100)
     type = models.IntegerField(choices=constants.PROJECT_TYPES)
     weekly_limit = models.IntegerField(default=40, null=True, blank=True)
-    paymentPeriod = models.IntegerField(choices=constants.PAYMENT_PERIOD, default=constants.WEEKLY, null=True, blank=True)
+    payment_period = models.IntegerField(choices=constants.PAYMENT_PERIOD, default=constants.WEEKLY, null=True, blank=True)
     price = models.FloatField(null=True)
     client = models.ForeignKey('Client', on_delete=models.CASCADE)
     participants = models.ManyToManyField('user.User', related_name='projects')
