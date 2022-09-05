@@ -6,6 +6,9 @@ import datetime
 from api.common.logging.serializers import LogDetailSerializer
 from reporting.models import Log
 from api.permission import IsAdmin
+from .filters import LogsFilter
+
+
 class DailyLogsView(ListAPIView):
     serializer_class = LogDetailSerializer
     permission_classes = [IsAdmin]
@@ -18,7 +21,7 @@ class DailyLogsForCertainDateView(ListAPIView):
     serializer_class = LogDetailSerializer
     permission_classes = [IsAdmin]
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['owner']
+    filterset_class = LogsFilter
     def get_queryset(self):
         year = self.kwargs['year']
         month = self.kwargs['month']
@@ -45,7 +48,7 @@ class WeeklyLogsforCertainWeekView(ListAPIView):
     serializer_class = LogDetailSerializer
     permission_classes =[IsAdmin]
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['owner']
+    filterset_class = LogsFilter
 
     def get_queryset(self):
         year = self.kwargs['year']
@@ -71,7 +74,7 @@ class MonthlyLogsForCertainMonthView(ListAPIView):
     serializer_class = LogDetailSerializer
     permission_classes = [IsAdmin]
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['owner']
+    filterset_class = LogsFilter
     def get_queryset(self):
         year = self.kwargs['year']
         month = self.kwargs['month']
