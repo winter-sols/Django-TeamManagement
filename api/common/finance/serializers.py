@@ -5,7 +5,7 @@ from django.db.models.functions import Abs
 
 from ..user.serializers import UserSerializer
 from finance import constants as cs
-
+import datetime
 
 class ClientDetailSerializer(serializers.ModelSerializer):
     owner = UserSerializer()
@@ -111,7 +111,7 @@ class FinancialRequestDetailSerializer(serializers.ModelSerializer):
         fields = ('id', 'type', 'status', 'amount', 'address', 'requested_at', 'requester', 'project', 'payment_account', 'description')
 
 
-class FinancialRequestSerializer(serializers.ModelSerializer):    
+class FinancialRequestSerializer(serializers.ModelSerializer):
     def validate(self, data):
         data = super().validate(data)
         # if data['type'] in [cs.FINANCIAL_TYPE_SND_INVOICE, cs.FINANCIAL_TYPE_RCV_PAYMENT, cs.FINANCIAL_TYPE_REFUND_PAYMENT]:

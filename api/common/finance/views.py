@@ -29,6 +29,7 @@ from .filters import (
     ProjectFilter,
     FinancialRequestFilter,
 )
+import datetime
 
 class ClientViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
@@ -128,12 +129,13 @@ class FinancialRequestViewSet(  mixins.CreateModelMixin,
         serializer_data = request.data
         serializer_data['requester'] = self.request.user.id
         serializer = self.get_serializer(data=request.data)
+        # serializer.data[]
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         serializer = FinancialRequestDetailSerializer(instance=serializer.instance)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-    
+
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
         kwargs['partial'] = True

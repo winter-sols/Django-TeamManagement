@@ -5,7 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 from . import constants
 from .manager import ProjectQuerySet, FinancialRequestQuerySet, TransactionQuerySet
 from .signals import fr_post_save
-
+import datetime
 
 class Project(models.Model):
     objects = ProjectQuerySet.as_manager()
@@ -44,7 +44,7 @@ class FinancialRequest(models.Model):
     # counter_party_id = models.PositiveIntegerField()
     # counter_party = GenericForeignKey('counter_party_type', 'counter_party_id')
     address = models.CharField(max_length=200, null=True, blank=True)
-    requested_at = models.DateTimeField(auto_now_add=True)
+    requested_at = models.DateField(null=True)
     requester = models.ForeignKey('user.User', on_delete=models.CASCADE)
     project = models.ForeignKey('Project', on_delete=models.CASCADE, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
@@ -52,6 +52,8 @@ class FinancialRequest(models.Model):
 
     def save(self, **kwargs):
         fr = FinancialRequest.objects.get(id=self.id) if self.id is not None else None
+        if self.requested_at is None:
+            self.requested_at = datetime.date.today()
         super().save(**kwargs)
         fr_post_save.send(sender=self.__class__, instance=self, prev_inst=fr, **kwargs)
 
