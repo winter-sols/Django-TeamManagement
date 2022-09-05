@@ -136,7 +136,7 @@ class AccountsAdminViewSet(viewsets.ModelViewSet):
         'email',
         'location',
         'url',
-        'account_platform'
+        'account_platform__name'
     ]
 
 
